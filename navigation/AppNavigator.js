@@ -12,13 +12,13 @@ const AppNavigation = createNativeStackNavigator();
 const AppNavigator = () => {
   return (
     <NavigationContainer>
-      <AppNavigation.Navigator initialRouteName='Home'>
+      <AppNavigation.Navigator initialRouteName="Home">
         <AppNavigation.Screen
-          name='Home'
+          name="Home"
           options={{ title: 'Clock It !' }}
           component={HomeScreen}
         />
-        <AppNavigation.Screen name='ClockIt' component={ClockItScreen} />
+        <AppNavigation.Screen name="ClockIt" component={ClockItScreen} />
       </AppNavigation.Navigator>
     </NavigationContainer>
   );
