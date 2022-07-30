@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for clockIt/navigation/AppNavigator.js</title>
+    <title>Code coverage report for clockIt/utils/padNumToTwo.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">clockIt/navigation</a> AppNavigator.js</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">clockIt/utils</a> padNumToTwo.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>0/20</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>0/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>0/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>0/19</span>
             </div>
         
             
@@ -90,60 +90,84 @@
 <a name='L25'></a><a href='#L25'>25</a>
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a>
-<a name='L28'></a><a href='#L28'>28</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const padNumToTwo = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(n</span>um) =&gt; (<span class="cstat-no" title="statement not covered" >num &lt;= 9 ? `0${num}` : num)</span>;</span>
 &nbsp;
-// screens
+const displayTime = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(h</span>undredthsOfSecond) =&gt; {</span>
+  let min = <span class="cstat-no" title="statement not covered" >0;</span>
+  let sec = <span class="cstat-no" title="statement not covered" >0;</span>
+  // let hours = Math.floor(minutes / 60);
+<span class="cstat-no" title="statement not covered" >  if (hundredthsOfSecond &lt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >    sec = 0;</span>
+  }
+<span class="cstat-no" title="statement not covered" >  if (hundredthsOfSecond &lt; 100) {</span>
+<span class="cstat-no" title="statement not covered" >    return `00:00:${padNumToTwo(hundredthsOfSecond)}`;</span>
+  }
+  let remainingHundredthsOfSecond = <span class="cstat-no" title="statement not covered" >hundredthsOfSecond % 100;</span>
+<span class="cstat-no" title="statement not covered" >  sec = (hundredthsOfSecond - remainingHundredthsOfSecond) / 100;</span>
 &nbsp;
-import HomeScreen from '../screens/Home Screen/HomeScreen';
-import ClockItScreen from '../screens/Clock It Screen/clockItScreen';
+<span class="cstat-no" title="statement not covered" >  if (sec &lt; 60) {</span>
+<span class="cstat-no" title="statement not covered" >    return `00:${padNumToTwo(sec)}:${padNumToTwo(remainingHundredthsOfSecond)}`;</span>
+  }
+  let remainingSeconds = <span class="cstat-no" title="statement not covered" >sec % 60;</span>
+<span class="cstat-no" title="statement not covered" >  min = (sec - remainingSeconds) / 60;</span>
+<span class="cstat-no" title="statement not covered" >  if (min &lt; 60) {</span>
+<span class="cstat-no" title="statement not covered" >    return `${padNumToTwo(min)}:${padNumToTwo(remainingSeconds)}:${padNumToTwo(</span>
+      remainingHundredthsOfSecond
+    )}`;
+  }
+  let hours = <span class="cstat-no" title="statement not covered" >Math.floor(min / 60);</span>
 &nbsp;
-const AppNavigation = <span class="cstat-no" title="statement not covered" >createNativeStackNavigator();</span>
+<span class="cstat-no" title="statement not covered" >  min = min % 60;</span>
 &nbsp;
-const AppNavigator = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >  return (</span>
-    &lt;NavigationContainer&gt;
-      &lt;AppNavigation.Navigator initialRouteName="ClockIt"&gt;
-        &lt;AppNavigation.Screen
-          name="Home"
-          options={{ title: 'Clock It !' }}
-          component={HomeScreen}
-        /&gt;
-        &lt;AppNavigation.Screen name="ClockIt" component={ClockItScreen} /&gt;
-      &lt;/AppNavigation.Navigator&gt;
-    &lt;/NavigationContainer&gt;
-  );
+<span class="cstat-no" title="statement not covered" >  return `${padNumToTwo(hours)}:${padNumToTwo(min)}:${padNumToTwo(remainingSeconds)}:${padNumToTwo(</span>
+    remainingHundredthsOfSecond
+  )}`;
 };
 &nbsp;
-export default AppNavigator;
+export default displayTime;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->

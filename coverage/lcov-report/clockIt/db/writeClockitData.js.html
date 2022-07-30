@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>0/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>0/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>0/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>0/16</span>
             </div>
         
             
@@ -83,45 +83,69 @@
 <a name='L18'></a><a href='#L18'>18</a>
 <a name='L19'></a><a href='#L19'>19</a>
 <a name='L20'></a><a href='#L20'>20</a>
-<a name='L21'></a><a href='#L21'>21</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { db } from '../firebase';
-import {
-  addDoc,
-  setDoc,
-  doc,
-  collection,
-  Timestamp,
-  getDoc,
-} from 'firebase/firestore';
-&nbsp;
-// Firestore data converter
-// find how to convert time into readable shizz.
+import { addDoc, setDoc, doc, collection, Timestamp, getDoc } from 'firebase/firestore';
 &nbsp;
 export const addActivityData = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >as</span>ync (activity, duration) =&gt; {</span>
   const docData = <span class="cstat-no" title="statement not covered" >{</span>
     activity: 'Air-Bike',
     time: Timestamp.fromDate(new Date()),
   };
-<span class="cstat-no" title="statement not covered" >  await setDoc(doc(db, 'test', 'user1'), docData);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  console.log(duration, convertCentiSecondsToHMS(duration));</span>
+};
+export const padTo2Digits = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(n</span>um) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  return num.toString().padStart(2, '0');</span>
+};
+export const convertCentiSecondsToHMS = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(c</span>entiseconds) =&gt; {</span>
+  let seconds = <span class="cstat-no" title="statement not covered" >(centiseconds / 100) | 0;</span>
+&nbsp;
+  let minutes = <span class="cstat-no" title="statement not covered" >(seconds / 60) | 0;</span>
+  let hours = <span class="cstat-no" title="statement not covered" >Math.floor(minutes / 60);</span>
+<span class="cstat-no" title="statement not covered" >  seconds = seconds % 60;</span>
+  let isRoundedUp = <span class="cstat-no" title="statement not covered" >seconds &gt;= 45 ? true : false;</span>
+<span class="cstat-no" title="statement not covered" >  minutes = isRoundedUp ? minutes + 1 : minutes;</span>
+<span class="cstat-no" title="statement not covered" >  seconds = isRoundedUp ? 0 : seconds;</span>
+<span class="cstat-no" title="statement not covered" >  minutes = minutes % 60;</span>
+<span class="cstat-no" title="statement not covered" >  hours = hours % 24;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;</span>
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -130,7 +154,7 @@ export const addActivityData = <span class="cstat-no" title="statement not cover
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2022-07-29T00:47:25.084Z
+                at 2022-07-30T18:34:29.277Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
