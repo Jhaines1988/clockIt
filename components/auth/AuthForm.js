@@ -89,7 +89,6 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
             onUpdateValue={updateInputValueHandler.bind(this, 'userName')}
             secure
             value={userName}
-            // isInvalid={passwordsDontMatch}
           />
         )}
         <View style={styles.buttons}>

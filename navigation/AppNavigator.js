@@ -33,7 +33,7 @@ function AuthStack() {
       screenOptions={{
         headerStyle: { backgroundColor: Colors.primary500 },
         headerTintColor: 'white',
-        contentStyle: { backgroundColor: Colors.primary100 },
+        contentStyle: { backgroundColor: 'black' },
       }}>
       <AppNavigation.Screen name="Login" component={LoginScreen} />
       <AppNavigation.Screen name="Signup" component={SignupScreen} />

@@ -4,6 +4,8 @@ import { Colors } from '../../constants/styles';
 import { useNavigation } from '@react-navigation/native';
 import FlatButton from '../buttons/FlatButton';
 import AuthForm from './AuthForm';
+import { auth, db } from '../../firebase';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
 function AuthContent({ isLogin, onAuthenticate }) {
   const [credentialsInvalid, setCredentialsInvalid] = useState({
@@ -21,7 +23,7 @@ function AuthContent({ isLogin, onAuthenticate }) {
     }
   }
 
-  function submitHandler(credentials) {
+  async function submitHandler(credentials) {
     let { email, confirmEmail, password, confirmPassword, userName } = credentials;
 
     email = email.trim();
@@ -46,7 +48,7 @@ function AuthContent({ isLogin, onAuthenticate }) {
       });
       return;
     }
-    onAuthenticate({ email, password, userName });
+    await onAuthenticate({ email, password, userName });
   }
 
   return (
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 32,
     padding: 16,
     borderRadius: 8,
-    backgroundColor: Colors.primary800,
+    backgroundColor: 'gray',
     elevation: 2,
     shadowColor: 'black',
     shadowOffset: { width: 1, height: 1 },
