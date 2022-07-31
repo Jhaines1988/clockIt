@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
+import StopWatch from '../../components/stopWatch/stopwatch';
 const ClockItScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text> Welcome To The ClockIt Screen!</Text>
+      <StopWatch />
     </View>
   );
 };

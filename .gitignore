@@ -16,3 +16,6 @@ web-build/
 
 # config
 firebase.js
+unused.js
+coverage
+.env
