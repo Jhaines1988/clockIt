@@ -6,7 +6,6 @@ const ActivityFlatList = ({
   keyExtractor,
   extraData,
   selectedId,
-  selectedName,
   setSelectedId,
   setSelectedName,
 }) => {

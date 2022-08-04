@@ -58,7 +58,6 @@ const HomeScreen = ({ navigation, route }) => {
         keyExtractor={(item) => item.id}
         extraData={updatedActivityData.current}
         selectedId={selectedId}
-        selectedName={selectedName}
         setSelectedId={setSelectedId}
         setSelectedName={setSelectedName}
       />

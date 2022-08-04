@@ -1,8 +1,7 @@
-import React, { useState, useRef, useContext } from 'react';
-import { View, Text, StyleSheet, Animated, Button, Alert, TouchableOpacity } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import displayTime from '../../utils/padNumToTwo';
 import { ClockItColors } from '../../constants/styles';
-import { addActivityData } from '../../db/writeClockitData';
 import {
   FinishButton,
   ResetButton,
@@ -36,8 +35,6 @@ const StopWatch = ({ addDataToFirebase }) => {
 
   const handleFinishButtonPress = () => {
     if (!running) {
-      console.log('Here');
-      console.log('cs to ms', time * 10);
       addDataToFirebase(time);
     }
   };
@@ -89,8 +86,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: ClockItColors.darkestBlue,
     width: '100%',
-    // justifyContent: 'center',
-    // alignItems: 'center',
   },
   timeAndStartButtonContainer: {
     flex: 4,
@@ -104,10 +99,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     alignItems: 'center',
-    // position: 'relative',
   },
   timeDisplay: {
-    // position: 'absolute',
     fontSize: 60,
     flex: 1,
     lineHeight: 82,
@@ -163,60 +156,4 @@ const buttonStyles = StyleSheet.create({
   },
 });
 
-// function ResetButton({ time, running, handleResetButtonPress }) {
-//   return (
-//     <TouchableOpacity
-//       disabled={time > 0 ? false : true}
-//       style={time > 0 ? resetButtonStyles.buttonWrapper : finishButtonStyles.buttonWrapper}
-//       onPress={handleResetButtonPress}>
-//       <View style={resetButtonStyles.buttonTextContainer}>
-//         <Text style={resetButtonStyles.buttonText}>Reset</Text>
-//       </View>
-//     </TouchableOpacity>
-//   );
-// }
-
-// const resetButtonStyles = StyleSheet.create({
-//   buttonWrapper: { flex: 1, backgroundColor: ClockItColors.dkBlue },
-//   buttonTextContainer: {},
-//   buttonText: {
-//     textAlign: 'center',
-//     height: 55,
-//     color: 'white',
-//     fontSize: 20,
-//     textTransform: 'uppercase',
-//     fontWeight: '600',
-//     lineHeight: 28,
-//     letterSpacing: 3,
-//     padding: 10,
-//   },
-// });
-// function FinishButton({ time, running, handleFinishButtonPress }) {
-//   return (
-//     <TouchableOpacity
-//       disabled={running ? true : false}
-//       style={time > 0 ? finishButtonStyles.buttonWrapper : resetButtonStyles.buttonWrapper}
-//       onPress={handleFinishButtonPress}>
-//       <View style={finishButtonStyles.buttonTextContainer}>
-//         <Text style={finishButtonStyles.buttonText}>Finish</Text>
-//       </View>
-//     </TouchableOpacity>
-//   );
-// }
-
-// const finishButtonStyles = StyleSheet.create({
-//   buttonWrapper: { flex: 1, backgroundColor: ClockItColors.blue },
-//   buttonTextContainer: {},
-//   buttonText: {
-//     textAlign: 'center',
-//     height: 55,
-//     color: 'white',
-//     fontSize: 20,
-//     textTransform: 'uppercase',
-//     fontWeight: '600',
-//     lineHeight: 28,
-//     letterSpacing: 3,
-//     padding: 10,
-//   },
-// });
 export default StopWatch;
