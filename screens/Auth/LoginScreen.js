@@ -1,24 +1,26 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import AuthContent from '../../components/auth/AuthContent';
+import { Alert } from 'react-native';
 import { login } from '../../utils/Auth';
-import { useNavigation } from '@react-navigation/native';
 import LoadingOverlay from '../../components/auth/ui/LoadingOverlay';
+import { AuthContext } from '../../store/Auth-Context';
+import { UserContext } from '../../store/User-Context';
 function LoginScreen() {
-  const navigation = useNavigation();
+  const authCtx = useContext(AuthContext);
+  const userContext = useContext(UserContext);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const loginHandler = async ({ email, password }) => {
+    setIsLoggingIn(true);
     try {
-      setIsLoggingIn(true);
-      await login(email, password);
-      setIsLoggingIn(false);
+      let [token, uid] = await login(email, password);
+      if (token && uid) {
+        authCtx.authenticate(token, uid);
+        userContext.setUID(uid);
+      }
     } catch (error) {
-      /// handle errors here coming from utils/auth
-      console.log('HandleErrorsHere', error);
+      Alert.alert(`${error.message}`);
       setIsLoggingIn(false);
-      return;
     }
-
-    navigation.navigate('Home');
   };
   if (isLoggingIn) return <LoadingOverlay message="Logging you In" />;
   return <AuthContent isLogin onAuthenticate={loginHandler} />;

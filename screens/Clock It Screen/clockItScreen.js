@@ -1,21 +1,16 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useContext } from 'react';
 import StopWatch from '../../components/stopWatch/stopwatch';
-const ClockItScreen = ({ navigation }) => {
-  return (
-    <View style={styles.container}>
-      <StopWatch />
-    </View>
-  );
+import { UserContext } from '../../store/User-Context';
+import { addTimeDataToUserActivities } from '../../db/writeClockitData';
+const ClockItScreen = ({ navigation, route }) => {
+  const { userId, activityId, activityName } = route.params;
+  console.log('clockitScreen', userId, activityId, activityName);
+  const userContext = useContext(UserContext);
+  // const userId = userContext.uid;
+  function addDataToFirebase(time) {
+    addTimeDataToUserActivities(activityName, time, userId);
+  }
+  return <StopWatch addDataToFirebase={addDataToFirebase} />;
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default ClockItScreen;
