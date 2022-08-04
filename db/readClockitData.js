@@ -1,11 +1,5 @@
 import { db } from '../firebase';
-import {
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  Timestamp,
-} from 'firebase/firestore';
+import { collection, getDocs, getDoc, doc, Timestamp } from 'firebase/firestore';
 
 export const getActivityData = async () => {
   //   try {
@@ -18,6 +12,20 @@ export const getActivityData = async () => {
   //     console.log('No such document!', error);
   //   }
 };
-
+export const getUserDataOnMount = async (userId) => {
+  try {
+    const userActivitiesRef = doc(db, userId, 'activities');
+    const userActivitiesSnap = await getDoc(userActivitiesRef);
+    if (userActivitiesSnap.exists()) {
+      const fetchedUserActivities = userActivitiesSnap.data().userActivities;
+      return fetchedUserActivities;
+    } else {
+      console.log('No such document!');
+    }
+  } catch (error) {
+    console.log('ERROR GETTING USER DATA ON MOUNT', error);
+    throw new Error(error);
+  }
+};
 let date = new Date(Date.now()).getTime();
 let dateNow = Date.now('MM.D.YY');

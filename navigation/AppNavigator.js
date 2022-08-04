@@ -1,44 +1,93 @@
-import React from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AppLoading from 'expo-app-loading';
 import { Colors } from '../constants/styles';
 // screens
-
+import { onAuthStateChange } from '../utils/Auth';
 import HomeScreen from '../screens/Home Screen/HomeScreen';
 import ClockItScreen from '../screens/Clock It Screen/clockItScreen';
-import AuthScreen from '../screens/Auth/AuthScreen';
+
 import LoginScreen from '../screens/Auth/LoginScreen';
 import SignupScreen from '../screens/Auth/SignupScreen';
-import WelcomeScreen from '../screens/Auth/WelcomeScreen';
-const AppNavigation = createNativeStackNavigator();
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
-const AppNavigator = () => {
-  return (
-    <NavigationContainer>
-      <AppNavigation.Navigator initialRouteName="Auth">
-        <AppNavigation.Screen
+import { AuthContext } from '../store/Auth-Context';
+import UserContextProvider, { UserContext } from '../store/User-Context';
+import IconButton from '../components/buttons/IconButton';
+
+const Stack = createNativeStackNavigator();
+
+const AuthenticatedStack = () => {
+  const authCtx = useContext(AuthContext);
+  const userCtx = useContext(UserContext);
+  const [currentUserId, setCurrentUserId] = useState(authCtx.userId);
+  const [appReady, setAppReady] = useState(false);
+  const auth = getAuth();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        setCurrentUserId(uid);
+        setAppReady(true);
+      } else {
+        console.log('user is signed out... ');
+      }
+    });
+  }, []);
+
+  if (appReady) {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: 'gray' },
+          headerTintColor: 'blue',
+          contentStyle: { backgroundColor: 'black' },
+        }}>
+        <Stack.Screen
           name="Home"
-          options={{ title: 'Clock It !' }}
           component={HomeScreen}
+          initialParams={{ userID: authCtx.userId }}
+          options={{
+            headerRight: ({ tintColor }) => (
+              <IconButton icon="exit" color={tintColor} size={24} onPress={authCtx.logout} />
+            ),
+          }}
         />
-        <AppNavigation.Screen name="ClockIt" component={ClockItScreen} />
-        <AppNavigation.Screen name="Auth" component={AuthStack} />
-      </AppNavigation.Navigator>
-    </NavigationContainer>
-  );
+        <Stack.Screen name="ClockIt" component={ClockItScreen} />
+      </Stack.Navigator>
+    );
+  } else {
+    return <View></View>;
+  }
 };
 function AuthStack() {
   return (
-    <AppNavigation.Navigator
+    <Stack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: Colors.primary500 },
-        headerTintColor: 'white',
+        headerStyle: { backgroundColor: 'gray' },
+        headerTintColor: 'blue',
         contentStyle: { backgroundColor: 'black' },
       }}>
-      <AppNavigation.Screen name="Login" component={LoginScreen} />
-      <AppNavigation.Screen name="Signup" component={SignupScreen} />
-    </AppNavigation.Navigator>
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Signup" component={SignupScreen} />
+    </Stack.Navigator>
   );
 }
 
-export default AppNavigator;
+function Navigation() {
+  const authCtx = useContext(AuthContext);
+
+  return (
+    <NavigationContainer>
+      {!authCtx.isAuthenticated && <AuthStack />}
+      {authCtx.isAuthenticated && <AuthenticatedStack />}
+    </NavigationContainer>
+  );
+}
+
+export default Navigation;
