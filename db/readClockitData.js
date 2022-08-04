@@ -1,5 +1,5 @@
 import { db } from '../firebase';
-import { collection, getDocs, getDoc, doc, Timestamp } from 'firebase/firestore';
+import { getDoc, doc } from 'firebase/firestore';
 
 export const getActivityData = async () => {
   //   try {
