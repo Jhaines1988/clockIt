@@ -15,6 +15,7 @@ import ActivityFlatList from '../../components/ActivityListItems/ActivityFlatLis
 import { getUserDataOnMount } from '../../db/readClockitData';
 import { deleteItemFromActivitiesList } from '../../db/deleteClockitData';
 import { getTimeActivityData } from '../../db/readClockitData';
+import { updateActivityTimeOnFinish, updateUserActivities } from '../../db/writeClockitData';
 import { db } from '../../firebase';
 import {
   addDoc,
@@ -67,7 +68,7 @@ const instantiateUser = async () => {
     console.log(error, '<====');
   }
 };
-
+/* FUNCTION THAT WILL BE CALLED ON SIGNUP >  */
 const instantiateNewUser = async () => {
   let id = 'b29cCTmC4KVmpZJozxQgoNCgbhr2';
   /// need to call date helper funciton to determine when the next sunday is.
@@ -106,12 +107,13 @@ const Item = ({ item, onPress, backgroundColor, textColor }) => {
     </TouchableOpacity>
   );
 };
+
 const HomeScreen = ({ navigation, route }) => {
   const [userActivities, setUserActivities] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [selectedName, setSelectedName] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
-  const userActivitesRef = useRef([]);
+  const userActivitiesRef = useRef([]);
   const [text, onChangeText] = React.useState('');
   const authCtx = useContext(AuthContext);
   const userId = authCtx.userId;
@@ -122,14 +124,12 @@ const HomeScreen = ({ navigation, route }) => {
     };
   }, []);
 
-  /* FUNCTION THAT WILL BE CALLED ON SIGNUP IN THE FUTURE>  */
-
   /* GET USER DATA ON LOAD============================== */
   const getUserData = async function () {
     try {
       const userActivitesOnLoad = await getUserActivities(userId);
       setUserActivities(userActivitesOnLoad.activities);
-      userActivitesRef.current = userActivitesOnLoad.activities;
+      userActivitiesRef.current = userActivitesOnLoad.activities;
       console.log('selectedActivitgy', selectedItem);
     } catch (error) {
       console.log('Error getting user data:', error);
@@ -137,58 +137,20 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   /* ADD TIME DATA ON FINISH AND UPDATE TIME DATA>>>>>>> */
-  const addTimeDataOnFinish = async () => {
-    let activityName = selectedName;
-    let totalTime = 1000; // getting time from clockit screen.
-    // [{ activityName, timeToday: totalTime }],
 
-    try {
-      let updatedActivity = await updateTimeOnFinish(totalTime, activityName);
-      let dayOfWeek = findDay().getDate();
-      let id = updatedActivity.id.toString();
-      let name = updatedActivity.name;
-      console.log(id);
-      let post = await setDoc(
-        doc(db, userId, 'Week Data'),
-
-        { [dayOfWeek]: { [name]: updatedActivity } },
-        { merge: true }
-      );
-    } catch (error) {
-      console.log('ERROR', error);
-    }
-  };
-
-  const experiment = () => {
+  const onStopWatchFinish = async () => {
     const totalTime = 1000;
-    console.log('before', userActivities);
-    selectedItem.totalTime += totalTime;
+    let currentActivitiesSlice = userActivities.slice();
+    const indexOfSelectedItem = userActivities.indexOf(selectedItem);
+    currentActivitiesSlice[indexOfSelectedItem].totalTime += totalTime;
+    const updatedActivity = currentActivitiesSlice[indexOfSelectedItem];
+    setUserActivities((prevState) => currentActivitiesSlice);
 
-    console.log('after', userActivities);
-  };
-  const updateTimeOnFinish = async (totalTime, activityName) => {
     try {
-      let userId = 'b29cCTmC4KVmpZJozxQgoNCgbhr2';
-      // actually updates the activitiy...
-
-      let filteredActivity;
-      let newActivities = userActivities.map((act) => {
-        if (act.name === activityName) {
-          act.totalTime += totalTime;
-          filteredActivity = act;
-        }
-        return act;
-      });
-
-      // sets the document in the DB with updated activity time.
-      let currentTime = await setDoc(doc(db, userId, 'activities'), {
-        activities: newActivities,
-      });
-      // updates the state.
-      setUserActivities(newActivities);
-      return filteredActivity;
+      await updateActivityTimeOnFinish(userId, updatedActivity);
+      await updateUserActivities(userId, userActivities);
     } catch (error) {
-      console.log('ERROR UPDATEDINGTIMEONFINISH', error);
+      console.log('Error in "onStopWatchFinish":', error);
     }
   };
 
@@ -215,9 +177,9 @@ const HomeScreen = ({ navigation, route }) => {
       );
       console.log(postData, 'heres the data... ');
 
-      // let newRef = userActivitesRef.current;
+      // let newRef = userActivitiesRef.current;
       // newRef.push(docData);
-      // userActivitesRef.current = newRef;
+      // userActivitiesRef.current = newRef;
       setUserActivities((prevActivities) => [docData, ...prevActivities]);
     } catch (error) {
       console.log('Error adding activity', error);
@@ -252,7 +214,7 @@ const HomeScreen = ({ navigation, route }) => {
           data={userActivities}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          extraData={userActivitesRef.current}
+          extraData={userActivitiesRef.current}
         />
 
         <Button
@@ -261,7 +223,7 @@ const HomeScreen = ({ navigation, route }) => {
             onChangeText('');
           }}
           title="Add Data"></Button>
-        <Button onPress={experiment} title="Add To time Data"></Button>
+        <Button onPress={onStopWatchFinish} title="Add To time Data"></Button>
       </SafeAreaView>
     </View>
   );
@@ -389,6 +351,57 @@ limit of 5 things !
       console.log('Error adding activity', error);
     }
   };
+
+ const addTimeDataOnFinish = async () => {
+    let activityName = selectedName;
+    let totalTime = 1000; // getting time from clockit screen.
+    // [{ activityName, timeToday: totalTime }],
+
+    try {
+      let updatedActivity = await updateTimeOnFinish(totalTime, activityName);
+      let dayOfWeek = findDay().getDate();
+      let id = updatedActivity.id.toString();
+      let name = updatedActivity.name;
+      console.log(id);
+      let post = await setDoc(
+        doc(db, userId, 'Week Data'),
+
+        { [dayOfWeek]: { [name]: updatedActivity } },
+        { merge: true }
+      );
+    } catch (error) {
+      console.log('ERROR', error);
+    }
+  };
+
+
+  const updateTimeOnFinish = async (totalTime, activityName) => {
+    try {
+      let userId = 'b29cCTmC4KVmpZJozxQgoNCgbhr2';
+      // actually updates the activitiy...
+
+      let filteredActivity;
+      let newActivities = userActivities.map((act) => {
+        if (act.name === activityName) {
+          act.totalTime += totalTime;
+          filteredActivity = act;
+        }
+        return act;
+      });
+
+      // sets the document in the DB with updated activity time.
+      let currentTime = await setDoc(doc(db, userId, 'activities'), {
+        activities: newActivities,
+      });
+      // updates the state.
+      setUserActivities(newActivities);
+      return filteredActivity;
+    } catch (error) {
+      console.log('ERROR UPDATEDINGTIMEONFINISH', error);
+    }
+  };
+
+
 */
 
 // ARRAY LIMITATIONS

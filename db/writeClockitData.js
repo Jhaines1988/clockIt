@@ -1,5 +1,5 @@
 import { db } from '../firebase';
-
+import { findDay } from '../utils/DateTimeHelpers/getDay';
 import {
   addDoc,
   setDoc,
@@ -97,7 +97,17 @@ export const updateUserActivities = async (id, updatedActivities) => {
 
 /* Methods for adding data from stop watch */
 
-export const updateActivityTimeOnFinish = (id, timeSpentDoingActivity) => {
+export const updateActivityTimeOnFinish = async (userId, updatedActivity) => {
   try {
-  } catch (error) {}
+    const dayOfWeek = findDay().getDate();
+    const name = updatedActivity.name;
+    await setDoc(
+      doc(db, userId, 'Week Data'),
+
+      { [dayOfWeek]: { [name]: updatedActivity } },
+      { merge: true }
+    );
+  } catch (error) {
+    console.log('Error in updateActivityTimeOnFinish:', error);
+  }
 };
