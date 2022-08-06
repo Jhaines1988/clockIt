@@ -2,37 +2,42 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
+// context
+import { AuthContext } from '../store/Auth-Context';
 // screens
 
 import HomeScreen from '../screens/Home Screen/HomeScreen';
 import ClockItScreen from '../screens/Clock It Screen/clockItScreen';
-
 import LoginScreen from '../screens/Auth/LoginScreen';
 import SignupScreen from '../screens/Auth/SignupScreen';
 
 // helpers
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { AuthContext } from '../store/Auth-Context';
-
+import authChange from '../utils/NavigationHelpers/authChangeListener';
+import { validateWeekIsInRange } from '../db/readClockitData';
+import { auth } from '../firebase';
 // components
 import IconButton from '../components/buttons/IconButton';
-
+import { onAuthStateChanged, getAuth } from 'firebase/auth';
 const Stack = createNativeStackNavigator();
 
 const AuthenticatedStack = () => {
   const authCtx = useContext(AuthContext);
   const [appReady, setAppReady] = useState(false);
-  const auth = getAuth();
+  const [isUser, setIsUser] = useState(false);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        setAppReady(true);
-      } else {
-        console.log('user is signed out... ');
+        setIsUser(true);
       }
     });
+    async function checkUser() {
+      if (isUser) {
+        let weekExpiration = await validateWeekIsInRange(authCtx.userId);
+      }
+      setAppReady(true);
+    }
+    checkUser();
   }, []);
 
   if (appReady) {
@@ -61,6 +66,7 @@ const AuthenticatedStack = () => {
     return <View></View>;
   }
 };
+
 function AuthStack() {
   return (
     <Stack.Navigator

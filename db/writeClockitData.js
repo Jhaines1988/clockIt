@@ -12,6 +12,7 @@ import {
   arrayUnion,
 } from 'firebase/firestore';
 import { convertCentiSecondsToHMS, padTo2Digits } from '../utils/convertCentisecondstoHMS';
+import { async } from '@firebase/util';
 export const addActivityData = async (activity, duration, userId) => {
   console.log(userId);
   const docData = {
@@ -64,4 +65,39 @@ export const addTimeDataToUserActivities = async (activity, duration, userId) =>
   } catch (error) {
     console.log('ERRORWRITINGDATA', error);
   }
+};
+/*   Methods for instantiating a new piece of "WEEK" data for the user when the current week has expired.  */
+
+export const addToHistory = async (id, firstWeekLabel, previousWeekData) => {
+  try {
+    await setDoc(doc(db, id, 'Previous Weeks', 'history', firstWeekLabel), previousWeekData);
+  } catch (error) {
+    throw new Error({ message: error.message });
+  }
+};
+export const resetCurrentWeek = async (id, weekData) => {
+  try {
+    await setDoc(doc(db, id, 'Week Data'), weekData);
+  } catch (error) {
+    throw new Error({ message: error.message });
+  }
+};
+
+const resetUserHistory = () => {};
+
+export const updateUserActivities = async (id, updatedActivities) => {
+  try {
+    await updateDoc(doc(db, id, 'activities'), {
+      activities: updatedActivities,
+    });
+  } catch (error) {
+    throw new Error({ message: error.message });
+  }
+};
+
+/* Methods for adding data from stop watch */
+
+export const updateActivityTimeOnFinish = (id, timeSpentDoingActivity) => {
+  try {
+  } catch (error) {}
 };

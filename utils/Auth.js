@@ -3,9 +3,39 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
 } from 'firebase/auth';
-
+import { Timestamp } from 'firebase/firestore';
 import { doc, setDoc, getDoc, collection } from 'firebase/firestore';
 import { db, auth } from '../firebase';
+import { findTheNextSunday, findDay } from './DateTimeHelpers/getDay';
+const instantiateNewUser = async (id) => {
+  // let id = 'Z20rA8EtLKfZ7PadJ7FcQjrfyFH3';
+  /// need to call date helper funciton to determine when the next sunday is.
+  let docData = {
+    activities: [],
+  };
+  let today = findDay();
+  let nextSunday = findTheNextSunday(today);
+  let weekData = {
+    expiresAt: Timestamp.fromDate(nextSunday),
+    0: {},
+    1: {},
+    2: {},
+    3: {},
+    4: {},
+    5: {},
+    6: {},
+  };
+  let lastSunday = new Date(nextSunday);
+  lastSunday.setDate(lastSunday.getDate() - 7);
+  let firstWeekLabel = lastSunday.toISOString();
+  try {
+    await setDoc(doc(db, id, 'activities'), docData);
+    await setDoc(doc(db, id, 'Week Data'), weekData);
+    await setDoc(doc(db, id, 'Previous Weeks', 'history', firstWeekLabel), {});
+  } catch (error) {
+    console.log(error, '<====');
+  }
+};
 
 export const signUp = async (email, password, userName) => {
   try {
@@ -14,9 +44,7 @@ export const signUp = async (email, password, userName) => {
     await setDoc(doc(db, 'users', user.uid), {
       username: userName,
     });
-    await setDoc(doc(db, user.uid, 'activities'), {
-      userActivities: [{ activity: 'sampleActivity', id: '1244556' }],
-    });
+    instantiateNewUser(user.uid);
     const token = user.stsTokenManager.accessToken;
     const uid = user.uid;
     return [token, uid];
@@ -30,6 +58,7 @@ export const signUp = async (email, password, userName) => {
 
 export const login = async (email, password) => {
   try {
+    console.log('does this Run? ');
     let userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     const token = user.stsTokenManager.accessToken;
