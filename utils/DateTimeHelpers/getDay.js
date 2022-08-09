@@ -40,3 +40,16 @@ export const createWeekData = (expiryDate) => {
   };
   return weekData;
 };
+
+export const getNextExpiryDate = () => {
+  let today = findDay();
+  let nextSunday = findTheNextSunday(today);
+  const expiryDate = Timestamp.fromDate(nextSunday);
+  return expiryDate.toDate();
+};
+
+export const getStartAndEndOfWeek = () => {
+  let endOfWeek = getNextExpiryDate();
+  let startOfWeek = previousSunday(endOfWeek);
+  return [startOfWeek, endOfWeek];
+};

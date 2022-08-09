@@ -15,7 +15,7 @@ function SignupScreen() {
     setIsAuthenticating(true);
     try {
       let [token, uid] = await signUp(email, password, userName);
-      if ((token, uid)) {
+      if (token && uid) {
         authCtx.authenticate(token, uid);
         userContext.setUID(uid);
       }

@@ -21,6 +21,7 @@ import {
   createWeekData,
 } from '../utils/DateTimeHelpers/getDay';
 import { Timestamp } from 'firebase/firestore';
+
 export const getActivityData = async () => {
   //   try {
   //     const docRef = doc(db, 'test', 'user1');

@@ -1,5 +1,6 @@
 import { useEffect, useState, useContext } from 'react';
 import AuthContextProvider, { AuthContext } from './store/Auth-Context';
+import UserContextProvider, { UserContext } from './store/User-Context';
 import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -17,6 +18,7 @@ export default function App() {
 
 function Root() {
   let authCtx = useContext(AuthContext);
+  let userCtx = useContext(UserContext);
   // fix with expo splash screen.  Documentation  on usage to replace <AppLoading/> was not clear
   // use App is ready for splashScreen.
   const [appIsReady, setAppIsReady] = useState(false);
@@ -24,8 +26,10 @@ function Root() {
     async function getToken() {
       const token = await AsyncStorage.getItem('token');
       const uid = await AsyncStorage.getItem('uid');
+
       if (token && uid) {
         authCtx.authenticate(token, uid);
+        userCtx.setUID(uid);
         setAppIsReady(true);
       } else {
         setAppIsReady(true);
@@ -33,6 +37,5 @@ function Root() {
     }
     getToken();
   }, []);
-
   return <Navigation />;
 }

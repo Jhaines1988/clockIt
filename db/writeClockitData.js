@@ -12,7 +12,7 @@ import {
   arrayUnion,
 } from 'firebase/firestore';
 import { convertCentiSecondsToHMS, padTo2Digits } from '../utils/convertCentisecondstoHMS';
-import { async } from '@firebase/util';
+
 export const addActivityData = async (activity, duration, userId) => {
   console.log(userId);
   const docData = {
@@ -109,5 +109,22 @@ export const updateActivityTimeOnFinish = async (userId, updatedActivity) => {
     );
   } catch (error) {
     console.log('Error in updateActivityTimeOnFinish:', error);
+  }
+};
+export const onStopWatchFinish = async (
+  userId,
+  timeFromStopWatch,
+  activityObject,
+  currentActivities
+) => {
+  const indexOfActivityToUpdate = currentActivities.indexOf(activityObject);
+  currentActivities[indexOfActivityToUpdate].totalTime += timeFromStopWatch;
+
+  try {
+    await updateActivityTimeOnFinish(userId, activityObject);
+    await updateUserActivities(userId, currentActivities);
+    return currentActivities;
+  } catch (error) {
+    console.log('Error in "onStopWatchFinish":', error);
   }
 };

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // context
 import { AuthContext } from '../store/Auth-Context';
+import UserContextProvider, { UserContext } from '../store/User-Context';
 // screens
 
 import HomeScreen from '../screens/Home Screen/HomeScreen';
@@ -15,13 +16,16 @@ import SignupScreen from '../screens/Auth/SignupScreen';
 import authChange from '../utils/NavigationHelpers/authChangeListener';
 import { validateWeekIsInRange } from '../db/readClockitData';
 import { auth } from '../firebase';
+import { getUserActivities } from '../db/readClockitData';
 // components
 import IconButton from '../components/buttons/IconButton';
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Stack = createNativeStackNavigator();
 
 const AuthenticatedStack = () => {
   const authCtx = useContext(AuthContext);
+  const userCtx = useContext(UserContext);
   const [appReady, setAppReady] = useState(false);
   const [isUser, setIsUser] = useState(false);
 
@@ -33,12 +37,25 @@ const AuthenticatedStack = () => {
     });
     async function checkUser() {
       if (isUser) {
-        let weekExpiration = await validateWeekIsInRange(authCtx.userId);
+        try {
+          // let weekExpiration = await validateWeekIsInRange(authCtx.userId);
+          let populateUserData = await getUserActivities(authCtx.userId);
+          // let expiration = await AsyncStorage.getItem('expiration');
+          // if (expiration) {
+          //   userCtx.setExpirationDate(expiration);
+          userCtx.getWeekStartStop();
+          // }
+          if (populateUserData) {
+            userCtx.setUserActivities(populateUserData);
+          }
+        } catch (error) {
+          console.log('ERROR IN CHECK USER IN NAV', error);
+        }
       }
       setAppReady(true);
     }
     checkUser();
-  }, []);
+  }, [isUser]);
 
   if (appReady) {
     return (
@@ -63,7 +80,11 @@ const AuthenticatedStack = () => {
     );
   } else {
     /// configure App Loading / expo splash screen here... ///
-    return <View></View>;
+    return (
+      <View>
+        <Text>Wiating</Text>
+      </View>
+    );
   }
 };
 
@@ -83,11 +104,15 @@ function AuthStack() {
 
 function Navigation() {
   const authCtx = useContext(AuthContext);
-
+  const userCtx = useContext(UserContext);
   return (
     <NavigationContainer>
       {!authCtx.isAuthenticated && <AuthStack />}
-      {authCtx.isAuthenticated && <AuthenticatedStack />}
+      {authCtx.isAuthenticated && (
+        <UserContextProvider>
+          <AuthenticatedStack />
+        </UserContextProvider>
+      )}
     </NavigationContainer>
   );
 }

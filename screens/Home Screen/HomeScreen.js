@@ -10,6 +10,8 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { UserContext } from '../../store/User-Context';
 import ActivityInputContainer from '../../components/activityInput/ActivityInputContainer';
 import ActivityFlatList from '../../components/ActivityListItems/ActivityFlatList';
 import { getUserDataOnMount } from '../../db/readClockitData';
@@ -39,65 +41,9 @@ function createActivityData(activityName) {
 }
 import { findDay, findTheNextSunday } from '../../utils/DateTimeHelpers/getDay';
 import { convertCentiSecondsToHMS } from '../../utils/convertCentisecondstoHMS';
-import AuthContextProvider, { AuthContext } from '../../store/Auth-Context';
+import { AuthContext } from '../../store/Auth-Context';
 import { getUserActivities } from '../../db/readClockitData';
-const instantiateUser = async () => {
-  let id = 'b29cCTmC4KVmpZJozxQgoNCgbhr2';
-  /// need to call date helper funciton to determine when the next sunday is.
-  let docData = {
-    activities: [],
-  };
 
-  let today = findDay();
-  let nextSunday = findTheNextSunday(today);
-  let weekData = {
-    expiresAt: Timestamp.fromDate(nextSunday),
-    0: {},
-    1: {},
-    2: {},
-    3: {},
-    4: {},
-    5: {},
-    6: {},
-  };
-
-  try {
-    await setDoc(doc(db, id, 'activities'), docData);
-    await setDoc(doc(db, id, 'Week Data'), weekData);
-  } catch (error) {
-    console.log(error, '<====');
-  }
-};
-/* FUNCTION THAT WILL BE CALLED ON SIGNUP >  */
-const instantiateNewUser = async () => {
-  let id = 'b29cCTmC4KVmpZJozxQgoNCgbhr2';
-  /// need to call date helper funciton to determine when the next sunday is.
-  let docData = {
-    activities: [],
-  };
-  let today = findDay();
-  let nextSunday = findTheNextSunday(today);
-  let weekData = {
-    expiresAt: Timestamp.fromDate(nextSunday),
-    0: {},
-    1: {},
-    2: {},
-    3: {},
-    4: {},
-    5: {},
-    6: {},
-  };
-  let lastSunday = new Date(nextSunday);
-  lastSunday.setDate(lastSunday.getDate() - 7);
-  let firstWeekLabel = lastSunday.toISOString();
-  try {
-    await setDoc(doc(db, id, 'activities'), docData);
-    await setDoc(doc(db, id, 'Week Data'), weekData);
-    await setDoc(doc(db, id, 'Previous Weeks', 'history', firstWeekLabel), {});
-  } catch (error) {
-    console.log(error, '<====');
-  }
-};
 const Item = ({ item, onPress, backgroundColor, textColor }) => {
   return (
     <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
@@ -109,7 +55,9 @@ const Item = ({ item, onPress, backgroundColor, textColor }) => {
 };
 
 const HomeScreen = ({ navigation, route }) => {
-  const [userActivities, setUserActivities] = useState([]);
+  const userCtx = useContext(UserContext);
+  const [userActivities, setUserActivities] = useState(userCtx.userActivities);
+  // const [expirationDate, setExpirationDate] = useState(userCtx.expirationDate);
   const [selectedId, setSelectedId] = useState(null);
   const [selectedName, setSelectedName] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -117,28 +65,41 @@ const HomeScreen = ({ navigation, route }) => {
   const [text, onChangeText] = React.useState('');
   const authCtx = useContext(AuthContext);
   const userId = authCtx.userId;
-  useEffect(() => {
-    getUserData();
-    return () => {
-      console.log('userActivites', userActivities);
-    };
-  }, []);
+  // useEffect(() => {
+  //   // getUserData();     console.log('USERCTX', userCtx.getWeekStartStop());
+  //   // setUserActivities(userCtx.userActivities);
+  //   // return () => {
+  //   //   // userActivitiesRef.current = null;
+  //   // };
+  //   return () => {
+  //     console.log('USERCTX', userCtx);
+  //   };
+  // });
 
   /* GET USER DATA ON LOAD============================== */
   const getUserData = async function () {
     try {
-      const userActivitesOnLoad = await getUserActivities(userId);
-      setUserActivities(userActivitesOnLoad.activities);
-      userActivitiesRef.current = userActivitesOnLoad.activities;
-      console.log('selectedActivitgy', selectedItem);
+      let expiration = await userCtx.getExpirationDate();
+      await userCtx.setExpirationDate(expiration);
+      console.log(expiration, 'herherhere');
     } catch (error) {
       console.log('Error getting user data:', error);
     }
   };
+  // const getUserData = async function () {
+  //   try {
+  //     const userActivitesOnLoad = await getUserActivities(userId);
+  //     setUserActivities(userActivitesOnLoad.activities);
+  //     userActivitiesRef.current = userActivitesOnLoad.activities;
+  //     console.log('selectedActivitgy', selectedItem);
+  //   } catch (error) {
+  //     console.log('Error getting user data:', error);
+  //   }
+  // };
 
   /* ADD TIME DATA ON FINISH AND UPDATE TIME DATA>>>>>>> */
 
-  const onStopWatchFinish = async () => {
+  const onStopWatchFinish = async (timeFromStopWatch) => {
     const totalTime = 1000;
     let currentActivitiesSlice = userActivities.slice();
     const indexOfSelectedItem = userActivities.indexOf(selectedItem);
@@ -156,7 +117,6 @@ const HomeScreen = ({ navigation, route }) => {
 
   /* Addingding a newActivity to Firebase  */
   const addData = async () => {
-    let userId = 'b29cCTmC4KVmpZJozxQgoNCgbhr2';
     const activity = text;
     if (userActivities.length === 5 || text.trim() === '') {
       console.log('notAdding');
@@ -177,9 +137,9 @@ const HomeScreen = ({ navigation, route }) => {
       );
       console.log(postData, 'heres the data... ');
 
-      // let newRef = userActivitiesRef.current;
-      // newRef.push(docData);
-      // userActivitiesRef.current = newRef;
+      let newRef = userActivitiesRef.current;
+      newRef.push(docData);
+      userActivitiesRef.current = newRef;
       setUserActivities((prevActivities) => [docData, ...prevActivities]);
     } catch (error) {
       console.log('Error adding activity', error);
@@ -205,27 +165,45 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'white' }}>
-      <SafeAreaView>
-        <TextInput style={styles.input} onChangeText={onChangeText} value={text} />
-      </SafeAreaView>
-      <SafeAreaView>
-        <FlatList
-          data={userActivities}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          extraData={userActivitiesRef.current}
-        />
+    <UserContext.Consumer>
+      {({ userActivities, startOfWeek, endOfWeek }) => (
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+          <SafeAreaView>
+            <TextInput style={styles.input} onChangeText={onChangeText} value={text} />
+          </SafeAreaView>
+          <SafeAreaView>
+            <FlatList
+              data={userActivities}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id}
+              extraData={userActivitiesRef.current}
+            />
 
-        <Button
-          onPress={() => {
-            addData();
-            onChangeText('');
-          }}
-          title="Add Data"></Button>
-        <Button onPress={onStopWatchFinish} title="Add To time Data"></Button>
-      </SafeAreaView>
-    </View>
+            <Button
+              onPress={() => {
+                addData();
+                onChangeText('');
+              }}
+              title="Add Data"></Button>
+            <Button onPress={onStopWatchFinish} title="Add To time Data"></Button>
+          </SafeAreaView>
+          <Button
+            title="Clock It With Selected Data"
+            onPress={() =>
+              navigation.navigate('ClockIt', {
+                userId: userId,
+                activityObj: selectedItem,
+                currentActivities: userActivities.slice(),
+              })
+            }
+          />
+          <Text style={{ color: 'black', fontSize: 22, flex: 1 }}>
+            {new Date(startOfWeek).toLocaleDateString()} -{' '}
+            {new Date(endOfWeek).toLocaleDateString()}
+          </Text>
+        </View>
+      )}
+    </UserContext.Consumer>
   );
 };
 const styles = StyleSheet.create({

@@ -6,7 +6,12 @@ import {
 import { Timestamp } from 'firebase/firestore';
 import { doc, setDoc, getDoc, collection } from 'firebase/firestore';
 import { db, auth } from '../firebase';
-import { findTheNextSunday, findDay } from './DateTimeHelpers/getDay';
+import {
+  findTheNextSunday,
+  findDay,
+  getNextExpiryDate,
+  getStartAndEndOfWeek,
+} from './DateTimeHelpers/getDay';
 const instantiateNewUser = async (id) => {
   // let id = 'Z20rA8EtLKfZ7PadJ7FcQjrfyFH3';
   /// need to call date helper funciton to determine when the next sunday is.
@@ -15,8 +20,9 @@ const instantiateNewUser = async (id) => {
   };
   let today = findDay();
   let nextSunday = findTheNextSunday(today);
+  const expiryDate = Timestamp.fromDate(nextSunday);
   let weekData = {
-    expiresAt: Timestamp.fromDate(nextSunday),
+    expiresAt: expiryDate,
     0: {},
     1: {},
     2: {},
@@ -44,7 +50,7 @@ export const signUp = async (email, password, userName) => {
     await setDoc(doc(db, 'users', user.uid), {
       username: userName,
     });
-    instantiateNewUser(user.uid);
+    await instantiateNewUser(user.uid);
     const token = user.stsTokenManager.accessToken;
     const uid = user.uid;
     return [token, uid];
@@ -63,6 +69,8 @@ export const login = async (email, password) => {
     const user = userCredential.user;
     const token = user.stsTokenManager.accessToken;
     const uid = user.uid;
+    const expiryDate = getNextExpiryDate();
+
     return [token, uid];
   } catch (error) {
     if (error.code === 'auth/wrong-password') {
