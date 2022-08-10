@@ -10,54 +10,13 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '../../store/User-Context';
-import ActivityInputContainer from '../../components/activityInput/ActivityInputContainer';
-import ActivityFlatList from '../../components/ActivityListItems/ActivityFlatList';
-import { getUserDataOnMount } from '../../db/readClockitData';
-import { deleteItemFromActivitiesList } from '../../db/deleteClockitData';
-import { getTimeActivityData } from '../../db/readClockitData';
-import { updateActivityTimeOnFinish, updateUserActivities } from '../../db/writeClockitData';
-import { db } from '../../firebase';
-import {
-  addDoc,
-  setDoc,
-  updateDoc,
-  doc,
-  getDocs,
-  collection,
-  Timestamp,
-  getDoc,
-  arrayUnion,
-  orderBy,
-} from 'firebase/firestore';
-function createActivityData(activityName) {
-  const activity = {
-    name: activityName,
-    id: Date.now(),
-    totalTime: 0,
-  };
-  return activity;
-}
-import { findDay, findTheNextSunday } from '../../utils/DateTimeHelpers/getDay';
-import { convertCentiSecondsToHMS } from '../../utils/convertCentisecondstoHMS';
 import { AuthContext } from '../../store/Auth-Context';
-import { getUserActivities } from '../../db/readClockitData';
-
-const Item = ({ item, onPress, backgroundColor, textColor }) => {
-  return (
-    <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
-      <Text style={[styles.title, textColor]}>
-        {item.name} : {convertCentiSecondsToHMS(item.totalTime)}
-      </Text>
-    </TouchableOpacity>
-  );
-};
-
+import LoadingOverlay from '../../components/auth/ui/LoadingOverlay';
 const HomeScreen = ({ navigation, route }) => {
   const userCtx = useContext(UserContext);
   const [userActivities, setUserActivities] = useState(userCtx.userActivities);
-  // const [expirationDate, setExpirationDate] = useState(userCtx.expirationDate);
+
   const [selectedId, setSelectedId] = useState(null);
   const [selectedName, setSelectedName] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -65,145 +24,37 @@ const HomeScreen = ({ navigation, route }) => {
   const [text, onChangeText] = React.useState('');
   const authCtx = useContext(AuthContext);
   const userId = authCtx.userId;
-  // useEffect(() => {
-  //   // getUserData();     console.log('USERCTX', userCtx.getWeekStartStop());
-  //   // setUserActivities(userCtx.userActivities);
-  //   // return () => {
-  //   //   // userActivitiesRef.current = null;
-  //   // };
-  //   return () => {
-  //     console.log('USERCTX', userCtx);
-  //   };
-  // });
+  useEffect(() => {
+    console.log('userCtx', userCtx);
+  });
 
-  /* GET USER DATA ON LOAD============================== */
-  const getUserData = async function () {
-    try {
-      let expiration = await userCtx.getExpirationDate();
-      await userCtx.setExpirationDate(expiration);
-      console.log(expiration, 'herherhere');
-    } catch (error) {
-      console.log('Error getting user data:', error);
-    }
-  };
-  // const getUserData = async function () {
-  //   try {
-  //     const userActivitesOnLoad = await getUserActivities(userId);
-  //     setUserActivities(userActivitesOnLoad.activities);
-  //     userActivitiesRef.current = userActivitesOnLoad.activities;
-  //     console.log('selectedActivitgy', selectedItem);
-  //   } catch (error) {
-  //     console.log('Error getting user data:', error);
-  //   }
-  // };
+  return <UserActivityData userId={userId} userActivities={userCtx.userActivities} />;
+};
 
-  /* ADD TIME DATA ON FINISH AND UPDATE TIME DATA>>>>>>> */
-
-  const onStopWatchFinish = async (timeFromStopWatch) => {
-    const totalTime = 1000;
-    let currentActivitiesSlice = userActivities.slice();
-    const indexOfSelectedItem = userActivities.indexOf(selectedItem);
-    currentActivitiesSlice[indexOfSelectedItem].totalTime += totalTime;
-    const updatedActivity = currentActivitiesSlice[indexOfSelectedItem];
-    setUserActivities((prevState) => currentActivitiesSlice);
-
-    try {
-      await updateActivityTimeOnFinish(userId, updatedActivity);
-      await updateUserActivities(userId, userActivities);
-    } catch (error) {
-      console.log('Error in "onStopWatchFinish":', error);
-    }
-  };
-
-  /* Addingding a newActivity to Firebase  */
-  const addData = async () => {
-    const activity = text;
-    if (userActivities.length === 5 || text.trim() === '') {
-      console.log('notAdding');
-      return;
-    }
-    let existsInUserActivities = userActivities.some((value) => value.name === text.trim());
-
-    if (existsInUserActivities) {
-      console.log('not adding');
-      return;
-    }
-    try {
-      const docData = createActivityData(activity);
-      const postData = await updateDoc(
-        doc(db, userId, 'activities'),
-
-        { activities: arrayUnion(docData) }
-      );
-      console.log(postData, 'heres the data... ');
-
-      let newRef = userActivitiesRef.current;
-      newRef.push(docData);
-      userActivitiesRef.current = newRef;
-      setUserActivities((prevActivities) => [docData, ...prevActivities]);
-    } catch (error) {
-      console.log('Error adding activity', error);
-    }
-  };
-
-  const renderItem = ({ item }) => {
-    const backgroundColor = item.id === selectedId ? '#6e3b6e' : '#f9c2ff';
-    const color = item.id === selectedId ? 'white' : 'black';
-
-    return (
-      <Item
-        item={item}
-        onPress={() => {
-          setSelectedId(item.id);
-          setSelectedName(item.name);
-          setSelectedItem(item);
-        }}
-        backgroundColor={{ backgroundColor }}
-        textColor={{ color }}
-      />
-    );
-  };
+const UserActivityData = ({ userId, userActivities }) => {
+  const userCtx = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(true);
 
   return (
-    <UserContext.Consumer>
-      {({ userActivities, startOfWeek, endOfWeek }) => (
-        <View style={{ flex: 1, backgroundColor: 'white' }}>
-          <SafeAreaView>
-            <TextInput style={styles.input} onChangeText={onChangeText} value={text} />
-          </SafeAreaView>
-          <SafeAreaView>
-            <FlatList
-              data={userActivities}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id}
-              extraData={userActivitiesRef.current}
-            />
-
-            <Button
-              onPress={() => {
-                addData();
-                onChangeText('');
-              }}
-              title="Add Data"></Button>
-            <Button onPress={onStopWatchFinish} title="Add To time Data"></Button>
-          </SafeAreaView>
-          <Button
-            title="Clock It With Selected Data"
-            onPress={() =>
-              navigation.navigate('ClockIt', {
-                userId: userId,
-                activityObj: selectedItem,
-                currentActivities: userActivities.slice(),
-              })
-            }
-          />
-          <Text style={{ color: 'black', fontSize: 22, flex: 1 }}>
-            {new Date(startOfWeek).toLocaleDateString()} -{' '}
-            {new Date(endOfWeek).toLocaleDateString()}
-          </Text>
-        </View>
-      )}
-    </UserContext.Consumer>
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <Text> The Welcome Screen </Text>
+      <SafeAreaView style={{ flex: 1 }}>
+        <FlatList
+          data={userCtx.userActivities}
+          renderItem={({ item }) => {
+            return (
+              <TouchableOpacity>
+                <Text style={{ color: 'black', fontSize: 32 }}>
+                  {item.name}: {item.totalTime}
+                </Text>
+              </TouchableOpacity>
+            );
+          }}
+          keyExtractor={(item) => item.id}
+          extraData={userActivities}
+        />
+      </SafeAreaView>
+    </View>
   );
 };
 const styles = StyleSheet.create({
@@ -226,6 +77,36 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
+
+/*
+
+  return (
+    <UserContext.Consumer>
+      {({ userActivities, startOfWeek, endOfWeek }) => (
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+          <SafeAreaView>
+            <TextInput style={styles.input} onChangeText={onChangeText} value={text} />
+          </SafeAreaView>
+
+          <Button
+            title="Clock It With Selected Data"
+            onPress={() =>
+              navigation.navigate('ClockIt', {
+                userId: userId,
+                activityObj: selectedItem,
+                currentActivities: userActivities.slice(),
+              })
+            }
+          />
+          <Text style={{ color: 'black', fontSize: 22, flex: 1 }}>
+            {new Date(startOfWeek).toLocaleDateString()} -{' '}
+            {new Date(endOfWeek).toLocaleDateString()}
+          </Text>
+        </View>
+      )}
+    </UserContext.Consumer>
+  );
+*/
 
 // const HomeScreen = ({ navigation, route }) => {
 //   const [selectedId, setSelectedId] = useState(null);
@@ -304,9 +185,74 @@ const styles = StyleSheet.create({
 export default HomeScreen;
 /*
 
+FLATLIST COMPONENT
+
+const Item = ({ item, onPress, backgroundColor, textColor }) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
+      <Text style={[styles.title, textColor]}>
+        {item.name} : {convertCentiSecondsToHMS(item.totalTime)}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
+  const renderItem = ({ item }) => {
+    const backgroundColor = item.id === selectedId ? '#6e3b6e' : '#f9c2ff';
+    const color = item.id === selectedId ? 'white' : 'black';
+
+    return (
+      <Item
+        item={item}
+        onPress={() => {
+          setSelectedId(item.id);
+          setSelectedName(item.name);
+          setSelectedItem(item);
+        }}
+        backgroundColor={{ backgroundColor }}
+        textColor={{ color }}
+      />
+    );
+  };
 
 
 
+  //// ON ADD
+
+  NOT USED CURRENTLY
+
+  const onStopWatchFinish = async (timeFromStopWatch) => {
+    const totalTime = 1000;
+    let currentActivitiesSlice = userActivities.slice();
+    const indexOfSelectedItem = userActivities.indexOf(selectedItem);
+    currentActivitiesSlice[indexOfSelectedItem].totalTime += totalTime;
+    const updatedActivity = currentActivitiesSlice[indexOfSelectedItem];
+    setUserActivities((prevState) => currentActivitiesSlice);
+
+    try {
+      await updateActivityTimeOnFinish(userId, updatedActivity);
+      await updateUserActivities(userId, userActivities);
+    } catch (error) {
+      console.log('Error in "onStopWatchFinish":', error);
+    }
+  };
+
+   <SafeAreaView>
+            <FlatList
+              data={userActivities}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id}
+              extraData={userActivitiesRef.current}
+            />
+
+            <Button
+              onPress={() => {
+                addData();
+                onChangeText('');
+              }}
+              title="Add Data"></Button>
+            <Button onPress={onStopWatchFinish} title="Add To time Data"></Button>
+          </SafeAreaView>
 
 
 Whats currently happening....
@@ -388,4 +334,46 @@ limit of 5 things !
  we'll end up having to read a couple times  because we cant get the correct index of the item to update.
 
  so we'd have to read , get the array value we want and replace it.
+
+
+
+
+
+
+
+
+
+const addData = async () => {
+    const activity = text;
+    if (userActivities.length === 5 || text.trim() === '') {
+      console.log('notAdding');
+      return;
+    }
+    let existsInUserActivities = userActivities.some((value) => value.name === text.trim());
+
+    if (existsInUserActivities) {
+      console.log('not adding');
+      return;
+    }
+    try {
+      const docData = createActivityData(activity);
+      const postData = await updateDoc(
+        doc(db, userId, 'activities'),
+
+        { activities: arrayUnion(docData) }
+      );
+      console.log(postData, 'heres the data... ');
+
+      let newRef = userActivitiesRef.current;
+      newRef.push(docData);
+      userActivitiesRef.current = newRef;
+      setUserActivities((prevActivities) => [docData, ...prevActivities]);
+    } catch (error) {
+      console.log('Error adding activity', error);
+    }
+  };
+
+
+
+
 */

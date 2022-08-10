@@ -20,11 +20,10 @@ export const findTheNextSunday = (date) => {
   return nextSunday;
 };
 
-export const previousSunday = (date) => {
-  let lastSunday = new Date(date);
+export const getLastSunday = (upcomingSunday) => {
+  let lastSunday = new Date(upcomingSunday);
   lastSunday.setDate(lastSunday.getDate() - 7);
-  let firstWeekLabel = lastSunday.toISOString();
-  return firstWeekLabel;
+  return lastSunday;
 };
 
 export const createWeekData = (expiryDate) => {
@@ -50,6 +49,12 @@ export const getNextExpiryDate = () => {
 
 export const getStartAndEndOfWeek = () => {
   let endOfWeek = getNextExpiryDate();
-  let startOfWeek = previousSunday(endOfWeek);
+  let startOfWeek = getLastSunday(endOfWeek);
   return [startOfWeek, endOfWeek];
+};
+
+export const compareTimeStamp = (expiryDate) => {
+  let today = Timestamp.fromDate(findDay()).valueOf();
+
+  return today >= expiryDate;
 };

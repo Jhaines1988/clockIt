@@ -15,12 +15,13 @@ import SignupScreen from '../screens/Auth/SignupScreen';
 // helpers
 import authChange from '../utils/NavigationHelpers/authChangeListener';
 import { validateWeekIsInRange } from '../db/readClockitData';
+import { compareTimeStamp } from '../utils/DateTimeHelpers/getDay';
 import { auth } from '../firebase';
 import { getUserActivities } from '../db/readClockitData';
 // components
 import IconButton from '../components/buttons/IconButton';
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const Stack = createNativeStackNavigator();
 
 const AuthenticatedStack = () => {
@@ -38,15 +39,14 @@ const AuthenticatedStack = () => {
     async function checkUser() {
       if (isUser) {
         try {
-          // let weekExpiration = await validateWeekIsInRange(authCtx.userId);
-          let populateUserData = await getUserActivities(authCtx.userId);
-          // let expiration = await AsyncStorage.getItem('expiration');
-          // if (expiration) {
-          //   userCtx.setExpirationDate(expiration);
-          userCtx.getWeekStartStop();
-          // }
-          if (populateUserData) {
-            userCtx.setUserActivities(populateUserData);
+          let fetchUserData = await getUserActivities(authCtx.userId);
+          if (fetchUserData) {
+            let expirationDate = fetchUserData.expiresAt;
+            console.log(fetchUserData.activities);
+            if (compareTimeStamp(expirationDate)) {
+              // reset week
+            }
+            userCtx.setUserActivities(fetchUserData);
           }
         } catch (error) {
           console.log('ERROR IN CHECK USER IN NAV', error);
@@ -55,11 +55,12 @@ const AuthenticatedStack = () => {
       setAppReady(true);
     }
     checkUser();
-  }, [isUser]);
+  }, []);
 
   if (appReady) {
     return (
       <Stack.Navigator
+        initialRouteName="Home"
         screenOptions={{
           headerStyle: { backgroundColor: 'gray' },
           headerTintColor: 'blue',
@@ -82,7 +83,7 @@ const AuthenticatedStack = () => {
     /// configure App Loading / expo splash screen here... ///
     return (
       <View>
-        <Text>Wiating</Text>
+        <Text>Waiting</Text>
       </View>
     );
   }

@@ -13,16 +13,11 @@ import {
   getStartAndEndOfWeek,
 } from './DateTimeHelpers/getDay';
 const instantiateNewUser = async (id) => {
-  // let id = 'Z20rA8EtLKfZ7PadJ7FcQjrfyFH3';
-  /// need to call date helper funciton to determine when the next sunday is.
-  let docData = {
-    activities: [],
-  };
-  let today = findDay();
-  let nextSunday = findTheNextSunday(today);
-  const expiryDate = Timestamp.fromDate(nextSunday);
+  let [startOfWeek, endOfWeek] = getStartAndEndOfWeek();
+  const expiryDate = endOfWeek.toISOString();
   let weekData = {
-    expiresAt: expiryDate,
+    weekOf: startOfWeek.toDateString() + '/' + endOfWeek.toDateString(),
+    expiresAt: Timestamp.fromDate(endOfWeek),
     0: {},
     1: {},
     2: {},
@@ -30,14 +25,15 @@ const instantiateNewUser = async (id) => {
     4: {},
     5: {},
     6: {},
+    activities: [],
   };
-  let lastSunday = new Date(nextSunday);
-  lastSunday.setDate(lastSunday.getDate() - 7);
-  let firstWeekLabel = lastSunday.toISOString();
+
+  let firstWeekLabel = endOfWeek.toISOString();
   try {
-    await setDoc(doc(db, id, 'activities'), docData);
-    await setDoc(doc(db, id, 'Week Data'), weekData);
+    // await setDoc(doc(db, id, 'activities'), docData);
+    await setDoc(doc(db, id, 'activities'), weekData);
     await setDoc(doc(db, id, 'Previous Weeks', 'history', firstWeekLabel), {});
+    return weekData.expiresAt.valueOf();
   } catch (error) {
     console.log(error, '<====');
   }
@@ -50,14 +46,14 @@ export const signUp = async (email, password, userName) => {
     await setDoc(doc(db, 'users', user.uid), {
       username: userName,
     });
-    await instantiateNewUser(user.uid);
+    const expiryTime = await instantiateNewUser(user.uid);
     const token = user.stsTokenManager.accessToken;
     const uid = user.uid;
-    return [token, uid];
+    return [token, uid, expiryTime];
   } catch (error) {
     const errorCode = error.code;
     const errorMessage = error.message;
-    console.log('throw this error to signup screen');
+    console.log('throw this error to signup screen', error);
     throw new Error({ message: errorMessage });
   }
 };

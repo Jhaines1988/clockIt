@@ -14,14 +14,15 @@ function SignupScreen() {
   const signUpHandler = async ({ email, password, userName }) => {
     setIsAuthenticating(true);
     try {
-      let [token, uid] = await signUp(email, password, userName);
-      if (token && uid) {
+      let [token, uid, expiryTime] = await signUp(email, password, userName);
+      if (token && uid && expiryTime) {
         authCtx.authenticate(token, uid);
         userContext.setUID(uid);
+        userContext.setExpirationDate(expiryTime);
       }
     } catch (error) {
       // handle Errors here , being thrown from /utils/auth
-      console.log(error, 'handle signup errors here.. email exists...etc');
+      console.log(error.message, 'handle signup errors here.. email exists...etc');
       setIsAuthenticating(false);
       return;
     }

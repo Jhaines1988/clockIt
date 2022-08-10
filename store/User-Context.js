@@ -24,7 +24,7 @@ function UserContextProvider({ children }) {
   const [endOfWeek, setEndOfWeek] = useState('');
   async function setUserId(userId) {
     setUID(userId);
-    await AsyncStorage.setItem('uid', userId);
+    // await AsyncStorage.setItem('uid', userId);
   }
   const getUserID = async () => {
     const id = await AsyncStorage.getItem('uid');
@@ -55,7 +55,8 @@ function UserContextProvider({ children }) {
   };
   const setUserActivities = async (fetchedUserActivities) => {
     try {
-      setUserActivitiesOnLoad((prevState) => fetchedUserActivities.activities);
+      console.log('ANYTHING', fetchedUserActivities.activities);
+      setUserActivitiesOnLoad(fetchedUserActivities.activities);
     } catch (error) {
       console.log('Error In User Context setting User activities', error);
     }

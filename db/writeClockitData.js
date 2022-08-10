@@ -13,12 +13,18 @@ import {
 } from 'firebase/firestore';
 import { convertCentiSecondsToHMS, padTo2Digits } from '../utils/convertCentisecondstoHMS';
 
-export const addActivityData = async (activity, duration, userId) => {
-  console.log(userId);
-  const docData = {
-    activity,
-    id: Math.random().toString(),
+/* ADD ACTIVITY DATA TO HOME SCREEN  */
+
+function createActivityData(activityName) {
+  const activity = {
+    name: activityName,
+    id: Date.now(),
+    totalTime: 0,
   };
+  return activity;
+}
+export const addActivityData = async (activity, duration, userId) => {
+  const docData = createActivityData(activity);
   try {
     const postData = await setDoc(doc(db, userId, 'activities'), docData);
   } catch (error) {
@@ -82,8 +88,6 @@ export const resetCurrentWeek = async (id, weekData) => {
     throw new Error({ message: error.message });
   }
 };
-
-const resetUserHistory = () => {};
 
 export const updateUserActivities = async (id, updatedActivities) => {
   try {
