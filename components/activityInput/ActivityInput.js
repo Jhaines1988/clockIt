@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet } from 'react-native';
 
 function ActivityInput({ label, textInputConfiguration }) {
   return (
-    <View style={styles.container}>
+    <View style={styles.textInputContainer}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         style={styles.textInput}
@@ -15,12 +15,26 @@ function ActivityInput({ label, textInputConfiguration }) {
 }
 
 const styles = StyleSheet.create({
-  container: { height: 55 },
+  textInputContainer: { flex: 0.2, marginTop: 50, marginBottom: 20, alignItems: 'flex-start' },
   label: {
-    fontSize: 12,
+    fontSize: 20,
     color: 'white',
+    fontWeight: '600',
     marginBottom: 4,
+    lineHeight: 27,
+    textAlign: 'center',
   },
-  textInput: { backgroundColor: 'pink', padding: 6, borderRadius: 6, fontSize: 18, color: 'black' },
+  textInput: {
+    flex: 0.3,
+    width: 330,
+    backgroundColor: 'white',
+    padding: 6,
+    borderRadius: 8,
+    fontSize: 18,
+    color: 'black',
+    borderWidth: 2,
+    borderColor: 'white',
+    borderStyle: 'solid',
+  },
 });
 export default ActivityInput;

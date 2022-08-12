@@ -10,73 +10,186 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
+import { db } from '../../firebase';
+import AddButton from '../../components/buttons/AddButton';
+
+import { convertCentiSecondsToHMS } from '../../utils/convertCentisecondstoHMS';
 import { UserContext } from '../../store/User-Context';
 import { AuthContext } from '../../store/Auth-Context';
 import LoadingOverlay from '../../components/auth/ui/LoadingOverlay';
-const HomeScreen = ({ navigation, route }) => {
-  const userCtx = useContext(UserContext);
-  const [userActivities, setUserActivities] = useState(userCtx.userActivities);
+import ActivityInputContainer from '../../components/activityInput/ActivityInputContainer';
 
-  const [selectedId, setSelectedId] = useState(null);
-  const [selectedName, setSelectedName] = useState(null);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const userActivitiesRef = useRef([]);
-  const [text, onChangeText] = React.useState('');
+import { getUserActivities } from '../../db/readClockitData';
+import GradientView from '../../components/UI/BackgroundContainer';
+import ActivityFlatList from '../../components/ActivityListItems/ActivityFlatList';
+import { onSnapshot, doc } from 'firebase/firestore';
+import useActivitiesSnapShot from '../../hooks/useActivitiesSnapShot';
+import useGetActivitiesOnMount from '../../hooks/useGetActivitiesOnMount';
+const HomeScreen = ({ navigation, route }) => {
   const authCtx = useContext(AuthContext);
   const userId = authCtx.userId;
-  useEffect(() => {
-    console.log('userCtx', userCtx);
-  });
-
-  return <UserActivityData userId={userId} userActivities={userCtx.userActivities} />;
-};
-
-const UserActivityData = ({ userId, userActivities }) => {
   const userCtx = useContext(UserContext);
-  const [isLoading, setIsLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [addingActivities, setAddingActivities] = useState(false);
+
+  function addingActivitiesToHomeScreenHandler() {
+    setAddingActivities(!addingActivities);
+  }
+  function startStopAddActivityHandler() {
+    setModalVisible(!modalVisible);
+  }
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'white' }}>
-      <Text> The Welcome Screen </Text>
-      <SafeAreaView style={{ flex: 1 }}>
-        <FlatList
-          data={userCtx.userActivities}
-          renderItem={({ item }) => {
-            return (
-              <TouchableOpacity>
-                <Text style={{ color: 'black', fontSize: 32 }}>
-                  {item.name}: {item.totalTime}
-                </Text>
-              </TouchableOpacity>
-            );
-          }}
-          keyExtractor={(item) => item.id}
-          extraData={userActivities}
-        />
-      </SafeAreaView>
-    </View>
+    <GradientView style={styles.container}>
+      <ActivityInputContainer
+        userId={userId}
+        modalVisible={modalVisible}
+        onClose={startStopAddActivityHandler}
+        addingActivitiesToHomeScreenHandler={addingActivitiesToHomeScreenHandler}
+      />
+
+      <UserActivityData
+        addingActivities={addingActivities}
+        startStopAddActivityHandler={startStopAddActivityHandler}
+        userId={userId}
+      />
+    </GradientView>
   );
 };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 40,
   },
-  item: {
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-  },
-  title: {
-    fontSize: 32,
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
+  listAndButtonContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
 });
+const UserActivityData = ({ startStopAddActivityHandler, addingActivities, userId }) => {
+  const userCtx = useContext(UserContext);
+  const authCtx = useContext(AuthContext);
+  const [selectedId, setSelectedId] = useState(null);
+  const [selectedName, setSelectedName] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [usersCurrentActivities, setUsersCurrentActivities] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [weekOf, setWeekOf] = useState('');
+
+  useEffect(() => {
+    async function fetchUserActivities() {
+      try {
+        let userActivities = await getUserActivities(userId);
+        if (userActivities) {
+          setUsersCurrentActivities(userActivities.activities);
+          setIsLoading(false);
+          setWeekOf(userActivities.weekOf);
+        }
+      } catch (error) {}
+    }
+    fetchUserActivities();
+  }, [userId]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, userId, 'activities'), (doc) => {
+      console.log('!');
+      setUsersCurrentActivities(doc.data().activities);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [addingActivities]);
+
+  if (isLoading) {
+    return <LoadingOverlay message="Cleaning things up.." />;
+  }
+  return (
+    <View style={userActivityStyles.container}>
+      <Text style={userActivityStyles.appTitle}> Clock It </Text>
+      <Text style={userActivityStyles.weekDisplay}> This Week </Text>
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ActivityFlatList
+          data={usersCurrentActivities}
+          keyExtractor={(item) => item.id}
+          extraData={addingActivities}
+          selectedId={selectedId}
+          setSelectedId={setSelectedId}
+          setSelectedName={setSelectedName}
+        />
+        <AddButton onPress={startStopAddActivityHandler} />
+      </View>
+    </View>
+  );
+};
+
+const userActivityStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'flex-start',
+  },
+  appTitle: {
+    fontSize: 18,
+    textAlign: 'center',
+    fontFamily: 'Manrope_400Regular',
+    color: 'white',
+  },
+  weekDisplay: {
+    fontSize: 40,
+    textAlign: 'center',
+    fontFamily: 'Manrope_700Bold',
+    color: 'white',
+  },
+});
+// const UserActivityData = () => {
+//   const userCtx = useContext(UserContext);
+//   const [usersCurrentActivities, setUsersCurrentActivities] = useState([]);
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [weekOf, setWeekOf] = useState('');
+//   useEffect(() => {
+//     async function fetchUserActivities() {
+//       try {
+//         let userActivities = await getUserActivities(userCtx.userId);
+//         if (userActivities) {
+//           console.log(userCtx);
+//           setUsersCurrentActivities(userActivities.activities);
+//           setIsLoading(false);
+//           setWeekOf(userActivities.weekOf);
+//         }
+//       } catch (error) {}
+//     }
+//     fetchUserActivities();
+//   }, []);
+//   if (isLoading) {
+//     return <LoadingOverlay message="Cleaning things up.." />;
+//   }
+//   return (
+//     <View style={{ flex: 1, backgroundColor: 'white' }}>
+//       <Text> Week Of:{weekOf} </Text>
+//       {/*
+//       <SafeAreaView style={{ flex: 1 }}>
+//         <FlatList
+//           data={usersCurrentActivities}
+//           renderItem={({ item }) => {
+//             return (
+//               <TouchableOpacity>
+//                 <Text style={{ color: 'black', fontSize: 32 }}>
+//                   {item.name}: {convertCentiSecondsToHMS(item.totalTime)}
+//                 </Text>
+//               </TouchableOpacity>
+//             );
+//           }}
+//           keyExtractor={(item) => item.id}
+//           // extraData={userActivities}
+//         />
+//       </SafeAreaView> */}
+// {/*
+//       <ActivityInputContainer userId={userCtx.userId} /> */}
+//     </View>
+//   );
+// };
 
 /*
 

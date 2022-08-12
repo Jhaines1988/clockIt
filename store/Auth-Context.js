@@ -5,8 +5,7 @@ export const AuthContext = createContext({
   token: '',
   userId: '',
   isAuthenticated: false,
-  updateTest: () => {},
-  authenticate: () => {},
+  authenticate: (token, uid) => {},
   logout: () => {},
 });
 
@@ -14,11 +13,11 @@ function AuthContextProvider({ children }) {
   const [authToken, setAuthToken] = useState();
   const [UID, setUID] = useState();
 
-  async function authenticate(token, uid) {
+  function authenticate(token, uid) {
     setAuthToken(token);
     setUID(uid);
-    await AsyncStorage.setItem('token', token);
-    await AsyncStorage.setItem('uid', uid);
+    AsyncStorage.setItem('token', token);
+    AsyncStorage.setItem('uid', uid);
   }
 
   function logout() {

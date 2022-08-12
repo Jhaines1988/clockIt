@@ -2,6 +2,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
+  sendEmailVerification,
 } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
 import { doc, setDoc, getDoc, collection } from 'firebase/firestore';
@@ -16,7 +17,7 @@ const instantiateNewUser = async (id) => {
   let [startOfWeek, endOfWeek] = getStartAndEndOfWeek();
   const expiryDate = endOfWeek.toISOString();
   let weekData = {
-    weekOf: startOfWeek.toDateString() + '/' + endOfWeek.toDateString(),
+    weekOf: startOfWeek.toLocaleDateString(),
     expiresAt: Timestamp.fromDate(endOfWeek),
     0: {},
     1: {},
@@ -45,7 +46,9 @@ export const signUp = async (email, password, userName) => {
     const user = userCredential.user;
     await setDoc(doc(db, 'users', user.uid), {
       username: userName,
+      email: email,
     });
+
     const expiryTime = await instantiateNewUser(user.uid);
     const token = user.stsTokenManager.accessToken;
     const uid = user.uid;
@@ -58,14 +61,25 @@ export const signUp = async (email, password, userName) => {
   }
 };
 
+const verifyUserEmail = async (userId) => {
+  try {
+    let verificationSuccess = await sendEmailVerification(auth.currentUser);
+    if (verificationSuccess) {
+      console.log('Email Sent to User!');
+    }
+  } catch (error) {
+    console.log('Error Sending email...');
+  }
+};
 export const login = async (email, password) => {
   try {
-    console.log('does this Run? ');
+    console.log('does this Run? ', email, password);
     let userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     const token = user.stsTokenManager.accessToken;
     const uid = user.uid;
-    const expiryDate = getNextExpiryDate();
+    // const expiryDate = getNextExpiryDate();
+    console.log('userId', uid);
 
     return [token, uid];
   } catch (error) {

@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
-import { Colors } from '../../constants/styles';
 import { useNavigation } from '@react-navigation/native';
 import FlatButton from '../buttons/FlatButton';
+import SaveActivityButton from '../buttons/SaveActivityButton';
 import AuthForm from './AuthForm';
 import { auth, db } from '../../firebase';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import ClockItLogo from '../UI/ClockItLogo';
 
 function AuthContent({ isLogin, onAuthenticate }) {
   const [credentialsInvalid, setCredentialsInvalid] = useState({
@@ -53,6 +54,7 @@ function AuthContent({ isLogin, onAuthenticate }) {
 
   return (
     <View style={styles.authContent}>
+      <ClockItLogo />
       <AuthForm
         isLogin={isLogin}
         onSubmit={submitHandler}
@@ -71,16 +73,17 @@ export default AuthContent;
 
 const styles = StyleSheet.create({
   authContent: {
+    flex: 1,
     marginTop: 64,
     marginHorizontal: 32,
     padding: 16,
     borderRadius: 8,
-    backgroundColor: 'gray',
     elevation: 2,
     shadowColor: 'black',
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.35,
     shadowRadius: 4,
+    justifyContent: 'flex-start',
   },
   buttons: {
     marginTop: 8,

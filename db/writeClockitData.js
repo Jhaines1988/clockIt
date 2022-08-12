@@ -23,7 +23,7 @@ function createActivityData(activityName) {
   };
   return activity;
 }
-export const addActivityData = async (activity, duration, userId) => {
+export const addActivityData = async (activity, userId) => {
   const docData = createActivityData(activity);
   try {
     const postData = await setDoc(doc(db, userId, 'activities'), docData);
@@ -34,14 +34,11 @@ export const addActivityData = async (activity, duration, userId) => {
 
 export const addActivityToUserHomeScreen = async (activity, userId) => {
   try {
-    const docData = {
-      activity,
-      id: Math.random().toString(),
-    };
+    const docData = createActivityData(activity);
     const postData = await updateDoc(
       doc(db, userId, 'activities'),
 
-      { userActivities: arrayUnion(docData) }
+      { activities: arrayUnion(docData) }
     );
     console.log(postData, 'heres the data... ');
     return docData;

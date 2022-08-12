@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/elip.png",
+      "image": "./assets/clockitSplash.png",
       "resizeMode": "contain",
       "backgroundColor": "#FFFFFF"
     },

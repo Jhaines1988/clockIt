@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Colors } from '../../constants/styles';
-function FlatButton({ children, onPress }) {
+
+function CancelAddActivityButton({ children, onPress }) {
   return (
     <Pressable
       style={({ pressed }) => [styles.button, pressed && styles.pressed]}
@@ -12,12 +12,20 @@ function FlatButton({ children, onPress }) {
   );
 }
 
-export default FlatButton;
+export default CancelAddActivityButton;
 
 const styles = StyleSheet.create({
   button: {
+    flex: 0.4,
+    borderRadius: 60,
+    height: 50,
     paddingVertical: 6,
     paddingHorizontal: 12,
+    backgroundColor: 'transparent',
+    elevation: 2,
+    borderColor: 'white',
+    borderWidth: 2,
+    marginRight: 10,
   },
   pressed: {
     opacity: 0.7,
@@ -25,8 +33,7 @@ const styles = StyleSheet.create({
   buttonText: {
     textAlign: 'center',
     color: 'white',
-    fontFamily: 'Manrope_600SemiBold',
-    fontSize: 20,
-    lineHeight: 27,
+    fontSize: 26,
+    fontWeight: 'bold',
   },
 });

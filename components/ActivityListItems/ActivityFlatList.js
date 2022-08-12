@@ -1,4 +1,4 @@
-import { SafeAreaView, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import ActivityListItem from './ActivityListItems';
 
 const ActivityFlatList = ({
@@ -26,26 +26,23 @@ const ActivityFlatList = ({
     );
   };
   return (
-    <SafeAreaView style={styles.flatContainer}>
-      <Text style={{ fontSize: 22, color: 'white', textAlign: 'center' }}>Your Activities</Text>
+    <View style={styles.flatContainer}>
       <FlatList
         data={data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         extraData={extraData}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-  },
   flatContainer: {
-    flex: 1,
-    marginTop: 0,
+    // flex: 0,
+    marginTop: 30,
+    // marginBottom: 40,
+    justifyContent: 'center',
   },
 });
 

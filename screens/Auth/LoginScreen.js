@@ -16,7 +16,7 @@ function LoginScreen() {
       if (token && uid) {
         authCtx.authenticate(token, uid);
         userContext.setUID(uid);
-        userContext.getWeekStartStop();
+        // userContext.getWeekStartStop();
       }
     } catch (error) {
       Alert.alert(`${error.message}`);

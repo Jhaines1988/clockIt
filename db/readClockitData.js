@@ -21,6 +21,7 @@ import {
   createWeekData,
 } from '../utils/DateTimeHelpers/getDay';
 import { Timestamp } from 'firebase/firestore';
+import { cos } from 'react-native-reanimated';
 
 export const getActivityData = async () => {
   //   try {
@@ -132,6 +133,14 @@ export const getTimeActivityData = async (userId, activityName) => {
   // });
 };
 
+export const updateListener = async (userId, cb) => {
+  let updatedActivities;
+  return onSnapshot(doc(db, userId, 'activities'), (doc) => {
+    console.log('!');
+    cb(doc.data().activities);
+  });
+};
+
 export const resetUserWeek = async (userId, previousUserData) => {
   try {
     let previousWeek = previousUserData;
@@ -170,6 +179,7 @@ export const validateWeekIsInRange = async (userId) => {
 };
 
 export const getUserActivities = async (userId) => {
+  console.log('userID', userId);
   try {
     const activitiesSnap = await getDoc(doc(db, userId, 'activities'));
     let userActivities;
