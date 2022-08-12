@@ -2,12 +2,10 @@ import React, { useContext } from 'react';
 import StopWatch from '../../components/stopWatch/stopwatch';
 import { addTimeDataToUserActivities } from '../../db/writeClockitData';
 import { onStopWatchFinish } from '../../db/writeClockitData';
+import { AuthContext } from '../../store/Auth-Context';
 
-import { UserContext } from '../../store/User-Context';
 const ClockItScreen = ({ navigation, route }) => {
-  const userCtx = useContext(UserContext);
-  const { userId, activityObj, currentActivities } = route.params;
-
+  let { userId, activityObj, currentActivities } = route.params;
   async function addDataToFirebase(time) {
     let newActivitiesContext = await onStopWatchFinish(
       userId,
@@ -15,10 +13,9 @@ const ClockItScreen = ({ navigation, route }) => {
       activityObj,
       currentActivities
     );
-    userCtx.setUserActivities({ activities: newActivitiesContext });
     navigation.navigate('Home');
   }
-  return <StopWatch addDataToFirebase={addDataToFirebase} />;
+  return <StopWatch addDataToFirebase={addDataToFirebase} name={activityObj.name} />;
 };
 
 export default ClockItScreen;

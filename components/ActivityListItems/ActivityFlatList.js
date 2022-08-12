@@ -1,27 +1,14 @@
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import ActivityListItem from './ActivityListItems';
 
-const ActivityFlatList = ({
-  data,
-  keyExtractor,
-  extraData,
-  selectedId,
-  setSelectedId,
-  setSelectedName,
-}) => {
+const ActivityFlatList = ({ data, keyExtractor, extraData, onItemPress }) => {
   const renderItem = ({ item }) => {
-    const backgroundColor = item.id === selectedId ? '#6e3b6e' : '#f9c2ff';
-    const color = item.id === selectedId ? 'white' : 'black';
-
     return (
       <ActivityListItem
         item={item}
         onPress={() => {
-          setSelectedId(item.id);
-          setSelectedName(item.activity);
+          onItemPress(item);
         }}
-        backgroundColor={{ backgroundColor }}
-        textColor={{ color }}
       />
     );
   };

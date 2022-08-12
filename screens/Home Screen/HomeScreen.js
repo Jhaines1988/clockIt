@@ -1,30 +1,18 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import {
-  View,
-  StyleSheet,
-  Button,
-  SafeAreaView,
-  FlatList,
-  Text,
-  StatusBar,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
-import { db } from '../../firebase';
+import { View, StyleSheet, Text } from 'react-native';
+
 import AddButton from '../../components/buttons/AddButton';
 
 import { convertCentiSecondsToHMS } from '../../utils/convertCentisecondstoHMS';
-import { UserContext } from '../../store/User-Context';
 import { AuthContext } from '../../store/Auth-Context';
 import LoadingOverlay from '../../components/auth/ui/LoadingOverlay';
 import ActivityInputContainer from '../../components/activityInput/ActivityInputContainer';
 
-import { getUserActivities } from '../../db/readClockitData';
 import GradientView from '../../components/UI/BackgroundContainer';
 import ActivityFlatList from '../../components/ActivityListItems/ActivityFlatList';
-import { onSnapshot, doc } from 'firebase/firestore';
+
 import useActivitiesSnapShot from '../../hooks/useActivitiesSnapShot';
-import useGetActivitiesOnMount from '../../hooks/useGetActivitiesOnMount';
+import { useNavigation } from '@react-navigation/native';
 const HomeScreen = ({ navigation, route }) => {
   const authCtx = useContext(AuthContext);
   const userId = authCtx.userId;
@@ -69,12 +57,16 @@ const styles = StyleSheet.create({
   },
 });
 const UserActivityData = ({ startStopAddActivityHandler, addingActivities, userId }) => {
-  const userCtx = useContext(UserContext);
-  const authCtx = useContext(AuthContext);
-  const [selectedId, setSelectedId] = useState(null);
-  const [selectedName, setSelectedName] = useState(null);
-  const [selectedItem, setSelectedItem] = useState(null);
   const [usersCurrentActivities, isLoading] = useActivitiesSnapShot(addingActivities, userId);
+  const navigation = useNavigation();
+
+  const activityItemPressHandler = (item) => {
+    navigation.navigate('Clockit', {
+      userId: userId,
+      activityObj: item,
+      currentActivities: usersCurrentActivities,
+    });
+  };
 
   if (isLoading) {
     return <LoadingOverlay message="Cleaning things up.." />;
@@ -88,9 +80,7 @@ const UserActivityData = ({ startStopAddActivityHandler, addingActivities, userI
           data={usersCurrentActivities}
           keyExtractor={(item) => item.id}
           extraData={addingActivities}
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
-          setSelectedName={setSelectedName}
+          onItemPress={activityItemPressHandler}
         />
         <AddButton onPress={startStopAddActivityHandler} />
       </View>

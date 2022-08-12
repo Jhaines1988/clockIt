@@ -100,10 +100,10 @@ export const updateUserActivities = async (id, updatedActivities) => {
 
 export const updateActivityTimeOnFinish = async (userId, updatedActivity) => {
   try {
-    const dayOfWeek = findDay().getDate();
+    const dayOfWeek = findDay().getDay();
     const name = updatedActivity.name;
     await setDoc(
-      doc(db, userId, 'Week Data'),
+      doc(db, userId, 'currentWeek'),
 
       { [dayOfWeek]: { [name]: updatedActivity } },
       { merge: true }
@@ -120,7 +120,7 @@ export const onStopWatchFinish = async (
 ) => {
   const indexOfActivityToUpdate = currentActivities.indexOf(activityObject);
   currentActivities[indexOfActivityToUpdate].totalTime += timeFromStopWatch;
-
+  console.log(activityObject, currentActivities, '______');
   try {
     await updateActivityTimeOnFinish(userId, activityObject);
     await updateUserActivities(userId, currentActivities);
