@@ -28,7 +28,7 @@ import useGetActivitiesOnMount from '../../hooks/useGetActivitiesOnMount';
 const HomeScreen = ({ navigation, route }) => {
   const authCtx = useContext(AuthContext);
   const userId = authCtx.userId;
-  const userCtx = useContext(UserContext);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [addingActivities, setAddingActivities] = useState(false);
 
@@ -74,34 +74,7 @@ const UserActivityData = ({ startStopAddActivityHandler, addingActivities, userI
   const [selectedId, setSelectedId] = useState(null);
   const [selectedName, setSelectedName] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [usersCurrentActivities, setUsersCurrentActivities] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [weekOf, setWeekOf] = useState('');
-
-  useEffect(() => {
-    async function fetchUserActivities() {
-      try {
-        let userActivities = await getUserActivities(userId);
-        if (userActivities) {
-          setUsersCurrentActivities(userActivities.activities);
-          setIsLoading(false);
-          setWeekOf(userActivities.weekOf);
-        }
-      } catch (error) {}
-    }
-    fetchUserActivities();
-  }, [userId]);
-
-  useEffect(() => {
-    const unsubscribe = onSnapshot(doc(db, userId, 'activities'), (doc) => {
-      console.log('!');
-      setUsersCurrentActivities(doc.data().activities);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, [addingActivities]);
+  const [usersCurrentActivities, isLoading] = useActivitiesSnapShot(addingActivities, userId);
 
   if (isLoading) {
     return <LoadingOverlay message="Cleaning things up.." />;

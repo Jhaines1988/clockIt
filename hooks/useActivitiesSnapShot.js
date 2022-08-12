@@ -1,21 +1,24 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-function useActivitiesSnapShot(addingActivities, setUsersCurrentActivities, userId) {
-  let auth = getAuth();
-  let id = auth.currentUser.uid;
-  console.log(id, 'here');
+
+function useActivitiesSnapShot(addingActivities, userId) {
+  const [usersCurrentActivities, setUsersCurrentActivities] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    const unsubscribe = onSnapshot(doc(db, id, 'activities'), (doc) => {
+    const unsubscribe = onSnapshot(doc(db, userId, 'activities'), (doc) => {
       console.log('!');
       setUsersCurrentActivities(doc.data().activities);
+      setIsLoading(false);
     });
 
     return () => {
       unsubscribe();
     };
-  }, [addingActivities]);
+  }, [addingActivities, userId]);
+
+  return [usersCurrentActivities, isLoading];
 }
 
 export default useActivitiesSnapShot;
