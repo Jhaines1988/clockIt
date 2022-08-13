@@ -1,10 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Image, Alert } from 'react-native';
 
-const AddButton = ({ onPress }) => {
+const AddButton = ({ onPress, numUserActivities }) => {
+  const handleButtonPress = () => {
+    if (numUserActivities === 6) {
+      Alert.alert('Sorry! You Have reached the maximum number of activities to track');
+    } else {
+      onPress();
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={onPress}>
+      <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
         <Image style={styles.image} source={require('../../assets/AddButton.png')} />
       </TouchableOpacity>
     </View>

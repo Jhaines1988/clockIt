@@ -1,10 +1,11 @@
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { ClockItColors } from '../../constants/styles';
+import { convertCentiSecondsToHMS } from '../../utils/convertCentisecondstoHMS';
 const ActivityListItem = ({ item, onPress, backgroundColor, textColor }) => {
   return (
     <TouchableOpacity onPress={onPress} style={[styles.item]}>
       <Text style={[styles.title]}>{item.name}</Text>
-      <Text style={[styles.time]}>{item.totalTime}</Text>
+      <Text style={[styles.time]}>{convertCentiSecondsToHMS(item.totalTime)}</Text>
     </TouchableOpacity>
   );
 };

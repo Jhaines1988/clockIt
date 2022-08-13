@@ -39,20 +39,26 @@ const AuthenticatedStack = () => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: 'gray' },
-        headerTintColor: 'blue',
+        headerStyle: { backgroundColor: ClockItColors.blue },
+        headerTintColor: 'white',
+        // headerShown: false,
         // contentStyle: { backgroundColor: ClockItColors.dkBlue },
       }}>
       <Stack.Screen
         name="Home"
         component={HomeScreen}
         options={{
+          headerTitle: '',
           headerRight: ({ tintColor }) => (
             <IconButton icon="exit" color={tintColor} size={24} onPress={authCtx.logout} />
           ),
         }}
       />
-      <Stack.Screen name="Clockit" component={ClockItScreen} />
+      <Stack.Screen
+        name="Clockit"
+        component={ClockItScreen}
+        options={{ headerTitle: '', headerBackTitle: 'Back' }}
+      />
     </Stack.Navigator>
   );
 };

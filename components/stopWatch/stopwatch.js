@@ -88,7 +88,6 @@ const StopWatch = ({ addDataToFirebase, name }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: ClockItColors.darkestBlue,
     width: '100%',
     justifyContent: 'space-between',
   },

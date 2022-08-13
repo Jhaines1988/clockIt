@@ -26,9 +26,8 @@ const ActivityFlatList = ({ data, keyExtractor, extraData, onItemPress }) => {
 
 const styles = StyleSheet.create({
   flatContainer: {
-    // flex: 0,
     marginTop: 30,
-    // marginBottom: 40,
+    marginBottom: 40,
     justifyContent: 'center',
   },
 });
