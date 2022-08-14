@@ -14,13 +14,30 @@ const StopWatch = ({ addDataToFirebase, name }) => {
   const timer = useRef(null);
   const interval = useRef(null);
   const expected = useRef(null);
+  const startedAt = useRef(null);
 
   let tick = () => {
     let drift = Date.now() - expected.current;
-    expected.current += interval.current;
-    let intervalId = setTimeout(tick, Math.max(0, interval.current - drift));
-    timer.current = intervalId;
-    setTime((prevTime) => prevTime + 1);
+    if (drift > interval.current * 10) {
+      clearInterval(timer.current);
+
+      let elapsedTime = Date.now() - startedAt.current;
+
+      interval.current = 10;
+
+      expected.current = Date.now() + interval.current;
+
+      setTime(Math.floor(elapsedTime / 10));
+
+      timer.current = setTimeout(() => {
+        tick();
+      }, 10);
+    } else {
+      expected.current += interval.current;
+      let intervalId = setTimeout(tick, Math.max(0, interval.current - drift));
+      timer.current = intervalId;
+      setTime((prevTime) => prevTime + 1);
+    }
   };
 
   const handleResetButtonPress = () => {
@@ -43,6 +60,7 @@ const StopWatch = ({ addDataToFirebase, name }) => {
       if (!interval.current) {
         interval.current = 10;
         expected.current = Date.now() + interval.current;
+        startedAt.current = Date.now();
       }
       setTimeout(() => {
         tick();

@@ -1,7 +1,7 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 
-import HomeScreen from '../screens/Home Screen/HomeScreen';
+import HomeScreen from '../../screens/Home Screen/HomeScreen';
 
 describe('<HomeScreen />', () => {
   it('has 2 children', () => {

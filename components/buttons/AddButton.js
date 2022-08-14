@@ -12,7 +12,7 @@ const AddButton = ({ onPress, numUserActivities }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
+      <TouchableOpacity testID="addButton" style={styles.button} onPress={handleButtonPress}>
         <Image style={styles.image} source={require('../../assets/AddButton.png')} />
       </TouchableOpacity>
     </View>
