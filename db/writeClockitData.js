@@ -47,28 +47,6 @@ export const addActivityToUserHomeScreen = async (activity, userId) => {
   }
 };
 
-export const addTimeDataToUserActivities = async (activity, duration, userId) => {
-  const querySnapshot = await getDocs(collection(db, userId));
-
-  querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
-    console.log(doc.id, ' => ', doc.data());
-  });
-  const docData = {
-    activity: activity,
-    timeToday: duration,
-    timeThisWeek: 0,
-  };
-
-  try {
-    const postData = await setDoc(
-      doc(db, userId, 'activities', activity, '07.31.22-08.06.22'),
-      docData
-    );
-  } catch (error) {
-    console.log('ERRORWRITINGDATA', error);
-  }
-};
 /*   Methods for instantiating a new piece of "WEEK" data for the user when the current week has expired.  */
 
 export const addToHistory = async (id, firstWeekLabel, previousWeekData) => {

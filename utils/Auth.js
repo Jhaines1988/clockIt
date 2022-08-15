@@ -13,25 +13,19 @@ import {
   getNextExpiryDate,
   getStartAndEndOfWeek,
 } from './DateTimeHelpers/getDay';
+
 const instantiateNewUser = async (id) => {
   let [startOfWeek, endOfWeek] = getStartAndEndOfWeek();
   const expiryDate = endOfWeek.toISOString();
   let weekData = {
     weekOf: startOfWeek.toLocaleDateString(),
     expiresAt: Timestamp.fromDate(endOfWeek),
-    0: {},
-    1: {},
-    2: {},
-    3: {},
-    4: {},
-    5: {},
-    6: {},
     activities: [],
   };
 
   let firstWeekLabel = endOfWeek.toISOString();
   try {
-    // await setDoc(doc(db, id, 'activities'), docData);
+    await setDoc(doc(db, id, 'currentWeek'), { expiresAt: endOfWeek, startedAt: startOfWeek });
     await setDoc(doc(db, id, 'activities'), weekData);
     await setDoc(doc(db, id, 'Previous Weeks', 'history', firstWeekLabel), {});
     return weekData.expiresAt.valueOf();

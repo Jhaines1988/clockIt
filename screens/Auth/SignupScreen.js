@@ -19,6 +19,7 @@ function SignupScreen() {
         authCtx.authenticate(token, uid);
         userContext.setUID(uid);
         userContext.setExpirationDate(expiryTime);
+        // authCtx.setExpirationDate(expiryTime);
       }
     } catch (error) {
       // handle Errors here , being thrown from /utils/auth

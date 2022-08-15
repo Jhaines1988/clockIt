@@ -21,7 +21,6 @@ import {
   createWeekData,
 } from '../utils/DateTimeHelpers/getDay';
 import { Timestamp } from 'firebase/firestore';
-import { cos } from 'react-native-reanimated';
 
 export const getActivityData = async () => {
   //   try {
@@ -48,89 +47,6 @@ export const getUserDataOnMount = async (userId) => {
     console.log('ERROR GETTING USER DATA ON MOUNT', error);
     throw new Error(error);
   }
-};
-let date = new Date(Date.now()).getTime();
-let dateNow = Date.now('MM.D.YY');
-
-export const getTimeActivityData = async (userId, activityName) => {
-  let id = 'Z20rA8EtLKfZ7PadJ7FcQjrfyFH3';
-  console.log('THISRUNS');
-
-  // this will get the activity data for ONLY a collection of a SPECIFIC Document.
-  //'Hello" in this case.
-  //  userId/nameOftheactivity/durationCollection/DaysDocuments.
-  // the specific  doc is Hello and the collection is activityDuration which has days docs inside it.
-
-  const q = query(
-    collection(db, id, 'Hello', 'activityDuration'),
-    orderBy('dayOfWeek', 'desc'),
-    limit(5)
-  );
-
-  // const querySnapShot = await getDocs(q);
-  // This has the document IDS being used as a name for the homescreen activities...
-  // not a best practice according to firebase.
-  // const docDataSnap = await getDocs(collection(db, id));
-
-  // This retrieves the actual documents from the collection userId/activities.
-  // currently being used to populateHomeScreen.
-  // const docDataSnap = await getDoc(doc(db, id, 'activities'));
-
-  // if (docDataSnap.exists()) {
-  //   console.log('docDaga', docDataSnap.data());
-  // } else {
-  //   console.log('No Data');
-  // }
-  // const activities = [];
-  // docDataSnap.forEach((doc) => {
-  //   // console.log(doc.id, '=>', doc.data());
-  //   activities.push(doc.id);
-  // });
-  // console.log(activities, '__');
-
-  const usersCollectionSnap = await getDoc(doc(db, 'users', id));
-
-  if (usersCollectionSnap.exists()) {
-    console.log('docDaga', usersCollectionSnap.data());
-  } else {
-    console.log('No Data');
-  }
-
-  const activities = [];
-  usersCollectionSnap.forEach((doc) => {
-    // console.log(doc.id, '=>', doc.data());
-    activities.push(doc.id);
-  });
-  const unsubscribe = onSnapshot(q, (querySnapshot) => {
-    const cities = [];
-    querySnapshot.forEach((doc) => {
-      cities.push(doc.data());
-    });
-    querySnapshot.docChanges().forEach((change) => {
-      if (change.type === 'added') {
-        console.log('Added: ', change.doc.data());
-      }
-      if (change.type === 'modified') {
-        console.log('Modified : ', change.doc.data());
-      }
-      if (change.type === 'removed') {
-        console.log('Removed city: ', change.doc.data());
-      }
-    });
-    console.log('Current cities in CA: ', cities);
-  });
-
-  unsubscribe();
-  // querySnapShot.forEach((doc) => {
-  //   // doc.data() is never undefined for query doc snapshots
-  //   console.log(doc.id, ' => ', doc.data());
-  //   console.log(doc.id, ' => ', new Date(doc.id).toDateString());
-  // });
-  // const querySnapshot = await getDocs(collection(db, id, 'Hello', 'activityDuration'));
-  // querySnapshot.forEach((doc) => {
-  //   // doc.data() is never undefined for query doc snapshots
-  //   console.log(doc.id, ' => ', doc.data());
-  // });
 };
 
 export const updateListener = async (userId, cb) => {
@@ -202,19 +118,24 @@ export const resetUserActivityTimeForNewWeek = (userActivities) => {
   return userActivities;
 };
 
-export const getUsersCurrentWeekData = async (userId) => {
+export const getUsersExpiration = async (userId) => {
   try {
-    let usersCurrentWeekData = await getDoc(doc(db, userId, 'Week Data'));
+    let usersCurrentWeekData = await getDoc(doc(db, userId, 'currentWeek'));
     if (usersCurrentWeekData.exists()) {
-      return usersCurrentWeekData.data();
+      if (compareTimeStamp(usersCurrentWeekData.data().expiresAt)) {
+        // handle it
+      } else {
+        return usersCurrentWeekData.data().startedAt.toDate().toLocaleDateString();
+      }
     } else {
-      return false;
     }
   } catch (error) {
     console.log('ERROR IN GET USERS CURRENT WEEK DATA', error);
   }
 };
 
-export const compareTimeStamp = (currentTime, expiryTime) => {
-  return currentTime >= expiryTime;
+export const compareTimeStamp = (expiryDate) => {
+  let today = Timestamp.fromDate(findDay()).valueOf();
+
+  return today >= expiryDate;
 };

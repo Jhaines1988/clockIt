@@ -1,4 +1,4 @@
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, SafeAreaView } from 'react-native';
 import ActivityListItem from './ActivityListItems';
 
 const ActivityFlatList = ({ data, keyExtractor, extraData, onItemPress }) => {
@@ -13,23 +13,19 @@ const ActivityFlatList = ({ data, keyExtractor, extraData, onItemPress }) => {
     );
   };
   return (
-    <View style={styles.flatContainer}>
+    <SafeAreaView style={styles.flatListContainer}>
       <FlatList
         data={data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         extraData={extraData}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  flatContainer: {
-    marginTop: 30,
-    marginBottom: 40,
-    justifyContent: 'center',
-  },
+  flatListContainer: { flex: 4, justifyContent: 'flex-start', paddingTop: 22 },
 });
 
 export default ActivityFlatList;

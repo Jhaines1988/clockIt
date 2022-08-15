@@ -21,7 +21,7 @@ const AddButton = ({ onPress, numUserActivities }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 2,
+    flex: 1,
     justifyContent: 'flex-start',
     paddingHorizontal: 10,
   },

@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 function CancelAddActivityButton({ children, onPress }) {
   return (
     <Pressable
+      testID="CancelAddActivityButton"
       style={({ pressed }) => [styles.button, pressed && styles.pressed]}
       onPress={onPress}>
       <View>
