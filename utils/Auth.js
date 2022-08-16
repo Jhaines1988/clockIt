@@ -67,13 +67,10 @@ const verifyUserEmail = async (userId) => {
 };
 export const login = async (email, password) => {
   try {
-    console.log('does this Run? ', email, password);
     let userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     const token = user.stsTokenManager.accessToken;
     const uid = user.uid;
-    // const expiryDate = getNextExpiryDate();
-    console.log('userId', uid);
 
     return [token, uid];
   } catch (error) {
@@ -82,6 +79,7 @@ export const login = async (email, password) => {
     } else if (error.code === 'auth/user-not-found') {
       throw new Error('Email not found, please signup');
     } else {
+      console.log('This is the error', error);
       throw new Error(error);
     }
   }

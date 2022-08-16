@@ -22,11 +22,13 @@ const AddButton = ({ onPress, numUserActivities }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
-    paddingHorizontal: 10,
+    justifyContent: 'center',
+    marginTop: 8,
   },
   button: {
     alignItems: 'center',
+
+    alignSelf: 'center',
     padding: 10,
   },
   image: {

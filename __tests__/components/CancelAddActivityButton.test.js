@@ -14,7 +14,7 @@ describe('<CancelAddActivityButton/>', () => {
     fireEvent.press(screen.getByTestId('CancelAddActivityButton'));
     expect(mockOnPress).toHaveBeenCalled();
   });
-  it('should remove opacity style after press event', () => {
+  test('should remove opacity style after press event', () => {
     const mockOnPress = jest.fn();
     render(<CancelAddActivityButton onPress={mockOnPress}>Cancel</CancelAddActivityButton>);
 

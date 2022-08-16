@@ -15,7 +15,7 @@ function LoginScreen() {
       let [token, uid] = await login(email, password);
       if (token && uid) {
         authCtx.authenticate(token, uid);
-        userContext.setUID(uid);
+        // userContext.setUID(uid);
         // userContext.getWeekStartStop();
       }
     } catch (error) {

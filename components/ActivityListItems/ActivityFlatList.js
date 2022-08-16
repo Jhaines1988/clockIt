@@ -25,7 +25,7 @@ const ActivityFlatList = ({ data, keyExtractor, extraData, onItemPress }) => {
 };
 
 const styles = StyleSheet.create({
-  flatListContainer: { flex: 4, justifyContent: 'flex-start', paddingTop: 22 },
+  flatListContainer: { flex: 4, justifyContent: 'flex-start' },
 });
 
 export default ActivityFlatList;

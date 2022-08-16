@@ -53,9 +53,7 @@ export default function App() {
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <AuthContextProvider>
-        <UserContextProvider>
-          <Root />
-        </UserContextProvider>
+        <Root />
       </AuthContextProvider>
     </View>
   );
@@ -74,7 +72,8 @@ function Root() {
 
       if (token && uid) {
         authCtx.authenticate(token, uid);
-        userCtx.setUID(uid);
+        // userCtx.setUID(uid);
+        console.log('APP.JS');
         setAppIsReady(true);
       } else {
         setAppIsReady(true);

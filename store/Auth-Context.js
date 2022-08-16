@@ -13,11 +13,11 @@ function AuthContextProvider({ children }) {
   const [authToken, setAuthToken] = useState();
   const [UID, setUID] = useState();
 
-  function authenticate(token, uid) {
+  async function authenticate(token, uid) {
     setAuthToken(token);
     setUID(uid);
-    AsyncStorage.setItem('token', token);
-    AsyncStorage.setItem('uid', uid);
+    await AsyncStorage.setItem('token', token);
+    await AsyncStorage.setItem('uid', uid);
   }
 
   function logout() {

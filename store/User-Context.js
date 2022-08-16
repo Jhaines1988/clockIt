@@ -32,20 +32,18 @@ function UserContextProvider({ children }) {
   };
 
   const getWeekStartStop = () => {
-    console.log('HELLO IM RUNNING CAUSE IM SUPPOSE TO');
     const [start, end] = getStartAndEndOfWeek();
-    console.log(typeof start);
+
     setStartOfWeek(start);
     setEndOfWeek(end);
   };
 
   const setExpirationDate = async (dateString) => {
     try {
-      console.log('IS THIS RUNNING ON LOGIN');
       setExpiration(dateString);
       await AsyncStorage.setItem('expiration', dateString);
     } catch (error) {
-      console.log('DOES THIS ERRO EVEN THROW?', error);
+      console.log('DOES THIS ERROR EVEN THROW?', error);
     }
   };
 

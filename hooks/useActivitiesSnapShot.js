@@ -6,6 +6,7 @@ function useActivitiesSnapShot(addingActivities, userId) {
   const [usersCurrentActivities, setUsersCurrentActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const weekOf = useRef(null);
+
   useEffect(() => {
     const unsubscribe = onSnapshot(doc(db, userId, 'activities'), (doc) => {
       console.log('!');

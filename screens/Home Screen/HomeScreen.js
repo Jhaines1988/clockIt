@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { StyleSheet } from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 
 import AddButton from '../../components/buttons/AddButton';
 import { AuthContext } from '../../store/Auth-Context';
@@ -9,21 +9,28 @@ import GradientView from '../../components/UI/BackgroundContainer';
 import ActivityFlatList from '../../components/ActivityListItems/ActivityFlatList';
 import WeekAndLogoDisplay from '../../components/UI/WeeKAndTitleDisplay';
 import useActivitiesSnapShot from '../../hooks/useActivitiesSnapShot';
+import SettingsCog from '../../components/UI/SettingsCog';
+import SettingsModal from '../../components/UI/SettingsModal';
 
 const HomeScreen = ({ navigation, route }) => {
   const authCtx = useContext(AuthContext);
   const userId = authCtx.userId;
   const [modalVisible, setModalVisible] = useState(false);
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [addingActivities, setAddingActivities] = useState(false);
   const [usersCurrentActivities, isLoading, weekOf] = useActivitiesSnapShot(
     addingActivities,
     userId
   );
+
   function addingActivitiesToHomeScreenHandler() {
     setAddingActivities(!addingActivities);
   }
   function startStopAddActivityHandler() {
     setModalVisible(!modalVisible);
+  }
+  function openCloseSettingsModalHandler() {
+    setSettingsModalVisible(!settingsModalVisible);
   }
   function activityItemPressHandler(item) {
     navigation.navigate('Clockit', {
@@ -54,10 +61,18 @@ const HomeScreen = ({ navigation, route }) => {
         extraData={addingActivities}
         keyExtractor={(item) => item.id}
       />
-      <AddButton
-        numUserActivities={usersCurrentActivities.length}
-        onPress={startStopAddActivityHandler}
-      />
+      <View style={styles.addButtonSettingsContainer}>
+        <AddButton
+          numUserActivities={usersCurrentActivities.length}
+          onPress={startStopAddActivityHandler}
+        />
+        <SettingsModal
+          modalVisible={settingsModalVisible}
+          onPress={openCloseSettingsModalHandler}
+          onLogout={authCtx.logout}
+        />
+        <SettingsCog onPress={openCloseSettingsModalHandler} />
+      </View>
     </GradientView>
   );
 };
@@ -66,6 +81,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  addButtonSettingsContainer: {
+    flex: 1,
+    width: '100%',
   },
 });
 

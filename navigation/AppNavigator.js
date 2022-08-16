@@ -47,17 +47,29 @@ const AuthenticatedStack = () => {
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{
-          headerTitle: '',
-          headerRight: ({ tintColor }) => (
-            <IconButton icon="exit" color={tintColor} size={24} onPress={authCtx.logout} />
-          ),
-        }}
+        options={{ headerShown: false }}
+        // options={{
+        //   headerTitle: '',
+        // headerRight: ({ tintColor }) => (
+        //   <IconButton icon="exit" color={tintColor} size={24} onPress={authCtx.logout} />
+        // ),
+        // }}
       />
       <Stack.Screen
         name="Clockit"
         component={ClockItScreen}
-        options={{ headerTitle: '', headerBackTitle: 'Back' }}
+        options={{
+          headerTitle: '',
+          headerBackTitle: 'Back',
+          headerRight: ({ tintColor }) => (
+            <IconButton
+              icon="ellipsis-vertical-outline"
+              color={tintColor}
+              size={24}
+              onPress={authCtx.logout}
+            />
+          ),
+        }}
       />
     </Stack.Navigator>
   );

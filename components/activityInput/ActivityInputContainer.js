@@ -1,7 +1,7 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, Modal, TextInput, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Modal, StyleSheet } from 'react-native';
 import ActivityInput from './ActivityInput';
-import { addActivityToUserHomeScreen, addActivityData } from '../../db/writeClockitData';
+import { addActivityToUserHomeScreen } from '../../db/writeClockitData';
 import SaveActivityButton from '../buttons/SaveActivityButton';
 import CancelAddActivityButton from '../buttons/CancelAddActivityButton';
 import GradientView from '../UI/BackgroundContainer';
