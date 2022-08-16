@@ -10,6 +10,7 @@ import {
   useFonts,
   Manrope_300Light,
   Manrope_400Regular,
+  Manrope_500Medium,
   Manrope_600SemiBold,
   Manrope_700Bold,
   Manrope_800ExtraBold,
@@ -19,8 +20,9 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   let [fontsLoaded] = useFonts({
-    Manrope_400Regular,
     Manrope_300Light,
+    Manrope_400Regular,
+    Manrope_500Medium,
     Manrope_600SemiBold,
     Manrope_700Bold,
     Manrope_800ExtraBold,

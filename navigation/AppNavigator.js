@@ -17,7 +17,7 @@ import { ClockItColors } from '../constants/styles';
 // components
 import IconButton from '../components/buttons/IconButton';
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
-
+import { deleteItemFromActivitiesList } from '../db/deleteClockitData';
 const Stack = createNativeStackNavigator();
 
 //
@@ -66,7 +66,7 @@ const AuthenticatedStack = () => {
               icon="ellipsis-vertical-outline"
               color={tintColor}
               size={24}
-              onPress={authCtx.logout}
+              onPress={() => {}}
             />
           ),
         }}
