@@ -2,10 +2,37 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
+  sendEmailVerification,
 } from 'firebase/auth';
-
+import { Timestamp } from 'firebase/firestore';
 import { doc, setDoc, getDoc, collection } from 'firebase/firestore';
 import { db, auth } from '../firebase';
+import {
+  findTheNextSunday,
+  findDay,
+  getNextExpiryDate,
+  getStartAndEndOfWeek,
+} from './DateTimeHelpers/getDay';
+
+const instantiateNewUser = async (id) => {
+  let [startOfWeek, endOfWeek] = getStartAndEndOfWeek();
+  const expiryDate = endOfWeek.toISOString();
+  let weekData = {
+    weekOf: startOfWeek.toLocaleDateString(),
+    expiresAt: Timestamp.fromDate(endOfWeek),
+    activities: [],
+  };
+
+  let firstWeekLabel = endOfWeek.toISOString();
+  try {
+    await setDoc(doc(db, id, 'currentWeek'), { expiresAt: endOfWeek, startedAt: startOfWeek });
+    await setDoc(doc(db, id, 'activities'), weekData);
+    await setDoc(doc(db, id, 'Previous Weeks', 'history', firstWeekLabel), {});
+    return weekData.expiresAt.valueOf();
+  } catch (error) {
+    console.log(error, '<====');
+  }
+};
 
 export const signUp = async (email, password, userName) => {
   try {
@@ -13,27 +40,38 @@ export const signUp = async (email, password, userName) => {
     const user = userCredential.user;
     await setDoc(doc(db, 'users', user.uid), {
       username: userName,
+      email: email,
     });
-    await setDoc(doc(db, user.uid, 'activities'), {
-      userActivities: [{ activity: 'sampleActivity', id: '1244556' }],
-    });
+
+    const expiryTime = await instantiateNewUser(user.uid);
     const token = user.stsTokenManager.accessToken;
     const uid = user.uid;
-    return [token, uid];
+    return [token, uid, expiryTime];
   } catch (error) {
     const errorCode = error.code;
     const errorMessage = error.message;
-    console.log('throw this error to signup screen');
+    console.log('throw this error to signup screen', error);
     throw new Error({ message: errorMessage });
   }
 };
 
+const verifyUserEmail = async (userId) => {
+  try {
+    let verificationSuccess = await sendEmailVerification(auth.currentUser);
+    if (verificationSuccess) {
+      console.log('Email Sent to User!');
+    }
+  } catch (error) {
+    console.log('Error Sending email...');
+  }
+};
 export const login = async (email, password) => {
   try {
     let userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     const token = user.stsTokenManager.accessToken;
     const uid = user.uid;
+
     return [token, uid];
   } catch (error) {
     if (error.code === 'auth/wrong-password') {
@@ -41,6 +79,7 @@ export const login = async (email, password) => {
     } else if (error.code === 'auth/user-not-found') {
       throw new Error('Email not found, please signup');
     } else {
+      console.log('This is the error', error);
       throw new Error(error);
     }
   }

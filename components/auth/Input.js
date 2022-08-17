@@ -27,6 +27,9 @@ const styles = StyleSheet.create({
   label: {
     color: 'white',
     marginBottom: 4,
+    fontFamily: 'Manrope_600SemiBold',
+    fontSize: 20,
+    lineHeight: 27,
   },
   labelInvalid: {
     color: Colors.error500,
@@ -35,8 +38,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 6,
     backgroundColor: 'white',
-    borderRadius: 4,
+    borderRadius: 8,
     fontSize: 16,
+    height: 50,
+    borderWidth: 2,
+    borderColor: 'white',
+    borderStyle: 'solid',
   },
   inputInvalid: {
     backgroundColor: Colors.error100,

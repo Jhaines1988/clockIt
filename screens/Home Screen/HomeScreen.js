@@ -1,85 +1,91 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Button } from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+
+import AddButton from '../../components/buttons/AddButton';
+import { AuthContext } from '../../store/Auth-Context';
+import LoadingOverlay from '../../components/auth/ui/LoadingOverlay';
 import ActivityInputContainer from '../../components/activityInput/ActivityInputContainer';
+import GradientView from '../../components/UI/BackgroundContainer';
 import ActivityFlatList from '../../components/ActivityListItems/ActivityFlatList';
-import { getUserDataOnMount } from '../../db/readClockitData';
-import { deleteItemFromActivitiesList } from '../../db/deleteClockitData';
+import WeekAndLogoDisplay from '../../components/UI/WeeKAndTitleDisplay';
+import useActivitiesSnapShot from '../../hooks/useActivitiesSnapShot';
+import SettingsCog from '../../components/UI/SettingsCog';
+import SettingsModal from '../../components/UI/SettingsModal';
 
 const HomeScreen = ({ navigation, route }) => {
-  const [selectedId, setSelectedId] = useState(null);
-  const [selectedName, setSelectedName] = useState(null);
-  const [activityDataOnLoad, setActivityDataOnLoad] = useState([]);
-  const updatedActivityData = useRef(null);
-  const userId = useRef(route.params.userID);
+  const authCtx = useContext(AuthContext);
+  const userId = authCtx.userId;
+  const [modalVisible, setModalVisible] = useState(false);
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [addingActivities, setAddingActivities] = useState(false);
+  const [usersCurrentActivities, isLoading, weekOf] = useActivitiesSnapShot(
+    addingActivities,
+    userId
+  );
 
-  useEffect(() => {
-    getUserData();
-  }, [updatedActivityData.current]);
-
-  const updateActivityData = function (activity) {
-    if (activityDataOnLoad.length) {
-      setActivityDataOnLoad((prevState) => [...prevState, activity]);
-    } else {
-      setActivityDataOnLoad(activity);
-    }
-    updatedActivityData.current = activityDataOnLoad;
-  };
-
-  async function getUserData() {
-    try {
-      let fetchedUserActivityData = await getUserDataOnMount(userId.current);
-      if (fetchedUserActivityData) {
-        setActivityDataOnLoad(fetchedUserActivityData);
-        updatedActivityData.current = fetchedUserActivityData;
-      }
-    } catch (error) {
-      console.log('Error Getting User Data: Handle In HomeScreenjs func getUserData()', error);
-    }
+  function addingActivitiesToHomeScreenHandler() {
+    setAddingActivities(!addingActivities);
   }
-  const deleteActivityData = function () {
-    const newActivityData = deleteItemFromActivitiesList(
-      userId.current,
-      updatedActivityData.current,
-      selectedId
+  function startStopAddActivityHandler() {
+    setModalVisible(!modalVisible);
+  }
+  function openCloseSettingsModalHandler() {
+    setSettingsModalVisible(!settingsModalVisible);
+  }
+  function activityItemPressHandler(item) {
+    navigation.navigate('Clockit', {
+      userId: userId,
+      activityObj: item,
+      currentActivities: usersCurrentActivities,
+    });
+  }
+  if (isLoading) {
+    return (
+      <GradientView>
+        <LoadingOverlay message="Cleaning things up.." />
+      </GradientView>
     );
-    setActivityDataOnLoad((previousState) => newActivityData);
-    updatedActivityData.current = newActivityData;
-  };
-
+  }
   return (
-    <View style={styles.container}>
+    <GradientView style={styles.container}>
+      <WeekAndLogoDisplay weekOf={weekOf.current} />
       <ActivityInputContainer
-        setActivityDataOnLoad={setActivityDataOnLoad}
-        updateActivityData={updateActivityData}
-        userId={userId.current}
+        userId={userId}
+        modalVisible={modalVisible}
+        onClose={startStopAddActivityHandler}
+        addingActivitiesToHomeScreenHandler={addingActivitiesToHomeScreenHandler}
       />
       <ActivityFlatList
-        data={activityDataOnLoad}
+        data={usersCurrentActivities}
+        onItemPress={activityItemPressHandler}
+        extraData={addingActivities}
         keyExtractor={(item) => item.id}
-        extraData={updatedActivityData.current}
-        selectedId={selectedId}
-        setSelectedId={setSelectedId}
-        setSelectedName={setSelectedName}
       />
-      <Button
-        title="Clock It With Selected Data"
-        onPress={() =>
-          navigation.navigate('ClockIt', {
-            userId: userId.current,
-            activityId: selectedId,
-            activityName: selectedName,
-          })
-        }
-      />
-      <Button title="Delete SelectedItem" onPress={deleteActivityData} />
-    </View>
+      <View style={styles.addButtonSettingsContainer}>
+        <AddButton
+          numUserActivities={usersCurrentActivities.length}
+          onPress={startStopAddActivityHandler}
+        />
+        <SettingsModal
+          modalVisible={settingsModalVisible}
+          onPress={openCloseSettingsModalHandler}
+          onLogout={authCtx.logout}
+        />
+        <SettingsCog onPress={openCloseSettingsModalHandler} />
+      </View>
+    </GradientView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addButtonSettingsContainer: {
+    flex: 1,
+    width: '100%',
   },
 });
+
 export default HomeScreen;

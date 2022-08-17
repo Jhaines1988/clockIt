@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import Button from '../buttons/Button';
 import Input from './Input';
-
+import SignUpLogInButton from '../buttons/SignupLoginButton';
 function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
   const [enteredEmail, setEnteredEmail] = useState('');
   const [enteredConfirmEmail, setEnteredConfirmEmail] = useState('');
@@ -92,7 +92,9 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
           />
         )}
         <View style={styles.buttons}>
-          <Button onPress={submitHandler}>{isLogin ? 'Log In' : 'Sign Up'}</Button>
+          <SignUpLogInButton onPress={submitHandler}>
+            {isLogin ? 'Log In' : 'Sign Up'}
+          </SignUpLogInButton>
         </View>
       </View>
     </View>

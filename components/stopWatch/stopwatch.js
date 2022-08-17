@@ -7,20 +7,37 @@ import {
   ResetButton,
 } from '../../components/buttons/StopWatchButtons/TimeControlButtons';
 
-const StopWatch = ({ addDataToFirebase }) => {
+const StopWatch = ({ addDataToFirebase, name }) => {
   const [time, setTime] = useState(0);
   const [running, setRunning] = useState(false);
   const [lap, setLap] = useState([]);
   const timer = useRef(null);
   const interval = useRef(null);
   const expected = useRef(null);
+  const startedAt = useRef(null);
 
   let tick = () => {
     let drift = Date.now() - expected.current;
-    expected.current += interval.current;
-    let intervalId = setTimeout(tick, Math.max(0, interval.current - drift));
-    timer.current = intervalId;
-    setTime((prevTime) => prevTime + 1);
+    if (drift > interval.current * 10) {
+      clearInterval(timer.current);
+
+      let elapsedTime = Date.now() - startedAt.current;
+
+      interval.current = 10;
+
+      expected.current = Date.now() + interval.current;
+
+      setTime(Math.floor(elapsedTime / 10));
+
+      timer.current = setTimeout(() => {
+        tick();
+      }, 10);
+    } else {
+      expected.current += interval.current;
+      let intervalId = setTimeout(tick, Math.max(0, interval.current - drift));
+      timer.current = intervalId;
+      setTime((prevTime) => prevTime + 1);
+    }
   };
 
   const handleResetButtonPress = () => {
@@ -43,6 +60,7 @@ const StopWatch = ({ addDataToFirebase }) => {
       if (!interval.current) {
         interval.current = 10;
         expected.current = Date.now() + interval.current;
+        startedAt.current = Date.now();
       }
       setTimeout(() => {
         tick();
@@ -57,6 +75,10 @@ const StopWatch = ({ addDataToFirebase }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.activityInfoContainer}>
+        <Text style={styles.clockingLabel}>Clocking</Text>
+        <Text style={styles.activityName}>{name}</Text>
+      </View>
       <View style={styles.timeAndStartButtonContainer}>
         <View style={styles.textContainer}>
           <Text style={styles.timeDisplay}>
@@ -84,14 +106,27 @@ const StopWatch = ({ addDataToFirebase }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: ClockItColors.darkestBlue,
     width: '100%',
+    justifyContent: 'space-between',
   },
-  timeAndStartButtonContainer: {
-    flex: 4,
-    width: '100%',
-    height: '10%',
+  activityInfoContainer: {
+    alignItems: 'center',
+
+    flex: 1,
     justifyContent: 'center',
+  },
+  clockingLabel: {
+    paddingTop: 55,
+    fontSize: 22,
+    lineHeight: 25,
+    fontFamily: 'Manrope_600SemiBold',
+    color: 'white',
+  },
+  activityName: { fontFamily: 'Manrope_700Bold', color: 'white', fontSize: 44, lineHeight: 55 },
+  timeAndStartButtonContainer: {
+    flex: 2,
+    justifyContent: 'flex-end',
+
     alignItems: 'center',
   },
   textContainer: {
@@ -103,9 +138,8 @@ const styles = StyleSheet.create({
   timeDisplay: {
     fontSize: 60,
     flex: 1,
-    lineHeight: 82,
     paddingLeft: 40,
-    fontWeight: '800',
+    fontFamily: 'Manrope_800ExtraBold',
     color: 'white',
   },
   resetFinishContainer: {
@@ -129,12 +163,10 @@ function StartButton({ time, handleStartStopButtonPress, running }) {
 
 const buttonStyles = StyleSheet.create({
   buttonWrapper: {
-    // flex: 0.5,
+    flex: 1.5,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
-    position: 'relative',
-    bottom: 160,
   },
   buttonTextContainer: {
     borderRadius: 60,

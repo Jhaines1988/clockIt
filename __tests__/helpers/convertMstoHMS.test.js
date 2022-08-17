@@ -1,4 +1,4 @@
-const { convertCentiSecondsToHMS, padTo2Digits } = require('../utils/convertCentisecondstoHMS');
+const { convertCentiSecondsToHMS, padTo2Digits } = require('../../utils/convertCentisecondstoHMS');
 
 describe('convertCentiSecondsToHMS', () => {
   test('it converts centiseconds to seconds', () => {

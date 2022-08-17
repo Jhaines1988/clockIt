@@ -11,4 +11,6 @@ export const ClockItColors = {
   dkBlue: '#2123AB',
   blue: '#2C2ED0',
   buttonLime: '#D1FF86',
+  modalOverlay: 'rgba(4, 5, 115, 0.6)',
+  confirmDelete: '#EE4266',
 };

@@ -1,24 +1,74 @@
 import { createContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { getUserActivities } from '../db/readClockitData';
+import { Timestamp } from 'firebase/firestore';
+import { getStartAndEndOfWeek } from '../utils/DateTimeHelpers/getDay';
 export const UserContext = createContext({
-  uid: '',
+  userId: '',
+  userActivities: [],
+  expirationDate: '',
+  startOfWeek: '',
+  setUserActivities: () => {},
+  getWeekStartStop: () => {},
+  setExpirationDate: () => {},
+  getExpirationDate: () => {},
   getUID: () => {},
   setUID: () => {},
 });
 
 function UserContextProvider({ children }) {
   const [UID, setUID] = useState();
-  async function setUserId(uid) {
-    setUID(uid);
-    await AsyncStorage.setItem('uid', uid);
+  const [userActivitiesOnLoad, setUserActivitiesOnLoad] = useState([]);
+  const [expiration, setExpiration] = useState('');
+  const [startOfWeek, setStartOfWeek] = useState('');
+  const [endOfWeek, setEndOfWeek] = useState('');
+  async function setUserId(userId) {
+    setUID(userId);
+    // await AsyncStorage.setItem('uid', userId);
   }
   const getUserID = async () => {
     const id = await AsyncStorage.getItem('uid');
     return id;
   };
+
+  const getWeekStartStop = () => {
+    const [start, end] = getStartAndEndOfWeek();
+
+    setStartOfWeek(start);
+    setEndOfWeek(end);
+  };
+
+  const setExpirationDate = async (dateString) => {
+    try {
+      setExpiration(dateString);
+      await AsyncStorage.setItem('expiration', dateString);
+    } catch (error) {
+      console.log('DOES THIS ERROR EVEN THROW?', error);
+    }
+  };
+
+  const getExpirationDate = async () => {
+    let expiration = await AsyncStorage.getItem('expiration');
+    return expiration;
+  };
+  const setUserActivities = async (fetchedUserActivities) => {
+    try {
+      console.log('ANYTHING', fetchedUserActivities.activities);
+      setUserActivitiesOnLoad(fetchedUserActivities.activities);
+    } catch (error) {
+      console.log('Error In User Context setting User activities', error);
+    }
+  };
   const value = {
-    uid: UID,
+    userId: UID,
+    userActivities: userActivitiesOnLoad,
+    expirationDate: expiration,
+    startOfWeek: startOfWeek,
+    endOfWeek: endOfWeek,
+    setUserActivities: setUserActivities,
+    getWeekStartStop: getWeekStartStop,
+    setExpirationDate: setExpirationDate,
+    getExpirationDate: getExpirationDate,
     getUID: getUserID,
     setUID: setUserId,
   };

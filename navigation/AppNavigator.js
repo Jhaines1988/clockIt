@@ -1,89 +1,88 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
+// context
+import { AuthContext } from '../store/Auth-Context';
+import UserContextProvider, { UserContext } from '../store/User-Context';
 // screens
 
 import HomeScreen from '../screens/Home Screen/HomeScreen';
 import ClockItScreen from '../screens/Clock It Screen/clockItScreen';
-
 import LoginScreen from '../screens/Auth/LoginScreen';
 import SignupScreen from '../screens/Auth/SignupScreen';
 
 // helpers
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { AuthContext } from '../store/Auth-Context';
-
+import { ClockItColors } from '../constants/styles';
 // components
 import IconButton from '../components/buttons/IconButton';
-
+import { onAuthStateChanged, getAuth } from 'firebase/auth';
+import { deleteItemFromActivitiesList } from '../db/deleteClockitData';
 const Stack = createNativeStackNavigator();
 
-const AuthenticatedStack = () => {
-  const authCtx = useContext(AuthContext);
-  const [appReady, setAppReady] = useState(false);
-  const auth = getAuth();
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setAppReady(true);
-      } else {
-        console.log('user is signed out... ');
-      }
-    });
-  }, []);
-
-  if (appReady) {
-    return (
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: { backgroundColor: 'gray' },
-          headerTintColor: 'blue',
-          contentStyle: { backgroundColor: 'black' },
-        }}>
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          initialParams={{ userID: authCtx.userId }}
-          options={{
-            headerRight: ({ tintColor }) => (
-              <IconButton icon="exit" color={tintColor} size={24} onPress={authCtx.logout} />
-            ),
-          }}
-        />
-        <Stack.Screen name="ClockIt" component={ClockItScreen} />
-      </Stack.Navigator>
-    );
-  } else {
-    /// configure App Loading / expo splash screen here... ///
-    return <View></View>;
-  }
-};
+//
 function AuthStack() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: 'gray' },
-        headerTintColor: 'blue',
-        contentStyle: { backgroundColor: 'black' },
+        headerShown: false,
+        contentStyle: { backgroundColor: ClockItColors.blue },
       }}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
     </Stack.Navigator>
   );
 }
-
-function Navigation() {
+const AuthenticatedStack = () => {
   const authCtx = useContext(AuthContext);
 
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: ClockItColors.blue },
+        headerTintColor: 'white',
+        // headerShown: false,
+        // contentStyle: { backgroundColor: ClockItColors.dkBlue },
+      }}>
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+        // options={{
+        //   headerTitle: '',
+        // headerRight: ({ tintColor }) => (
+        //   <IconButton icon="exit" color={tintColor} size={24} onPress={authCtx.logout} />
+        // ),
+        // }}
+      />
+      <Stack.Screen
+        name="Clockit"
+        component={ClockItScreen}
+        options={{
+          headerTitle: '',
+          headerBackTitle: 'Back',
+          headerRight: ({ tintColor }) => (
+            <IconButton
+              icon="ellipsis-vertical-outline"
+              color={tintColor}
+              size={24}
+              onPress={() => {}}
+            />
+          ),
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const Navigation = () => {
+  const authCtx = useContext(AuthContext);
   return (
     <NavigationContainer>
       {!authCtx.isAuthenticated && <AuthStack />}
       {authCtx.isAuthenticated && <AuthenticatedStack />}
     </NavigationContainer>
   );
-}
+};
 
 export default Navigation;

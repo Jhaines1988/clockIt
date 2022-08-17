@@ -10,7 +10,7 @@ export const convertCentiSecondsToHMS = (centiseconds) => {
   minutes = isRoundedUp ? minutes + 1 : minutes;
   seconds = isRoundedUp ? 0 : seconds;
   minutes = minutes % 60;
-  hours = hours % 24;
+  // hours = hours % 24;
 
   return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
 };
