@@ -18,13 +18,18 @@ const ConfirmDeleteModal = ({ modalVisible, onCancelPress }) => {
             </Text>
           </View>
           <View style={styles.functionContainer}>
-            <ReusableUIButton onPress={onCancelPress} style={styles.goBackButton}>
+            <ReusableUIButton
+              onPress={onCancelPress}
+              buttonStyle={styles.goBackButton}
+              buttonTextContainerStyle={styles.buttonTextContainer}
+              buttonTextStyle={styles.buttonText}>
               Go Back
             </ReusableUIButton>
             <ReusableUIButton
               onPress={() => {}}
-              backgroundColor={ClockItColors.confirmDelete}
-              style={styles.deleteButton}>
+              buttonStyle={styles.deleteButton}
+              buttonTextContainerStyle={styles.buttonTextContainer}
+              buttonTextStyle={styles.buttonText}>
               Delete activity
             </ReusableUIButton>
           </View>
@@ -64,26 +69,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   functionContainer: { flex: 0.5, flexDirection: 'row', justifyContent: 'center' },
-  deleteButton: {
-    button: { backgroundColor: ClockItColors.confirmDelete, flex: 0.5 },
-    buttonTextContainer: { flex: 1, justifyContent: 'center' },
-    buttonText: {
-      fontFamily: 'Manrope_500Medium',
-      color: 'white',
-      fontSize: 18,
-      textAlign: 'center',
-      letterSpacing: 1.1,
-    },
+
+  buttonTextContainer: { flex: 1, justifyContent: 'center' },
+
+  buttonText: {
+    fontFamily: 'Manrope_500Medium',
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
+    letterSpacing: 1.1,
   },
-  goBackButton: {
-    button: { backgroundColor: ClockItColors.blue, flex: 0.5 },
-    buttonTextContainer: { flex: 1, justifyContent: 'center' },
-    buttonText: {
-      fontFamily: 'Manrope_500Medium',
-      color: 'white',
-      fontSize: 18,
-      textAlign: 'center',
-      letterSpacing: 1.1,
-    },
-  },
+  deleteButton: { backgroundColor: ClockItColors.confirmDelete, flex: 0.5 },
+
+  goBackButton: { backgroundColor: ClockItColors.blue, flex: 0.5 },
 });

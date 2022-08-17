@@ -1,10 +1,17 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-function ReusableUIButton({ children, onPress, style = {} }) {
+function ReusableUIButton({
+  children,
+  onPress,
+  style = {},
+  buttonStyle,
+  buttonTextContainerStyle,
+  buttonTextStyle,
+}) {
   return (
-    <Pressable style={({ pressed }) => [style.button, pressed && styles.pressed]} onPress={onPress}>
-      <View style={style.buttonTextContainer}>
-        <Text style={style.buttonText}>{children}</Text>
+    <Pressable style={({ pressed }) => [buttonStyle, pressed && styles.pressed]} onPress={onPress}>
+      <View style={buttonTextContainerStyle}>
+        <Text style={buttonTextStyle}>{children}</Text>
       </View>
     </Pressable>
   );

@@ -12,10 +12,18 @@ const EditActivityModal = ({ modalVisible, onPress, onDeleteButtonPress }) => {
       transparent={true}>
       <Pressable style={styles.editingModalContainer} onPress={onPress}>
         <View style={styles.editingFunctionContainer}>
-          <ReusableUIButton onPress={onDeleteButtonPress} style={styles.renameButton}>
+          <ReusableUIButton
+            onPress={onDeleteButtonPress}
+            buttonTextContainerStyle={styles.buttonTextContainer}
+            buttonStyle={styles.button}
+            buttonTextStyle={styles.renameButtonText}>
             Rename activity
           </ReusableUIButton>
-          <ReusableUIButton onPress={onDeleteButtonPress} style={styles.deleteButton}>
+          <ReusableUIButton
+            onPress={onDeleteButtonPress}
+            buttonTextContainerStyle={styles.buttonTextContainer}
+            buttonStyle={styles.button}
+            buttonTextStyle={styles.deleteButtonText}>
             Delete activity
           </ReusableUIButton>
         </View>
@@ -37,29 +45,17 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     borderRadius: 8,
   },
-  deleteButton: {
-    button: {
-      flex: 1,
-      justifyContent: 'center',
-    },
-    buttonTextContainer: {
-      alignItems: 'center',
-    },
-    buttonText: {
-      fontFamily: 'Manrope_500Medium',
-      color: ClockItColors.confirmDelete,
-      fontSize: 18,
-    },
+  button: {
+    flex: 1,
+    justifyContent: 'center',
   },
-  renameButton: {
-    button: {
-      flex: 1,
-      justifyContent: 'center',
-    },
-    buttonTextContainer: {
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    buttonText: { fontFamily: 'Manrope_500Medium', color: ClockItColors.blue, fontSize: 18 },
+  buttonTextContainer: {
+    alignItems: 'center',
+  },
+  renameButtonText: { fontFamily: 'Manrope_500Medium', color: ClockItColors.blue, fontSize: 18 },
+  deleteButtonText: {
+    fontFamily: 'Manrope_500Medium',
+    color: ClockItColors.confirmDelete,
+    fontSize: 18,
   },
 });
