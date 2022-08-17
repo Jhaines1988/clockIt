@@ -3,10 +3,10 @@ import { View, Text, TextInput, StyleSheet } from 'react-native';
 
 function ActivityInput({ label, textInputConfiguration }) {
   return (
-    <View style={styles.textInputContainer}>
-      <Text style={styles.label}>{label}</Text>
+    <View style={[styles.textInputContainer]}>
+      <Text style={[styles.label]}>{label}</Text>
       <TextInput
-        style={styles.textInput}
+        style={[styles.textInput]}
         placeholder="Type Your Activity Here"
         {...textInputConfiguration}
       />

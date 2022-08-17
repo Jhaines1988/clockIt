@@ -74,6 +74,7 @@ export const updateUserActivities = async (id, updatedActivities) => {
   }
 };
 
+export const renameActivity = async (id, activities, activityObj) => {};
 /* Methods for adding data from stop watch */
 
 export const updateActivityTimeOnFinish = async (userId, updatedActivity) => {
@@ -96,9 +97,8 @@ export const onStopWatchFinish = async (
   activityObject,
   currentActivities
 ) => {
-  const indexOfActivityToUpdate = currentActivities.indexOf(activityObject);
-  currentActivities[indexOfActivityToUpdate].totalTime += timeFromStopWatch;
-  console.log(activityObject, currentActivities, '______');
+  activityObject.totalTime += timeFromStopWatch;
+
   try {
     await updateActivityTimeOnFinish(userId, activityObject);
     await updateUserActivities(userId, currentActivities);
