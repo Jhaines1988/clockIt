@@ -3,7 +3,6 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 function ReusableUIButton({
   children,
   onPress,
-  style = {},
   buttonStyle,
   buttonTextContainerStyle,
   buttonTextStyle,

@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Modal, Pressable } from 'react-native';
 import React from 'react';
 import { ClockItColors } from '../../constants/styles';
 import ReusableUIButton from '../buttons/ReusableUIButton';
-const ConfirmDeleteModal = ({ modalVisible, onCancelPress }) => {
+const ConfirmDeleteModal = ({ modalVisible, onCancelPress, onDeleteButtonPress }) => {
   return (
     <Modal
       visible={modalVisible}
@@ -26,7 +26,7 @@ const ConfirmDeleteModal = ({ modalVisible, onCancelPress }) => {
               Go Back
             </ReusableUIButton>
             <ReusableUIButton
-              onPress={() => {}}
+              onPress={onDeleteButtonPress}
               buttonStyle={styles.deleteButton}
               buttonTextContainerStyle={styles.buttonTextContainer}
               buttonTextStyle={styles.buttonText}>
