@@ -40,7 +40,10 @@ const ClockItScreen = ({ navigation, route }) => {
 
   const renameActivityHandler = () => {
     setEditingModalOpen(false);
-    navigation.navigate('RenameActivityScreen');
+    navigation.navigate({
+      name: 'RenameActivityScreen',
+      params: { userId, activityObj, currentActivities },
+    });
   };
 
   async function addDataToFirebase(time) {
