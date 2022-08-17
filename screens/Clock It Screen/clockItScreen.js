@@ -34,9 +34,13 @@ const ClockItScreen = ({ navigation, route }) => {
     setIsFinished(true);
     addDataToFirebase(time);
   };
-
   const dismissModalHandler = () => {
     setIsFinished(false);
+  };
+
+  const renameActivityHandler = () => {
+    setEditingModalOpen(false);
+    navigation.navigate('RenameActivityScreen');
   };
 
   async function addDataToFirebase(time) {
@@ -94,6 +98,7 @@ const ClockItScreen = ({ navigation, route }) => {
       <EditActivityModal
         modalVisible={editingModalOpen}
         onPress={editingModalHandler}
+        onRenameButtonPress={renameActivityHandler}
         onDeleteButtonPress={openConfirmDeleteModalHandler}
       />
       <FinishedClocking modalVisible={isFinished} onPress={dismissModalHandler} />

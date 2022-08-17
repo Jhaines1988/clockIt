@@ -6,11 +6,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthContext } from '../store/Auth-Context';
 import UserContextProvider, { UserContext } from '../store/User-Context';
 // screens
+import LoginScreen from '../screens/Auth/LoginScreen';
+import SignupScreen from '../screens/Auth/SignupScreen';
 
 import HomeScreen from '../screens/Home Screen/HomeScreen';
 import ClockItScreen from '../screens/Clock It Screen/clockItScreen';
-import LoginScreen from '../screens/Auth/LoginScreen';
-import SignupScreen from '../screens/Auth/SignupScreen';
+import RenameActivityScreen from '../screens/RenameActivityScreen/RenameActivityScreen';
 
 // helpers
 import { ClockItColors } from '../constants/styles';
@@ -71,6 +72,7 @@ const AuthenticatedStack = () => {
           ),
         }}
       />
+      <Stack.Screen name="RenameActivityScreen" component={RenameActivityScreen} />
     </Stack.Navigator>
   );
 };
