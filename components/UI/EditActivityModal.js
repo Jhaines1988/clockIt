@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Modal, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import { ClockItColors } from '../../constants/styles';
-import DeleteActivityButton from '../buttons/DeleteActivityButton';
+import ReusableUIButton from '../buttons/ReusableUIButton';
 
 const EditActivityModal = ({ modalVisible, onPress, onDeleteButtonPress }) => {
   return (
@@ -12,7 +12,20 @@ const EditActivityModal = ({ modalVisible, onPress, onDeleteButtonPress }) => {
       transparent={true}>
       <Pressable style={styles.editingModalContainer} onPress={onPress}>
         <View style={styles.editingFunctionContainer}>
-          <DeleteActivityButton onPress={onDeleteButtonPress} />
+          <ReusableUIButton
+            onPress={onDeleteButtonPress}
+            buttonTextContainerStyle={styles.buttonTextContainer}
+            buttonStyle={styles.button}
+            buttonTextStyle={styles.renameButtonText}>
+            Rename activity
+          </ReusableUIButton>
+          <ReusableUIButton
+            onPress={onDeleteButtonPress}
+            buttonTextContainerStyle={styles.buttonTextContainer}
+            buttonStyle={styles.button}
+            buttonTextStyle={styles.deleteButtonText}>
+            Delete activity
+          </ReusableUIButton>
         </View>
       </Pressable>
     </Modal>
@@ -24,23 +37,25 @@ export default EditActivityModal;
 const styles = StyleSheet.create({
   editingModalContainer: { flex: 1 },
   editingFunctionContainer: {
-    flex: 0.18,
-    width: '60%',
+    flex: 0.15,
+    width: '55%',
     marginTop: 90,
     backgroundColor: 'white',
     alignSelf: 'flex-end',
     marginHorizontal: 24,
     borderRadius: 8,
   },
-  modalContent: {
-    // backgroundColor: 'white',
-    // flex: 0.1,
-    // marginLeft: 22,
-    // marginBottom: 70,
-    // width: '50%',
-    // borderRadius: 8,
-    // shadowColor: '#090A49',
-    // shadowOffset: { width: 0, height: 4 },
-    // shadowRadius: 16,
+  button: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  buttonTextContainer: {
+    alignItems: 'center',
+  },
+  renameButtonText: { fontFamily: 'Manrope_500Medium', color: ClockItColors.blue, fontSize: 18 },
+  deleteButtonText: {
+    fontFamily: 'Manrope_500Medium',
+    color: ClockItColors.confirmDelete,
+    fontSize: 18,
   },
 });
