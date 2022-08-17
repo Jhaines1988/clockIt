@@ -61,6 +61,10 @@ const ClockItScreen = ({ navigation, route }) => {
       }
     } catch (error) {
       console.log('Error Deleting Items', error);
+      Alert.alert('Something went wrong deleting your activity...');
+      setTimeout(() => {
+        navigation.navigate('Home');
+      }, 1000);
     }
   };
 
