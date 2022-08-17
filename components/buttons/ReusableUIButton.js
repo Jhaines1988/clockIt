@@ -1,14 +1,8 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { ClockItColors } from '../../constants/styles';
-function ReusableUIButton({ children, onPress, style, backgroundColor }) {
+function ReusableUIButton({ children, onPress, style = {} }) {
   return (
-    <Pressable
-      style={({ pressed }) => [
-        style.button,
-        { backgroundColor: backgroundColor },
-        pressed && styles.pressed,
-      ]}
-      onPress={onPress}>
+    <Pressable style={({ pressed }) => [style.button, pressed && styles.pressed]} onPress={onPress}>
       <View style={style.buttonTextContainer}>
         <Text style={style.buttonText}>{children}</Text>
       </View>

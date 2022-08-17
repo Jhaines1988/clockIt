@@ -18,16 +18,13 @@ const ConfirmDeleteModal = ({ modalVisible, onCancelPress }) => {
             </Text>
           </View>
           <View style={styles.functionContainer}>
-            <ReusableUIButton
-              onPress={onCancelPress}
-              style={ReusableButtonStyles}
-              backgroundColor={ClockItColors.blue}>
-              Cancel
+            <ReusableUIButton onPress={onCancelPress} style={styles.goBackButton}>
+              Go Back
             </ReusableUIButton>
             <ReusableUIButton
               onPress={() => {}}
               backgroundColor={ClockItColors.confirmDelete}
-              style={ReusableButtonStyles}>
+              style={styles.deleteButton}>
               Delete activity
             </ReusableUIButton>
           </View>
@@ -67,16 +64,26 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   functionContainer: { flex: 0.5, flexDirection: 'row', justifyContent: 'center' },
-});
-
-const ReusableButtonStyles = StyleSheet.create({
-  button: { backgroundColor: ClockItColors.confirmDelete, flex: 0.5 },
-  buttonTextContainer: { flex: 1, justifyContent: 'center' },
-  buttonText: {
-    fontFamily: 'Manrope_500Medium',
-    color: 'white',
-    fontSize: 18,
-    textAlign: 'center',
-    letterSpacing: 1.1,
+  deleteButton: {
+    button: { backgroundColor: ClockItColors.confirmDelete, flex: 0.5 },
+    buttonTextContainer: { flex: 1, justifyContent: 'center' },
+    buttonText: {
+      fontFamily: 'Manrope_500Medium',
+      color: 'white',
+      fontSize: 18,
+      textAlign: 'center',
+      letterSpacing: 1.1,
+    },
+  },
+  goBackButton: {
+    button: { backgroundColor: ClockItColors.blue, flex: 0.5 },
+    buttonTextContainer: { flex: 1, justifyContent: 'center' },
+    buttonText: {
+      fontFamily: 'Manrope_500Medium',
+      color: 'white',
+      fontSize: 18,
+      textAlign: 'center',
+      letterSpacing: 1.1,
+    },
   },
 });

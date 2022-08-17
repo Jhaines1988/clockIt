@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Modal, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import { ClockItColors } from '../../constants/styles';
 import DeleteActivityButton from '../buttons/DeleteActivityButton';
+import ReusableUIButton from '../buttons/ReusableUIButton';
 
 const EditActivityModal = ({ modalVisible, onPress, onDeleteButtonPress }) => {
   return (
@@ -13,6 +14,7 @@ const EditActivityModal = ({ modalVisible, onPress, onDeleteButtonPress }) => {
       <Pressable style={styles.editingModalContainer} onPress={onPress}>
         <View style={styles.editingFunctionContainer}>
           <DeleteActivityButton onPress={onDeleteButtonPress} />
+          <ReusableUIButton onPress={onDeleteButtonPress}>Delete</ReusableUIButton>
         </View>
       </Pressable>
     </Modal>
