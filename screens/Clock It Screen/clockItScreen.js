@@ -8,6 +8,9 @@ import EditActivityModal from '../../components/UI/EditActivityModal';
 
 import GradientView from '../../components/UI/BackgroundContainer';
 import ConfirmDeleteModal from '../../components/UI/ConfirmDeleteModal';
+
+import { deleteItemFromActivitiesList } from '../../db/deleteClockitData';
+
 const ClockItScreen = ({ navigation, route }) => {
   const [isFinished, setIsFinished] = useState(false);
   const [editingModalOpen, setEditingModalOpen] = useState(false);
@@ -35,11 +38,18 @@ const ClockItScreen = ({ navigation, route }) => {
     setIsFinished(false);
   };
 
+  const deleteActivityHandler = async () => {
+    try {
+      await deleteItemFromActivitiesList(userId, currentActivities, activityObj.id);
+    } catch (error) {
+      console.log('Error Deleting Items', error);
+    }
+  };
   async function addDataToFirebase(time) {
     try {
       await onStopWatchFinish(userId, time, activityObj, currentActivities);
     } catch (error) {
-      console.log('Error Writring Activity to Firebase', error);
+      console.log('Error Writing Activity to Firebase', error);
     }
   }
 
@@ -64,6 +74,7 @@ const ClockItScreen = ({ navigation, route }) => {
       <ConfirmDeleteModal
         modalVisible={confirmingDeleteModalOpen}
         onCancelPress={closeConfirmDeleteModalHandler}
+        onDeleteButtonPress={deleteActivityHandler}
       />
       <EditActivityModal
         modalVisible={editingModalOpen}
