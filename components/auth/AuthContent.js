@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import FlatButton from '../buttons/FlatButton';
-import SaveActivityButton from '../buttons/SaveActivityButton';
 import AuthForm from './AuthForm';
 import { auth, db } from '../../firebase';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
