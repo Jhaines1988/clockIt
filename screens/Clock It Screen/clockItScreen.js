@@ -1,4 +1,5 @@
 import React, { useState, useLayoutEffect } from 'react';
+import { Alert } from 'react-native';
 import IconButton from '../../components/buttons/IconButton';
 import StopWatch from '../../components/stopWatch/stopwatch';
 
@@ -38,13 +39,6 @@ const ClockItScreen = ({ navigation, route }) => {
     setIsFinished(false);
   };
 
-  const deleteActivityHandler = async () => {
-    try {
-      await deleteItemFromActivitiesList(userId, currentActivities, activityObj.id);
-    } catch (error) {
-      console.log('Error Deleting Items', error);
-    }
-  };
   async function addDataToFirebase(time) {
     try {
       await onStopWatchFinish(userId, time, activityObj, currentActivities);
@@ -52,6 +46,23 @@ const ClockItScreen = ({ navigation, route }) => {
       console.log('Error Writing Activity to Firebase', error);
     }
   }
+  const deleteActivityHandler = async () => {
+    try {
+      const deletedSuccess = await deleteItemFromActivitiesList(
+        userId,
+        currentActivities,
+        activityObj.id
+      );
+      if (deletedSuccess) {
+        Alert.alert('Activity Successfully Deleted');
+        setTimeout(() => {
+          navigation.navigate('Home');
+        }, 1000);
+      }
+    } catch (error) {
+      console.log('Error Deleting Items', error);
+    }
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
