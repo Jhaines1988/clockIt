@@ -64,12 +64,14 @@ export const resetCurrentWeek = async (id, weekData) => {
 };
 
 export const updateUserActivities = async (id, updatedActivities) => {
+  console.log('UPDATED', updatedActivities, id);
   try {
     await updateDoc(doc(db, id, 'activities'), {
       activities: updatedActivities,
     });
   } catch (error) {
-    throw new Error({ message: error.message });
+    console.log('Error Updating user Activities:', error);
+    throw new Error(error);
   }
 };
 
@@ -90,19 +92,13 @@ export const updateActivityTimeOnFinish = async (userId, updatedActivity) => {
     console.log('Error in updateActivityTimeOnFinish:', error);
   }
 };
-export const onStopWatchFinish = async (
-  userId,
-  timeFromStopWatch,
-  activityObject,
-  currentActivities
-) => {
-  activityObject.totalTime += timeFromStopWatch;
+export const onStopWatchFinish = async (userId, activityObject, currentActivities) => {
+  // activityObject.totalTime += timeFromStopWatch;
 
   try {
     await updateActivityTimeOnFinish(userId, activityObject);
     await updateUserActivities(userId, currentActivities);
-    return currentActivities;
   } catch (error) {
-    console.log('Error in "onStopWatchFinish":', error);
+    console.log('Error in "On Stop Watch Finish ":', error.message);
   }
 };

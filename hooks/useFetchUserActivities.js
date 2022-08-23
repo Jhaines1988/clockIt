@@ -4,7 +4,6 @@ import { doc, getDoc } from 'firebase/firestore';
 import { UserContext } from '../store/User-Context';
 function useFetchUserActivities(userId) {
   const userCtx = useContext(UserContext);
-  const [usersCurrentActivities, setUsersCurrentActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const weekOf = useRef(null);
 
@@ -13,8 +12,7 @@ function useFetchUserActivities(userId) {
       try {
         const activitiesOnLoad = await getDoc(doc(db, userId, 'activities'));
         if (activitiesOnLoad.exists()) {
-          setUsersCurrentActivities(activitiesOnLoad.data().activities);
-          userCtx.updateUserActivities(activitiesOnLoad.data().activities);
+          userCtx.dispatch({ type: 'INITIALIZE', payload: activitiesOnLoad.data().activities });
           if (!weekOf.current) {
             weekOf.current = activitiesOnLoad.data().weekOf;
           }
@@ -27,7 +25,7 @@ function useFetchUserActivities(userId) {
     fetchActivities();
     return () => {};
   }, [userId]);
-  return [usersCurrentActivities, isLoading, weekOf];
+  return [isLoading, weekOf];
 }
 
 export default useFetchUserActivities;

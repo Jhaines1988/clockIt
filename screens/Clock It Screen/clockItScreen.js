@@ -1,24 +1,28 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useContext, useLayoutEffect } from 'react';
 import { Alert } from 'react-native';
+
+// components
 import IconButton from '../../components/buttons/IconButton';
 import StopWatch from '../../components/stopWatch/stopwatch';
-
-import { onStopWatchFinish } from '../../db/writeClockitData';
 import FinishedClocking from '../../components/UI/FinishedClocking';
 import EditActivityModal from '../../components/UI/EditActivityModal';
-
 import GradientView from '../../components/UI/BackgroundContainer';
 import ConfirmDeleteModal from '../../components/UI/ConfirmDeleteModal';
 
+// context
+
+import { UserContext } from '../../store/User-Context';
+// writing to database
+
+import { onStopWatchFinish } from '../../db/writeClockitData';
 import { deleteItemFromActivitiesList } from '../../db/deleteClockitData';
 
 const ClockItScreen = ({ navigation, route }) => {
+  const userCtx = useContext(UserContext);
   const [isFinished, setIsFinished] = useState(false);
   const [editingModalOpen, setEditingModalOpen] = useState(false);
   const [confirmingDeleteModalOpen, setConfirmingDeleteModalOpen] = useState(false);
-
-  let { userId, activityObj, currentActivities } = route.params;
-
+  const { userId } = route.params;
   const editingModalHandler = () => {
     setEditingModalOpen(!editingModalOpen);
   };
@@ -42,13 +46,14 @@ const ClockItScreen = ({ navigation, route }) => {
     setEditingModalOpen(false);
     navigation.navigate({
       name: 'RenameActivityScreen',
-      params: { userId, activityObj, currentActivities },
     });
   };
 
   async function addDataToFirebase(time) {
+    userCtx.currentActivityItem.totalTime += time;
+    userCtx.dispatch({ type: 'UPDATE', payload: userCtx.currentActivityItem });
     try {
-      await onStopWatchFinish(userId, time, activityObj, currentActivities);
+      await onStopWatchFinish(userId, userCtx.currentActivityItem, userCtx.activities);
     } catch (error) {
       console.log('Error Writing Activity to Firebase', error);
     }
@@ -57,8 +62,8 @@ const ClockItScreen = ({ navigation, route }) => {
     try {
       const deletedSuccess = await deleteItemFromActivitiesList(
         userId,
-        currentActivities,
-        activityObj.id
+        userCtx.userActivities,
+        userCtx.currentActivityItem.id
       );
       if (deletedSuccess) {
         Alert.alert('Activity Successfully Deleted');
@@ -87,9 +92,7 @@ const ClockItScreen = ({ navigation, route }) => {
       ),
     });
 
-    return () => {
-      // second;
-    };
+    return () => {};
   }, [navigation]);
   return (
     <GradientView>
@@ -105,7 +108,7 @@ const ClockItScreen = ({ navigation, route }) => {
         onDeleteButtonPress={openConfirmDeleteModalHandler}
       />
       <FinishedClocking modalVisible={isFinished} onPress={dismissModalHandler} />
-      <StopWatch addDataToFirebase={finishedHandler} name={activityObj.name} />
+      <StopWatch addDataToFirebase={finishedHandler} name={userCtx.currentActivityItem.name} />
     </GradientView>
   );
 };

@@ -1,38 +1,66 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useReducer } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const initialActivitiesState = [];
 
 export const UserContext = createContext({
   userId: '',
-  userActivities: [],
-  updateUserActivities: () => {},
+  currentActivityItem: {},
+  activities: initialActivitiesState,
+  setCurrentActivityItem: () => {},
+  dispatch: () => {},
   getUID: () => {},
   setUID: () => {},
 });
 
+const updateActivitiesReducer = (state, action) => {
+  switch (action.type) {
+    case 'INITIALIZE':
+      return action.payload;
+    case 'ADD':
+      const updatedState = state;
+      updatedState.push(action.payload);
+
+      return updatedState;
+    case 'UPDATE':
+      return state.map((item) => {
+        if (item.id === action.payload.id) {
+          item = action.payload;
+        }
+        return item;
+      });
+    default:
+      return state;
+  }
+};
+
+const mergeArrays = (state, updatedItem) => {
+  return;
+};
+
 function UserContextProvider({ children }) {
   const [UID, setUID] = useState();
-  const [userActivities, setUserActivities] = useState([]);
-
+  const [currentActivityItem, setCurrentActivityItem] = useState({});
+  const [updatedActivities, dispatch] = useReducer(updateActivitiesReducer, initialActivitiesState);
   async function setUserId(userId) {
     setUID(userId);
-    // await AsyncStorage.setItem('uid', userId);
   }
+
   const getUserID = async () => {
     const id = await AsyncStorage.getItem('uid');
     return id;
   };
 
-  const setUserActivitiesHandler = async (activities) => {
-    try {
-      setUserActivities(activities);
-    } catch (error) {
-      console.log('Error In User Context setting User activities', error);
-    }
+  const setCurrentActivityItemHandler = (item) => {
+    setCurrentActivityItem(item);
   };
+
   const value = {
     userId: UID,
-    userActivities: userActivities,
-    updateUserActivities: setUserActivitiesHandler,
+    currentActivityItem: currentActivityItem,
+    activities: updatedActivities,
+    setCurrentActivityItem: setCurrentActivityItemHandler,
+    dispatch: dispatch,
     getUID: getUserID,
     setUID: setUserId,
   };

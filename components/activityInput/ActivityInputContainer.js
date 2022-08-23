@@ -21,11 +21,11 @@ function ActivityInputContainer({
   async function onSaveHandler() {
     try {
       const newActivity = await addActivityToUserHomeScreen(activity, userId);
-      const updatedUserActivities = userCtx.userActivities;
-      updatedUserActivities.push(newActivity);
-      userCtx.updateUserActivities(updatedUserActivities);
+      userCtx.dispatch({ type: 'ADD', payload: newActivity });
       setActivity('');
     } catch (error) {
+      // throw errors from dispatch here
+      // ex if theres two items with the same name etc.
     } finally {
       addingActivitiesToHomeScreenHandler();
       onClose();

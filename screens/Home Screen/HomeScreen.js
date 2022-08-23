@@ -25,7 +25,7 @@ const HomeScreen = ({ navigation, route }) => {
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [addingActivities, setAddingActivities] = useState(false);
 
-  const [usersCurrentActivities, isLoading, weekOf] = useFetchUserActivities(userId);
+  const [isLoading, weekOf] = useFetchUserActivities(userId);
 
   function addingActivitiesToHomeScreenHandler() {
     setAddingActivities(!addingActivities);
@@ -37,10 +37,10 @@ const HomeScreen = ({ navigation, route }) => {
     setSettingsModalVisible(!settingsModalVisible);
   }
   function activityItemPressHandler(item) {
+    userCtx.setCurrentActivityItem(item);
+
     navigation.navigate('Clockit', {
       userId: userId,
-      activityObj: item,
-      currentActivities: usersCurrentActivities,
     });
   }
   if (isLoading) {
@@ -50,6 +50,7 @@ const HomeScreen = ({ navigation, route }) => {
       </GradientView>
     );
   }
+
   return (
     <GradientView style={styles.container}>
       <WeekAndLogoDisplay weekOf={weekOf.current} />
@@ -60,14 +61,13 @@ const HomeScreen = ({ navigation, route }) => {
         addingActivitiesToHomeScreenHandler={addingActivitiesToHomeScreenHandler}
       />
       <ActivityFlatList
-        data={userCtx.userActivities}
+        data={userCtx.activities}
         onItemPress={activityItemPressHandler}
-        extraData={addingActivities}
         keyExtractor={(item) => item.id}
       />
       <View style={styles.addButtonSettingsContainer}>
         <AddButton
-          numUserActivities={userCtx.userActivities.length}
+          numUserActivities={userCtx.activities.length}
           onPress={startStopAddActivityHandler}
         />
         <SettingsModal
