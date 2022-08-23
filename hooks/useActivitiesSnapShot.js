@@ -1,8 +1,11 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
+import { UserContext } from '../store/User-Context';
 import { db } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 
-function useActivitiesSnapShot(addingActivities, userId) {
+function useActivitiesSnapShot(userId) {
+  const userCtx = useContext(UserContext);
+
   const [usersCurrentActivities, setUsersCurrentActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const weekOf = useRef(null);
@@ -11,6 +14,7 @@ function useActivitiesSnapShot(addingActivities, userId) {
     const unsubscribe = onSnapshot(doc(db, userId, 'activities'), (doc) => {
       console.log('!');
       setUsersCurrentActivities(doc.data().activities);
+      userCtx.updateUserActivities(doc.data().activities);
       if (!weekOf.current) {
         weekOf.current = doc.data().weekOf;
       }
@@ -18,9 +22,10 @@ function useActivitiesSnapShot(addingActivities, userId) {
     });
 
     return () => {
+      console.log('here');
       unsubscribe();
     };
-  }, [addingActivities, userId]);
+  }, [userId]);
 
   return [usersCurrentActivities, isLoading, weekOf];
 }

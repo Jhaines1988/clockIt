@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import AddButton from '../../components/buttons/AddButton';
 import { AuthContext } from '../../store/Auth-Context';
+import { UserContext } from '../../store/User-Context.js';
 import LoadingOverlay from '../../components/auth/ui/LoadingOverlay';
 import ActivityInputContainer from '../../components/activityInput/ActivityInputContainer';
 import GradientView from '../../components/UI/BackgroundContainer';
@@ -14,14 +15,13 @@ import SettingsModal from '../../components/UI/SettingsModal';
 
 const HomeScreen = ({ navigation, route }) => {
   const authCtx = useContext(AuthContext);
+  const userCtx = useContext(UserContext);
   const userId = authCtx.userId;
   const [modalVisible, setModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [addingActivities, setAddingActivities] = useState(false);
-  const [usersCurrentActivities, isLoading, weekOf] = useActivitiesSnapShot(
-    addingActivities,
-    userId
-  );
+
+  const [usersCurrentActivities, isLoading, weekOf] = useActivitiesSnapShot(userId);
 
   function addingActivitiesToHomeScreenHandler() {
     setAddingActivities(!addingActivities);
@@ -58,7 +58,7 @@ const HomeScreen = ({ navigation, route }) => {
       <ActivityFlatList
         data={usersCurrentActivities}
         onItemPress={activityItemPressHandler}
-        extraData={addingActivities}
+        extraData={userCtx.userActivities}
         keyExtractor={(item) => item.id}
       />
       <View style={styles.addButtonSettingsContainer}>

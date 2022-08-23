@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, Modal, StyleSheet } from 'react-native';
 import ActivityInput from './ActivityInput';
 import { addActivityToUserHomeScreen } from '../../db/writeClockitData';
 import GradientView from '../UI/BackgroundContainer';
 import ReusableUIButton from '../buttons/ReusableUIButton';
+import { UserContext } from '../../store/User-Context';
 import { ClockItColors } from '../../constants/styles';
 function ActivityInputContainer({
   modalVisible,
@@ -11,6 +12,7 @@ function ActivityInputContainer({
   userId,
   addingActivitiesToHomeScreenHandler,
 }) {
+  const userCtx = useContext(UserContext);
   const [activity, setActivity] = useState('');
   function handleActivityChange(activity) {
     setActivity(activity);
@@ -19,6 +21,7 @@ function ActivityInputContainer({
   async function onSaveHandler() {
     try {
       const newActivity = await addActivityToUserHomeScreen(activity, userId);
+
       setActivity('');
     } catch (error) {
     } finally {

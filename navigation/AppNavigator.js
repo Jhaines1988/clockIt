@@ -35,45 +35,33 @@ function AuthStack() {
   );
 }
 const AuthenticatedStack = () => {
-  const authCtx = useContext(AuthContext);
-
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: ClockItColors.blue },
-        headerTintColor: 'white',
-        // headerShown: false,
-        // contentStyle: { backgroundColor: ClockItColors.dkBlue },
-      }}>
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ headerShown: false }}
-        // options={{
-        //   headerTitle: '',
-        // headerRight: ({ tintColor }) => (
-        //   <IconButton icon="exit" color={tintColor} size={24} onPress={authCtx.logout} />
-        // ),
-        // }}
-      />
-      <Stack.Screen
-        name="Clockit"
-        component={ClockItScreen}
-        options={{
-          headerTitle: '',
-          headerBackTitle: 'Back',
-          headerRight: ({ tintColor }) => (
-            <IconButton
-              icon="ellipsis-vertical-outline"
-              color={tintColor}
-              size={24}
-              onPress={() => {}}
-            />
-          ),
-        }}
-      />
-      <Stack.Screen name="RenameActivityScreen" component={RenameActivityScreen} />
-    </Stack.Navigator>
+    <UserContextProvider>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: ClockItColors.blue },
+          headerTintColor: 'white',
+        }}>
+        <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="Clockit"
+          component={ClockItScreen}
+          options={{
+            headerTitle: '',
+            headerBackTitle: 'Back',
+            headerRight: ({ tintColor }) => (
+              <IconButton
+                icon="ellipsis-vertical-outline"
+                color={tintColor}
+                size={24}
+                onPress={() => {}}
+              />
+            ),
+          }}
+        />
+        <Stack.Screen name="RenameActivityScreen" component={RenameActivityScreen} />
+      </Stack.Navigator>
+    </UserContextProvider>
   );
 };
 

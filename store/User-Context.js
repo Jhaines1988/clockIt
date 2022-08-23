@@ -1,27 +1,18 @@
 import { createContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getUserActivities } from '../db/readClockitData';
-import { Timestamp } from 'firebase/firestore';
-import { getStartAndEndOfWeek } from '../utils/DateTimeHelpers/getDay';
+
 export const UserContext = createContext({
   userId: '',
   userActivities: [],
-  expirationDate: '',
-  startOfWeek: '',
-  setUserActivities: () => {},
-  getWeekStartStop: () => {},
-  setExpirationDate: () => {},
-  getExpirationDate: () => {},
+  updateUserActivities: () => {},
   getUID: () => {},
   setUID: () => {},
 });
 
 function UserContextProvider({ children }) {
   const [UID, setUID] = useState();
-  const [userActivitiesOnLoad, setUserActivitiesOnLoad] = useState([]);
-  const [expiration, setExpiration] = useState('');
-  const [startOfWeek, setStartOfWeek] = useState('');
-  const [endOfWeek, setEndOfWeek] = useState('');
+  const [userActivities, setUserActivities] = useState([]);
+
   async function setUserId(userId) {
     setUID(userId);
     // await AsyncStorage.setItem('uid', userId);
@@ -31,44 +22,17 @@ function UserContextProvider({ children }) {
     return id;
   };
 
-  const getWeekStartStop = () => {
-    const [start, end] = getStartAndEndOfWeek();
-
-    setStartOfWeek(start);
-    setEndOfWeek(end);
-  };
-
-  const setExpirationDate = async (dateString) => {
+  const setUserActivitiesHandler = async (activities) => {
     try {
-      setExpiration(dateString);
-      await AsyncStorage.setItem('expiration', dateString);
-    } catch (error) {
-      console.log('DOES THIS ERROR EVEN THROW?', error);
-    }
-  };
-
-  const getExpirationDate = async () => {
-    let expiration = await AsyncStorage.getItem('expiration');
-    return expiration;
-  };
-  const setUserActivities = async (fetchedUserActivities) => {
-    try {
-      console.log('ANYTHING', fetchedUserActivities.activities);
-      setUserActivitiesOnLoad(fetchedUserActivities.activities);
+      setUserActivities(activities);
     } catch (error) {
       console.log('Error In User Context setting User activities', error);
     }
   };
   const value = {
     userId: UID,
-    userActivities: userActivitiesOnLoad,
-    expirationDate: expiration,
-    startOfWeek: startOfWeek,
-    endOfWeek: endOfWeek,
-    setUserActivities: setUserActivities,
-    getWeekStartStop: getWeekStartStop,
-    setExpirationDate: setExpirationDate,
-    getExpirationDate: getExpirationDate,
+    userActivities: userActivities,
+    updateUserActivities: setUserActivitiesHandler,
     getUID: getUserID,
     setUID: setUserId,
   };

@@ -40,7 +40,6 @@ export const addActivityToUserHomeScreen = async (activity, userId) => {
 
       { activities: arrayUnion(docData) }
     );
-    console.log(postData, 'heres the data... ');
     return docData;
   } catch (error) {
     console.log('Error adding activity', error);
