@@ -14,7 +14,7 @@ const ConfirmDeleteModal = ({ modalVisible, onCancelPress, onDeleteButtonPress }
           <View style={styles.warningTextContainer}>
             <Text style={styles.headerQuestion}> Are You Sure? </Text>
             <Text style={styles.warningContent}>
-              You're about to delete this activity and all its data. This cannot be undone{' '}
+              You're about to delete this activity and all its data. This cannot be undone
             </Text>
           </View>
           <View style={styles.functionContainer}>

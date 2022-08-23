@@ -46,6 +46,7 @@ const ClockItScreen = ({ navigation, route }) => {
     setEditingModalOpen(false);
     navigation.navigate({
       name: 'RenameActivityScreen',
+      params: { userId: userId },
     });
   };
 
@@ -60,9 +61,10 @@ const ClockItScreen = ({ navigation, route }) => {
   }
   const deleteActivityHandler = async () => {
     try {
+      userCtx.dispatch({ type: 'DELETE', payload: userCtx.currentActivityItem.id });
       const deletedSuccess = await deleteItemFromActivitiesList(
         userId,
-        userCtx.userActivities,
+        userCtx.activities,
         userCtx.currentActivityItem.id
       );
       if (deletedSuccess) {

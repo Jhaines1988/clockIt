@@ -29,6 +29,9 @@ const updateActivitiesReducer = (state, action) => {
         }
         return item;
       });
+
+    case 'DELETE':
+      return state.filter((item) => item.id !== action.payload);
     default:
       return state;
   }

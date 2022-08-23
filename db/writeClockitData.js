@@ -64,7 +64,6 @@ export const resetCurrentWeek = async (id, weekData) => {
 };
 
 export const updateUserActivities = async (id, updatedActivities) => {
-  console.log('UPDATED', updatedActivities, id);
   try {
     await updateDoc(doc(db, id, 'activities'), {
       activities: updatedActivities,
