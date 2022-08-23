@@ -21,7 +21,9 @@ function ActivityInputContainer({
   async function onSaveHandler() {
     try {
       const newActivity = await addActivityToUserHomeScreen(activity, userId);
-
+      const updatedUserActivities = userCtx.userActivities;
+      updatedUserActivities.push(newActivity);
+      userCtx.updateUserActivities(updatedUserActivities);
       setActivity('');
     } catch (error) {
     } finally {
