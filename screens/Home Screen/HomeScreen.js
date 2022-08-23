@@ -1,27 +1,31 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import AddButton from '../../components/buttons/AddButton';
-import { AuthContext } from '../../store/Auth-Context';
-import LoadingOverlay from '../../components/auth/ui/LoadingOverlay';
+// components
 import ActivityInputContainer from '../../components/activityInput/ActivityInputContainer';
-import GradientView from '../../components/UI/BackgroundContainer';
 import ActivityFlatList from '../../components/ActivityListItems/ActivityFlatList';
-import WeekAndLogoDisplay from '../../components/UI/WeeKAndTitleDisplay';
-import useActivitiesSnapShot from '../../hooks/useActivitiesSnapShot';
+import LoadingOverlay from '../../components/auth/ui/LoadingOverlay';
+import AddButton from '../../components/buttons/AddButton';
+import GradientView from '../../components/UI/BackgroundContainer';
 import SettingsCog from '../../components/UI/SettingsCog';
 import SettingsModal from '../../components/UI/SettingsModal';
+import WeekAndLogoDisplay from '../../components/UI/WeeKAndTitleDisplay';
 
+// context
+import { AuthContext } from '../../store/Auth-Context';
+import { UserContext } from '../../store/User-Context.js';
+// hooks
+
+import useFetchUserActivities from '../../hooks/useFetchUserActivities';
 const HomeScreen = ({ navigation, route }) => {
   const authCtx = useContext(AuthContext);
+  const userCtx = useContext(UserContext);
   const userId = authCtx.userId;
   const [modalVisible, setModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [addingActivities, setAddingActivities] = useState(false);
-  const [usersCurrentActivities, isLoading, weekOf] = useActivitiesSnapShot(
-    addingActivities,
-    userId
-  );
+
+  const [isLoading, weekOf] = useFetchUserActivities(userId);
 
   function addingActivitiesToHomeScreenHandler() {
     setAddingActivities(!addingActivities);
@@ -33,10 +37,10 @@ const HomeScreen = ({ navigation, route }) => {
     setSettingsModalVisible(!settingsModalVisible);
   }
   function activityItemPressHandler(item) {
+    userCtx.setCurrentActivityItem(item);
+
     navigation.navigate('Clockit', {
       userId: userId,
-      activityObj: item,
-      currentActivities: usersCurrentActivities,
     });
   }
   if (isLoading) {
@@ -46,6 +50,7 @@ const HomeScreen = ({ navigation, route }) => {
       </GradientView>
     );
   }
+
   return (
     <GradientView style={styles.container}>
       <WeekAndLogoDisplay weekOf={weekOf.current} />
@@ -56,14 +61,13 @@ const HomeScreen = ({ navigation, route }) => {
         addingActivitiesToHomeScreenHandler={addingActivitiesToHomeScreenHandler}
       />
       <ActivityFlatList
-        data={usersCurrentActivities}
+        data={userCtx.activities}
         onItemPress={activityItemPressHandler}
-        extraData={addingActivities}
         keyExtractor={(item) => item.id}
       />
       <View style={styles.addButtonSettingsContainer}>
         <AddButton
-          numUserActivities={usersCurrentActivities.length}
+          numUserActivities={userCtx.activities.length}
           onPress={startStopAddActivityHandler}
         />
         <SettingsModal

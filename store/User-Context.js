@@ -1,74 +1,69 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useReducer } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getUserActivities } from '../db/readClockitData';
-import { Timestamp } from 'firebase/firestore';
-import { getStartAndEndOfWeek } from '../utils/DateTimeHelpers/getDay';
+
+const initialActivitiesState = [];
+
 export const UserContext = createContext({
   userId: '',
-  userActivities: [],
-  expirationDate: '',
-  startOfWeek: '',
-  setUserActivities: () => {},
-  getWeekStartStop: () => {},
-  setExpirationDate: () => {},
-  getExpirationDate: () => {},
+  currentActivityItem: {},
+  activities: initialActivitiesState,
+  setCurrentActivityItem: () => {},
+  dispatch: () => {},
   getUID: () => {},
   setUID: () => {},
 });
 
+const updateActivitiesReducer = (state, action) => {
+  switch (action.type) {
+    case 'INITIALIZE':
+      return action.payload;
+    case 'ADD':
+      const updatedState = state;
+      updatedState.push(action.payload);
+
+      return updatedState;
+    case 'UPDATE':
+      return state.map((item) => {
+        if (item.id === action.payload.id) {
+          item = action.payload;
+        }
+        return item;
+      });
+
+    case 'DELETE':
+      return state.filter((item) => item.id !== action.payload);
+    default:
+      return state;
+  }
+};
+
+const mergeArrays = (state, updatedItem) => {
+  return;
+};
+
 function UserContextProvider({ children }) {
   const [UID, setUID] = useState();
-  const [userActivitiesOnLoad, setUserActivitiesOnLoad] = useState([]);
-  const [expiration, setExpiration] = useState('');
-  const [startOfWeek, setStartOfWeek] = useState('');
-  const [endOfWeek, setEndOfWeek] = useState('');
+  const [currentActivityItem, setCurrentActivityItem] = useState({});
+  const [updatedActivities, dispatch] = useReducer(updateActivitiesReducer, initialActivitiesState);
   async function setUserId(userId) {
     setUID(userId);
-    // await AsyncStorage.setItem('uid', userId);
   }
+
   const getUserID = async () => {
     const id = await AsyncStorage.getItem('uid');
     return id;
   };
 
-  const getWeekStartStop = () => {
-    const [start, end] = getStartAndEndOfWeek();
-
-    setStartOfWeek(start);
-    setEndOfWeek(end);
+  const setCurrentActivityItemHandler = (item) => {
+    setCurrentActivityItem(item);
   };
 
-  const setExpirationDate = async (dateString) => {
-    try {
-      setExpiration(dateString);
-      await AsyncStorage.setItem('expiration', dateString);
-    } catch (error) {
-      console.log('DOES THIS ERROR EVEN THROW?', error);
-    }
-  };
-
-  const getExpirationDate = async () => {
-    let expiration = await AsyncStorage.getItem('expiration');
-    return expiration;
-  };
-  const setUserActivities = async (fetchedUserActivities) => {
-    try {
-      console.log('ANYTHING', fetchedUserActivities.activities);
-      setUserActivitiesOnLoad(fetchedUserActivities.activities);
-    } catch (error) {
-      console.log('Error In User Context setting User activities', error);
-    }
-  };
   const value = {
     userId: UID,
-    userActivities: userActivitiesOnLoad,
-    expirationDate: expiration,
-    startOfWeek: startOfWeek,
-    endOfWeek: endOfWeek,
-    setUserActivities: setUserActivities,
-    getWeekStartStop: getWeekStartStop,
-    setExpirationDate: setExpirationDate,
-    getExpirationDate: getExpirationDate,
+    currentActivityItem: currentActivityItem,
+    activities: updatedActivities,
+    setCurrentActivityItem: setCurrentActivityItemHandler,
+    dispatch: dispatch,
     getUID: getUserID,
     setUID: setUserId,
   };

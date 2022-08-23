@@ -16,8 +16,8 @@ function AuthContextProvider({ children }) {
   async function authenticate(token, uid) {
     setAuthToken(token);
     setUID(uid);
-    await AsyncStorage.setItem('token', token);
-    await AsyncStorage.setItem('uid', uid);
+    AsyncStorage.setItem('token', token);
+    AsyncStorage.setItem('uid', uid);
   }
 
   function logout() {

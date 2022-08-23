@@ -1,11 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, Modal, StyleSheet, TextInput, SafeAreaView } from 'react-native';
 import GradientView from '../../components/UI/BackgroundContainer';
 import ReusableUIButton from '../../components/buttons/ReusableUIButton';
+import { updateUserActivities } from '../../db/writeClockitData';
+import { UserContext } from '../../store/User-Context';
 import { ClockItColors } from '../../constants/styles';
 function RenameActivityScreen({ navigation, route }) {
+  const userCtx = useContext(UserContext);
   const [text, onChangeText] = useState('');
-  const name = route.params.activityObj.name;
+  const { userId } = route.params;
+  const renameActivityHandler = async () => {
+    if (!text.trim().length) {
+      return;
+    }
+    try {
+      userCtx.currentActivityItem.name = text;
+      userCtx.dispatch({ type: 'UPDATE', payload: userCtx.currentActivityItem });
+      await updateUserActivities(userId, userCtx.activities);
+    } catch (error) {
+      console.log('error Renaming your activity', error);
+    }
+  };
+
   return (
     <GradientView>
       <SafeAreaView style={styles.safeAreaWrapper}>
@@ -14,6 +30,7 @@ function RenameActivityScreen({ navigation, route }) {
         </View>
         <View style={styles.buttonContainer}>
           <ReusableUIButton
+            onPress={renameActivityHandler}
             buttonStyle={styles.button}
             buttonTextContainerStyle={styles.buttonTextContainer}
             buttonTextStyle={styles.buttonText}>
