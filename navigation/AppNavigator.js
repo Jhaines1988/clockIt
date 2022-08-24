@@ -59,7 +59,11 @@ const AuthenticatedStack = () => {
             ),
           }}
         />
-        <Stack.Screen name="RenameActivityScreen" component={RenameActivityScreen} />
+        <Stack.Screen
+          name="RenameActivityScreen"
+          options={{ headerTitle: '', headerBackTitle: 'Back' }}
+          component={RenameActivityScreen}
+        />
       </Stack.Navigator>
     </UserContextProvider>
   );

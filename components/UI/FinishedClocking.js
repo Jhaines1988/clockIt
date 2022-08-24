@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, Modal, StyleSheet, Button } from 'react-native';
 import { ClockItColors } from '../../constants/styles';
 import { useNavigation } from '@react-navigation/native';
-const FinishedClocking = ({ modalVisible, onPress }) => {
+const FinishedClocking = ({ modalVisible, displayText, onPress }) => {
   const navigation = useNavigation();
   return (
     <Modal
@@ -16,7 +16,7 @@ const FinishedClocking = ({ modalVisible, onPress }) => {
       <View style={styles.finishedContainer}>
         <View style={styles.modalTextIconContainer}>
           <Image style={styles.clockitIcon} source={require('../../assets/blueClockitIcon.png')} />
-          <Text style={styles.finishedText}> Woo! Clocked it!</Text>
+          <Text style={styles.finishedText}> {displayText}</Text>
           <Button title="Ok " onPress={onPress} />
         </View>
       </View>
