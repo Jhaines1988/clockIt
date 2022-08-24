@@ -7,8 +7,12 @@ import { AuthContext } from '../../store/Auth-Context';
 import { UserContext } from '../../store/User-Context';
 function LoginScreen() {
   const authCtx = useContext(AuthContext);
-  const userContext = useContext(UserContext);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const [isLogin, setIsLogin] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(true);
+  const resetLoginHandler = () => {
+    setIsLogin(!isLogin);
+  };
   const loginHandler = async ({ email, password }) => {
     setIsLoggingIn(true);
     try {
@@ -22,7 +26,13 @@ function LoginScreen() {
     }
   };
   if (isLoggingIn) return <LoadingOverlay message="Logging you In" />;
-  return <AuthContent isLogin onAuthenticate={loginHandler} />;
+  return (
+    <AuthContent
+      isLogin={isLogin}
+      resetLoginHandler={resetLoginHandler}
+      onAuthenticate={loginHandler}
+    />
+  );
 }
 
 export default LoginScreen;

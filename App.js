@@ -74,8 +74,6 @@ function Root() {
 
       if (token && uid) {
         authCtx.authenticate(token, uid);
-        // userCtx.setUID(uid);
-        console.log('APP.JS');
         setAppIsReady(true);
       } else {
         setAppIsReady(true);

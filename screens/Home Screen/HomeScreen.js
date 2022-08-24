@@ -11,6 +11,8 @@ import SettingsCog from '../../components/UI/SettingsCog';
 import SettingsModal from '../../components/UI/SettingsModal';
 import WeekAndLogoDisplay from '../../components/UI/WeeKAndTitleDisplay';
 
+//Helpers
+import { getStartOfWeek } from '../../utils/DateTimeHelpers/DateTimeHelpers';
 // context
 import { AuthContext } from '../../store/Auth-Context';
 import { UserContext } from '../../store/User-Context.js';
@@ -25,7 +27,7 @@ const HomeScreen = ({ navigation, route }) => {
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [addingActivities, setAddingActivities] = useState(false);
 
-  const [isLoading, weekOf] = useFetchUserActivities(userId);
+  const isLoading = useFetchUserActivities(userId);
 
   function addingActivitiesToHomeScreenHandler() {
     setAddingActivities(!addingActivities);
@@ -53,7 +55,7 @@ const HomeScreen = ({ navigation, route }) => {
 
   return (
     <GradientView style={styles.container}>
-      <WeekAndLogoDisplay weekOf={weekOf.current} />
+      <WeekAndLogoDisplay weekOf={getStartOfWeek()} />
       <ActivityInputContainer
         userId={userId}
         modalVisible={modalVisible}

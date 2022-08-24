@@ -1,27 +1,16 @@
 import { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import FlatButton from '../buttons/FlatButton';
-import AuthForm from './AuthForm';
-import { auth, db } from '../../firebase';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import ClockItLogo from '../UI/ClockItLogo';
+import AuthForm from './AuthForm';
 
-function AuthContent({ isLogin, onAuthenticate }) {
+function AuthContent({ isLogin, onAuthenticate, resetLoginHandler }) {
   const [credentialsInvalid, setCredentialsInvalid] = useState({
     email: false,
     password: false,
     confirmEmail: false,
     confirmPassword: false,
   });
-  const navigation = useNavigation();
-  function switchAuthModeHandler() {
-    if (isLogin) {
-      navigation.replace('Signup');
-    } else {
-      navigation.replace('Login');
-    }
-  }
 
   async function submitHandler(credentials) {
     let { email, confirmEmail, password, confirmPassword, userName } = credentials;
@@ -60,7 +49,7 @@ function AuthContent({ isLogin, onAuthenticate }) {
         credentialsInvalid={credentialsInvalid}
       />
       <View style={styles.buttons}>
-        <FlatButton onPress={switchAuthModeHandler}>
+        <FlatButton onPress={resetLoginHandler}>
           {isLogin ? 'Create a new user' : 'Log in instead'}
         </FlatButton>
       </View>

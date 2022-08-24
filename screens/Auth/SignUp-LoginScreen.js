@@ -1,18 +1,33 @@
+import React from 'react';
+import { StyleSheet, Text, View, Alert } from 'react-native';
 import { useContext, useState } from 'react';
 import AuthContent from '../../components/auth/AuthContent';
 import { AuthContext } from '../../store/Auth-Context';
-import { signUp } from '../../utils/Auth';
-
+import { signUp, login } from '../../utils/Auth';
 import LoadingOverlay from '../../components/auth/ui/LoadingOverlay';
 
-function SignupScreen() {
+const SignUpLoginScreen = () => {
   const authCtx = useContext(AuthContext);
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
-
   const resetLoginHandler = () => {
     setIsLogin(!isLogin);
   };
+
+  const loginHandler = async ({ email, password }) => {
+    setIsLoggingIn(true);
+    try {
+      let [token, uid] = await login(email, password);
+      if (token && uid) {
+        authCtx.authenticate(token, uid);
+      }
+    } catch (error) {
+      Alert.alert(`${error.message}`);
+      setIsLoggingIn(false);
+    }
+  };
+
   const signUpHandler = async ({ email, password, userName }) => {
     setIsAuthenticating(true);
     try {
@@ -28,15 +43,17 @@ function SignupScreen() {
     }
   };
 
-  if (isAuthenticating) return <LoadingOverlay message="Creating a User..." />;
-
+  if (isLoggingIn || isAuthenticating)
+    return <LoadingOverlay message={isLogin ? 'Logging you In' : 'Creating A User...'} />;
   return (
     <AuthContent
       isLogin={isLogin}
       resetLoginHandler={resetLoginHandler}
-      onAuthenticate={signUpHandler}
+      onAuthenticate={isLogin ? loginHandler : signUpHandler}
     />
   );
-}
+};
 
-export default SignupScreen;
+export default SignUpLoginScreen;
+
+const styles = StyleSheet.create({});

@@ -1,4 +1,4 @@
-import { setDoc, updateDoc, doc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
 export const deleteItemFromActivitiesList = async (userId, items, itemIdToRemove) => {
