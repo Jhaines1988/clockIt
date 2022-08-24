@@ -1,16 +1,18 @@
-import { useState, useContext } from 'react';
+import { useContext, useState } from 'react';
 import AuthContent from '../../components/auth/AuthContent';
 import { AuthContext } from '../../store/Auth-Context';
-import { UserContext } from '../../store/User-Context';
 import { signUp } from '../../utils/Auth';
 
 import LoadingOverlay from '../../components/auth/ui/LoadingOverlay';
 
 function SignupScreen() {
   const authCtx = useContext(AuthContext);
-  const userContext = useContext(UserContext);
+  const [isLogin, setIsLogin] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
+  const resetLoginHandler = () => {
+    setIsLogin(!isLogin);
+  };
   const signUpHandler = async ({ email, password, userName }) => {
     setIsAuthenticating(true);
     try {
@@ -28,7 +30,13 @@ function SignupScreen() {
 
   if (isAuthenticating) return <LoadingOverlay message="Creating a User..." />;
 
-  return <AuthContent isLogin={false} onAuthenticate={signUpHandler} />;
+  return (
+    <AuthContent
+      isLogin={isLogin}
+      resetLoginHandler={resetLoginHandler}
+      onAuthenticate={signUpHandler}
+    />
+  );
 }
 
 export default SignupScreen;

@@ -113,6 +113,7 @@ const ClockItScreen = ({ navigation, route }) => {
         modalVisible={isFinished}
         displayText="Woo! Clocked It!"
         onPress={dismissModalHandler}
+        screenToNavigateTo="Home"
       />
       <StopWatch addDataToFirebase={finishedHandler} name={userCtx.currentActivityItem.name} />
     </GradientView>

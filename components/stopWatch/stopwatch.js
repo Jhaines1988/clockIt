@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import displayTime from '../../utils/padNumToTwo';
-import { ClockItColors } from '../../constants/styles';
+import React, { useRef, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import {
   FinishButton,
   ResetButton,
 } from '../../components/buttons/StopWatchButtons/TimeControlButtons';
+import { ClockItColors } from '../../constants/styles';
+import displayTime from '../../utils/padNumToTwo';
 
 const StopWatch = ({ addDataToFirebase, name }) => {
   const [time, setTime] = useState(0);
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   timeDisplay: {
     fontSize: 60,
     flex: 1,
-    paddingLeft: 40,
+    paddingHorizontal: 50,
     fontFamily: 'Manrope_800ExtraBold',
     color: 'white',
   },

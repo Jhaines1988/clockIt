@@ -1,11 +1,11 @@
-import React, { useState, useContext, useRef } from 'react';
-import { View, Text, Modal, StyleSheet, TextInput, SafeAreaView } from 'react-native';
-import GradientView from '../../components/UI/BackgroundContainer';
+import React, { useContext, useRef, useState } from 'react';
+import { SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 import ReusableUIButton from '../../components/buttons/ReusableUIButton';
+import GradientView from '../../components/UI/BackgroundContainer';
+import FinishedClocking from '../../components/UI/FinishedClocking';
+import { ClockItColors } from '../../constants/styles';
 import { updateUserActivities } from '../../db/writeClockitData';
 import { UserContext } from '../../store/User-Context';
-import { ClockItColors } from '../../constants/styles';
-import FinishedClocking from '../../components/UI/FinishedClocking';
 function RenameActivityScreen({ navigation, route }) {
   const userCtx = useContext(UserContext);
   const [modalVisible, setModalVisible] = useState(false);
