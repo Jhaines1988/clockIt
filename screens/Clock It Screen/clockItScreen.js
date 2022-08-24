@@ -65,7 +65,8 @@ const ClockItScreen = ({ navigation, route }) => {
       const deletedSuccess = await deleteItemFromActivitiesList(
         userId,
         userCtx.activities,
-        userCtx.currentActivityItem.id
+        userCtx.currentActivityItem.id,
+        userCtx.currentActivityItem.name
       );
       if (deletedSuccess) {
         Alert.alert('Activity Successfully Deleted');

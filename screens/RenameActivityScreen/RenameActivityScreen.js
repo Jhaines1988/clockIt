@@ -4,7 +4,7 @@ import ReusableUIButton from '../../components/buttons/ReusableUIButton';
 import GradientView from '../../components/UI/BackgroundContainer';
 import FinishedClocking from '../../components/UI/FinishedClocking';
 import { ClockItColors } from '../../constants/styles';
-import { updateUserActivities } from '../../db/writeClockitData';
+import { updateUserActivities, updateNamesInUsersCurrentWeek } from '../../db/writeClockitData';
 import { UserContext } from '../../store/User-Context';
 function RenameActivityScreen({ navigation, route }) {
   const userCtx = useContext(UserContext);
@@ -20,6 +20,11 @@ function RenameActivityScreen({ navigation, route }) {
       userCtx.currentActivityItem.name = text;
       userCtx.dispatch({ type: 'UPDATE', payload: userCtx.currentActivityItem });
       await updateUserActivities(userId, userCtx.activities);
+      await updateNamesInUsersCurrentWeek(
+        userId,
+        originalName.current,
+        userCtx.currentActivityItem.name
+      );
       handleModalOpenClose();
     } catch (error) {
       console.log('error Renaming your activity', error);
