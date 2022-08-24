@@ -36,6 +36,7 @@ function RenameActivityScreen({ navigation, route }) {
         modalVisible={modalVisible}
         onPress={handleModalOpenClose}
         displayText={`Renamed ${originalName.current} to ${text}`}
+        screenToNavigateTo={{ name: 'Clockit', params: { userId } }}
       />
       <View style={styles.originalNameContainer}>
         <Text style={styles.heading}> Rename</Text>

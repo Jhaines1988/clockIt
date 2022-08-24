@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, Modal, StyleSheet, Button } from 'react-native';
 import { ClockItColors } from '../../constants/styles';
 import { useNavigation } from '@react-navigation/native';
-const FinishedClocking = ({ modalVisible, displayText, onPress }) => {
+const FinishedClocking = ({ modalVisible, displayText, onPress, screenToNavigateTo }) => {
   const navigation = useNavigation();
   return (
     <Modal
@@ -11,7 +11,7 @@ const FinishedClocking = ({ modalVisible, displayText, onPress }) => {
       transparent={true}
       presentationStyle="overFullScreen"
       onDismiss={() => {
-        navigation.navigate('Home');
+        navigation.navigate(screenToNavigateTo);
       }}>
       <View style={styles.finishedContainer}>
         <View style={styles.modalTextIconContainer}>
