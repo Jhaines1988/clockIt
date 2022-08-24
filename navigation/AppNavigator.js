@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Text } from 'react-native';
+import React, { useContext } from 'react';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // context
 import { AuthContext } from '../store/Auth-Context';
 import UserContextProvider, { UserContext } from '../store/User-Context';
 // screens
-import LoginScreen from '../screens/Auth/LoginScreen';
-import SignupScreen from '../screens/Auth/SignupScreen';
+
 import SignUpLoginScreen from '../screens/Auth/SignUp-LoginScreen';
 import HomeScreen from '../screens/Home Screen/HomeScreen';
 import ClockItScreen from '../screens/Clock It Screen/clockItScreen';
@@ -17,8 +16,7 @@ import RenameActivityScreen from '../screens/RenameActivityScreen/RenameActivity
 import { ClockItColors } from '../constants/styles';
 // components
 import IconButton from '../components/buttons/IconButton';
-import { onAuthStateChanged, getAuth } from 'firebase/auth';
-import { deleteItemFromActivitiesList } from '../db/deleteClockitData';
+
 const Stack = createNativeStackNavigator();
 
 //

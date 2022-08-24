@@ -1,6 +1,6 @@
-import { useState, useEffect, useContext, useRef } from 'react';
-import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
+import { useContext, useEffect, useState } from 'react';
+import { db } from '../firebase';
 import { UserContext } from '../store/User-Context';
 function useFetchUserActivities(userId) {
   const userCtx = useContext(UserContext);
