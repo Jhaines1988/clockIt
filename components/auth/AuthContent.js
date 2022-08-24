@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import FlatButton from '../buttons/FlatButton';
@@ -12,15 +11,6 @@ function AuthContent({ isLogin, onAuthenticate, resetLoginHandler }) {
     confirmEmail: false,
     confirmPassword: false,
   });
-  const navigation = useNavigation();
-  // function switchAuthModeHandler() {
-  //   // if (isLogin) {
-  //   //   navigation.replace('Signup');
-  //   // } else {
-  //   //   navigation.replace('Login');
-  //   // }
-  //   resetLoginHandler();
-  // }
 
   async function submitHandler(credentials) {
     let { email, confirmEmail, password, confirmPassword, userName } = credentials;

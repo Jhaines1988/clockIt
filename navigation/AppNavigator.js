@@ -8,7 +8,7 @@ import UserContextProvider, { UserContext } from '../store/User-Context';
 // screens
 import LoginScreen from '../screens/Auth/LoginScreen';
 import SignupScreen from '../screens/Auth/SignupScreen';
-
+import SignUpLoginScreen from '../screens/Auth/SignUp-LoginScreen';
 import HomeScreen from '../screens/Home Screen/HomeScreen';
 import ClockItScreen from '../screens/Clock It Screen/clockItScreen';
 import RenameActivityScreen from '../screens/RenameActivityScreen/RenameActivityScreen';
@@ -29,8 +29,7 @@ function AuthStack() {
         headerShown: false,
         contentStyle: { backgroundColor: ClockItColors.blue },
       }}>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="SignupLogin" component={SignUpLoginScreen} />
     </Stack.Navigator>
   );
 }
