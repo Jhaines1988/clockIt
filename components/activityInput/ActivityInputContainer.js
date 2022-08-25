@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, Modal, StyleSheet } from 'react-native';
+import { View, Text, Modal, StyleSheet, Alert } from 'react-native';
 import ActivityInput from './ActivityInput';
 import { addActivityToUserHomeScreen } from '../../db/writeClockitData';
 import GradientView from '../UI/BackgroundContainer';
@@ -19,13 +19,21 @@ function ActivityInputContainer({
   }
 
   async function onSaveHandler() {
+    if (userCtx.activities.some((item) => item.name === activity)) {
+      Alert.alert('Please make your activity names unique');
+      setActivity('');
+      return;
+    }
     try {
       const newActivity = await addActivityToUserHomeScreen(activity, userId);
+
       userCtx.dispatch({ type: 'ADD', payload: newActivity });
       setActivity('');
     } catch (error) {
       // throw errors from dispatch here
       // ex if theres two items with the same name etc.
+
+      return;
     } finally {
       addingActivitiesToHomeScreenHandler();
       onClose();
