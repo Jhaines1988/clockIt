@@ -1,20 +1,10 @@
+import { arrayUnion, doc, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { findDay } from '../utils/DateTimeHelpers/getDay';
-import {
-  addDoc,
-  setDoc,
-  updateDoc,
-  doc,
-  getDocs,
-  collection,
-  Timestamp,
-  getDoc,
-  arrayUnion,
-} from 'firebase/firestore';
-import { convertCentiSecondsToHMS, padTo2Digits } from '../utils/convertCentisecondstoHMS';
+import { findDay, getStartAndEndOfWeek } from '../utils/DateTimeHelpers/getDay';
 
 /* ADD ACTIVITY DATA TO HOME SCREEN  */
 
+// utitlity function that  creates a data object //
 function createActivityData(activityName) {
   const activity = {
     name: activityName,
@@ -23,81 +13,83 @@ function createActivityData(activityName) {
   };
   return activity;
 }
-export const addActivityData = async (activity, userId) => {
-  const docData = createActivityData(activity);
-  try {
-    const postData = await setDoc(doc(db, userId, 'activities'), docData);
-  } catch (error) {
-    console.log(error);
-  }
-};
 
+// adding Activities to the home screen
 export const addActivityToUserHomeScreen = async (activity, userId) => {
+  const dayOfWeek = findDay().getDay();
   try {
     const docData = createActivityData(activity);
     const postData = await updateDoc(
       doc(db, userId, 'activities'),
 
-      { activities: arrayUnion(docData) }
+      { weeklyActivities: arrayUnion(docData) }
     );
+
     return docData;
   } catch (error) {
     console.log('Error adding activity', error);
   }
 };
 
-/*   Methods for instantiating a new piece of "WEEK" data for the user when the current week has expired.  */
+export const addToHistory = async (id, dataFromLastWeek) => {
+  const year = new Date().getFullYear().toString();
 
-export const addToHistory = async (id, firstWeekLabel, previousWeekData) => {
+  const docData = {};
+
+  dataFromLastWeek.weeklyActivities.forEach((activity) => {
+    const name = activity.name;
+    docData[name] = { ...activity };
+  });
+
+  docData.startedAt = dataFromLastWeek.startedAt;
+  docData.expiredAt = dataFromLastWeek.expiresAt;
   try {
-    await setDoc(doc(db, id, 'Previous Weeks', 'history', firstWeekLabel), previousWeekData);
+    const startOfWeek = dataFromLastWeek.startedAt.toDate();
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    await setDoc(doc(db, id, 'History', year, startOfWeek.toISOString()), docData);
   } catch (error) {
+    console.log(error);
     throw new Error({ message: error.message });
   }
 };
-export const resetCurrentWeek = async (id, weekData) => {
+
+// creates a new week in the document 'currentWeek' when the current week has expired
+
+export const instantiateNewActivitiesDocument = async (id, activities = []) => {
+  const [startOfWeek, endOfWeek] = getStartAndEndOfWeek();
+  startOfWeek.setHours(0, 0, 0, 0);
+  let weekData = {
+    weekOf: startOfWeek.toLocaleDateString(),
+    expiresAt: Timestamp.fromDate(endOfWeek),
+    startedAt: startOfWeek,
+    weeklyActivities: activities,
+  };
+
   try {
-    await setDoc(doc(db, id, 'Week Data'), weekData);
+    await setDoc(doc(db, id, 'activities'), weekData);
   } catch (error) {
+    console.log('Error Instantiating new Activities document', error);
     throw new Error({ message: error.message });
   }
 };
 
+/* Methods for adding data from stop watch */
+
+export const onStopWatchFinish = async (userId, currentActivities) => {
+  try {
+    await updateUserActivities(userId, currentActivities);
+  } catch (error) {
+    console.log('Error in "On Stop Watch Finish ":', error.message);
+  }
+};
 export const updateUserActivities = async (id, updatedActivities) => {
   try {
     await updateDoc(doc(db, id, 'activities'), {
-      activities: updatedActivities,
+      weeklyActivities: updatedActivities,
     });
   } catch (error) {
     console.log('Error Updating user Activities:', error);
     throw new Error(error);
-  }
-};
-
-export const renameActivity = async (id, activities, activityObj) => {};
-/* Methods for adding data from stop watch */
-
-export const updateActivityTimeOnFinish = async (userId, updatedActivity) => {
-  try {
-    const dayOfWeek = findDay().getDay();
-    const name = updatedActivity.name;
-    await setDoc(
-      doc(db, userId, 'currentWeek'),
-
-      { [dayOfWeek]: { [name]: updatedActivity } },
-      { merge: true }
-    );
-  } catch (error) {
-    console.log('Error in updateActivityTimeOnFinish:', error);
-  }
-};
-export const onStopWatchFinish = async (userId, activityObject, currentActivities) => {
-  // activityObject.totalTime += timeFromStopWatch;
-
-  try {
-    await updateActivityTimeOnFinish(userId, activityObject);
-    await updateUserActivities(userId, currentActivities);
-  } catch (error) {
-    console.log('Error in "On Stop Watch Finish ":', error.message);
   }
 };

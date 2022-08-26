@@ -18,8 +18,8 @@ function RenameActivityScreen({ navigation, route }) {
     }
     try {
       userCtx.currentActivityItem.name = text;
-      userCtx.dispatch({ type: 'UPDATE', payload: userCtx.currentActivityItem });
       await updateUserActivities(userId, userCtx.activities);
+      userCtx.dispatch({ type: 'RENAME', payload: userCtx.currentActivityItem });
       handleModalOpenClose();
     } catch (error) {
       console.log('error Renaming your activity', error);

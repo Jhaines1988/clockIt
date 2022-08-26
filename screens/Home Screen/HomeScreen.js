@@ -45,6 +45,7 @@ const HomeScreen = ({ navigation, route }) => {
       userId: userId,
     });
   }
+
   if (isLoading) {
     return (
       <GradientView>
