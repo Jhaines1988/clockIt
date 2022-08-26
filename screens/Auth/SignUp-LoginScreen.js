@@ -31,8 +31,8 @@ const SignUpLoginScreen = () => {
   const signUpHandler = async ({ email, password, userName }) => {
     setIsAuthenticating(true);
     try {
-      let [token, uid, expiryTime] = await signUp(email, password, userName);
-      if (token && uid && expiryTime) {
+      let [token, uid] = await signUp(email, password, userName);
+      if (token && uid) {
         authCtx.authenticate(token, uid);
       }
     } catch (error) {

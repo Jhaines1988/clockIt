@@ -51,24 +51,28 @@ const ClockItScreen = ({ navigation, route }) => {
   };
 
   async function addDataToFirebase(time) {
-    userCtx.currentActivityItem.totalTime += time;
-    userCtx.dispatch({ type: 'UPDATE', payload: userCtx.currentActivityItem });
+    // userCtx.currentActivityItem.totalTime += time;
+    userCtx.dispatch({
+      type: 'UPDATE',
+      payload: { updatedActivity: userCtx.currentActivityItem, time },
+    });
     try {
-      await onStopWatchFinish(userId, userCtx.currentActivityItem, userCtx.activities);
+      await onStopWatchFinish(userId, userCtx.activities);
     } catch (error) {
       console.log('Error Writing Activity to Firebase', error);
     }
   }
   const deleteActivityHandler = async () => {
+    console.log(userCtx.activities, 'in clockit screen');
     try {
-      userCtx.dispatch({ type: 'DELETE', payload: userCtx.currentActivityItem.id });
-      const deletedSuccess = await deleteItemFromActivitiesList(
+      const updatedArray = await deleteItemFromActivitiesList(
         userId,
         userCtx.activities,
-        userCtx.currentActivityItem.id,
-        userCtx.currentActivityItem.name
+        userCtx.currentActivityItem.id
       );
-      if (deletedSuccess) {
+      if (updatedArray) {
+        userCtx.dispatch({ type: 'DELETE', payload: updatedArray });
+        closeConfirmDeleteModalHandler();
         Alert.alert('Activity Successfully Deleted');
         setTimeout(() => {
           navigation.navigate('Home');

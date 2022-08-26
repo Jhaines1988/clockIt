@@ -1,34 +1,25 @@
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
   onAuthStateChanged,
   sendEmailVerification,
+  signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { Timestamp } from 'firebase/firestore';
-import { doc, setDoc, getDoc, collection } from 'firebase/firestore';
-import { db, auth } from '../firebase';
-import {
-  findTheNextSunday,
-  findDay,
-  getNextExpiryDate,
-  getStartAndEndOfWeek,
-} from './DateTimeHelpers/getDay';
+import { doc, setDoc, Timestamp } from 'firebase/firestore';
+import { auth, db } from '../firebase';
+import { getStartAndEndOfWeek } from './DateTimeHelpers/getDay';
 
 const instantiateNewUser = async (id) => {
   let [startOfWeek, endOfWeek] = getStartAndEndOfWeek();
-  const expiryDate = endOfWeek.toISOString();
+  startOfWeek.setHours(0, 0, 0, 0);
   let weekData = {
+    startedAt: startOfWeek,
     weekOf: startOfWeek.toLocaleDateString(),
     expiresAt: Timestamp.fromDate(endOfWeek),
-    activities: [],
+    weeklyActivities: [],
   };
 
-  let firstWeekLabel = endOfWeek.toISOString();
   try {
-    await setDoc(doc(db, id, 'currentWeek'), { expiresAt: endOfWeek, startedAt: startOfWeek });
     await setDoc(doc(db, id, 'activities'), weekData);
-    await setDoc(doc(db, id, 'Previous Weeks', 'history', firstWeekLabel), {});
-    return weekData.expiresAt.valueOf();
   } catch (error) {
     console.log(error, '<====');
   }
@@ -43,10 +34,10 @@ export const signUp = async (email, password, userName) => {
       email: email,
     });
 
-    const expiryTime = await instantiateNewUser(user.uid);
+    await instantiateNewUser(user.uid);
     const token = user.stsTokenManager.accessToken;
     const uid = user.uid;
-    return [token, uid, expiryTime];
+    return [token, uid];
   } catch (error) {
     const errorCode = error.code;
     const errorMessage = error.message;

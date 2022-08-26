@@ -1,6 +1,6 @@
 import { createContext, useState, useReducer } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { findDay } from '../utils/DateTimeHelpers/getDay';
 const initialActivitiesState = [];
 
 export const UserContext = createContext({
@@ -9,6 +9,7 @@ export const UserContext = createContext({
   activities: initialActivitiesState,
   setCurrentActivityItem: () => {},
   dispatch: () => {},
+
   getUID: () => {},
   setUID: () => {},
 });
@@ -17,34 +18,42 @@ const updateActivitiesReducer = (state, action) => {
   switch (action.type) {
     case 'INITIALIZE':
       return action.payload;
-    case 'ADD':
-      const updatedState = state;
-      updatedState.push(action.payload);
 
-      return updatedState;
+    case 'ADD':
+      const addedActivitiesState = state;
+      addedActivitiesState.push(action.payload);
+      return addedActivitiesState;
     case 'UPDATE':
+      const updatedWeeklyArray = state.map((item) => {
+        if (item.id === action.payload.updatedActivity.id) {
+          const day = findDay().toDateString();
+          item.totalTime += action.payload.time;
+          item[day] ? (item[day] += action.payload.time) : (item[day] = action.payload.time);
+        }
+        return item;
+      });
+
+      return updatedWeeklyArray;
+
+    case 'DELETE':
+      return action.payload;
+    case 'RENAME':
       return state.map((item) => {
         if (item.id === action.payload.id) {
           item = action.payload;
         }
         return item;
       });
-
-    case 'DELETE':
-      return state.filter((item) => item.id !== action.payload);
     default:
       return state;
   }
-};
-
-const mergeArrays = (state, updatedItem) => {
-  return;
 };
 
 function UserContextProvider({ children }) {
   const [UID, setUID] = useState();
   const [currentActivityItem, setCurrentActivityItem] = useState({});
   const [updatedActivities, dispatch] = useReducer(updateActivitiesReducer, initialActivitiesState);
+
   async function setUserId(userId) {
     setUID(userId);
   }
@@ -62,8 +71,10 @@ function UserContextProvider({ children }) {
     userId: UID,
     currentActivityItem: currentActivityItem,
     activities: updatedActivities,
+
     setCurrentActivityItem: setCurrentActivityItemHandler,
     dispatch: dispatch,
+
     getUID: getUserID,
     setUID: setUserId,
   };
