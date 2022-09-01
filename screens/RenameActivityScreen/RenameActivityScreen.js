@@ -4,7 +4,7 @@ import ReusableUIButton from '../../components/buttons/ReusableUIButton';
 import GradientView from '../../components/UI/BackgroundContainer';
 import FinishedClocking from '../../components/UI/FinishedClocking';
 import { ClockItColors } from '../../constants/styles';
-import { updateUserActivities } from '../../db/writeClockitData';
+import { renameActivityInHistory, updateUserActivities } from '../../db/writeClockitData';
 import { UserContext } from '../../store/User-Context';
 function RenameActivityScreen({ navigation, route }) {
   const userCtx = useContext(UserContext);
@@ -19,6 +19,7 @@ function RenameActivityScreen({ navigation, route }) {
     try {
       userCtx.currentActivityItem.name = text;
       await updateUserActivities(userId, userCtx.activities);
+      await renameActivityInHistory(userId, userCtx.currentActivityItem.id, text);
       userCtx.dispatch({ type: 'RENAME', payload: userCtx.currentActivityItem });
       handleModalOpenClose();
     } catch (error) {

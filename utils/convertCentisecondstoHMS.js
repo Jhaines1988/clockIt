@@ -12,5 +12,5 @@ export const convertCentiSecondsToHMS = (centiseconds) => {
   minutes = minutes % 60;
   // hours = hours % 24;
 
-  return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
+  return `${padTo2Digits(hours)}h:${padTo2Digits(minutes)}m:${padTo2Digits(seconds)}s`;
 };

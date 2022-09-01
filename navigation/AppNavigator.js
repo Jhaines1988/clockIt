@@ -5,13 +5,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // context
 import { AuthContext } from '../store/Auth-Context';
 import UserContextProvider, { UserContext } from '../store/User-Context';
+import HistoryContextProvider from '../store/History-Context';
 // screens
 
 import SignUpLoginScreen from '../screens/Auth/SignUp-LoginScreen';
 import HomeScreen from '../screens/Home Screen/HomeScreen';
 import ClockItScreen from '../screens/Clock It Screen/clockItScreen';
 import RenameActivityScreen from '../screens/RenameActivityScreen/RenameActivityScreen';
-
+import HistoryScreen from '../screens/History Screen/HistoryScreen';
 // helpers
 import { ClockItColors } from '../constants/styles';
 // components
@@ -34,34 +35,33 @@ function AuthStack() {
 const AuthenticatedStack = () => {
   return (
     <UserContextProvider>
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: { backgroundColor: ClockItColors.blue },
-          headerTintColor: 'white',
-        }}>
-        <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-        <Stack.Screen
-          name="Clockit"
-          component={ClockItScreen}
-          options={{
-            headerTitle: '',
-            headerBackTitle: 'Back',
-            headerRight: ({ tintColor }) => (
-              <IconButton
-                icon="ellipsis-vertical-outline"
-                color={tintColor}
-                size={24}
-                onPress={() => {}}
-              />
-            ),
-          }}
-        />
-        <Stack.Screen
-          name="RenameActivityScreen"
-          options={{ headerTitle: '', headerBackTitle: 'Back' }}
-          component={RenameActivityScreen}
-        />
-      </Stack.Navigator>
+      <HistoryContextProvider>
+        <Stack.Navigator
+          screenOptions={{
+            headerStyle: { backgroundColor: ClockItColors.blue },
+            headerTintColor: 'white',
+          }}>
+          <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+          <Stack.Screen
+            name="Clockit"
+            component={ClockItScreen}
+            options={{
+              headerTitle: '',
+              headerBackTitle: 'Back',
+            }}
+          />
+          <Stack.Screen
+            name="RenameActivityScreen"
+            options={{ headerTitle: '', headerBackTitle: 'Back' }}
+            component={RenameActivityScreen}
+          />
+          <Stack.Screen
+            name="HistoryScreen"
+            options={{ headerTitle: '', headerBackTitle: 'Back' }}
+            component={HistoryScreen}
+          />
+        </Stack.Navigator>
+      </HistoryContextProvider>
     </UserContextProvider>
   );
 };

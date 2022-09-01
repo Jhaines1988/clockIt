@@ -1,11 +1,14 @@
 import { FlatList, StyleSheet, SafeAreaView } from 'react-native';
 import ActivityListItem from './ActivityListItems';
 
-const ActivityFlatList = ({ data, keyExtractor, extraData, onItemPress }) => {
+const ActivityFlatList = ({ data, keyExtractor, extraData, onItemPress, onLongItemPress }) => {
   const renderItem = ({ item }) => {
     return (
       <ActivityListItem
         item={item}
+        onLongPress={() => {
+          onLongItemPress(item);
+        }}
         onPress={() => {
           onItemPress(item);
         }}
