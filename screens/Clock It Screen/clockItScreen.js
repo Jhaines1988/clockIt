@@ -16,17 +16,24 @@ import { UserContext } from '../../store/User-Context';
 
 import { onStopWatchFinish } from '../../db/writeClockitData';
 import { deleteItemFromActivitiesList } from '../../db/deleteClockitData';
+import ManualTimeInput from '../../components/manualTimeInput/ManualTimeInput';
 
 const ClockItScreen = ({ navigation, route }) => {
   const userCtx = useContext(UserContext);
   const [isFinished, setIsFinished] = useState(false);
   const [editingModalOpen, setEditingModalOpen] = useState(false);
   const [confirmingDeleteModalOpen, setConfirmingDeleteModalOpen] = useState(false);
+  const [manualTimeInputVisible, setManualTimeInputVisible] = useState(false);
+
   const { userId } = route.params;
   const editingModalHandler = () => {
     setEditingModalOpen(!editingModalOpen);
   };
 
+  const manualTimeInputVisibleHandler = () => {
+    setEditingModalOpen(false);
+    setManualTimeInputVisible(!manualTimeInputVisible);
+  };
   const openConfirmDeleteModalHandler = () => {
     setEditingModalOpen(false);
     setConfirmingDeleteModalOpen(true);
@@ -51,7 +58,6 @@ const ClockItScreen = ({ navigation, route }) => {
   };
 
   async function addDataToFirebase(time) {
-    // userCtx.currentActivityItem.totalTime += time;
     userCtx.dispatch({
       type: 'UPDATE',
       payload: { updatedActivity: userCtx.currentActivityItem, time },
@@ -63,7 +69,6 @@ const ClockItScreen = ({ navigation, route }) => {
     }
   }
   const deleteActivityHandler = async () => {
-    console.log(userCtx.activities, 'in clockit screen');
     try {
       const updatedArray = await deleteItemFromActivitiesList(
         userId,
@@ -111,6 +116,7 @@ const ClockItScreen = ({ navigation, route }) => {
       <EditActivityModal
         modalVisible={editingModalOpen}
         onPress={editingModalHandler}
+        onManualEntryButtonPress={manualTimeInputVisibleHandler}
         onRenameButtonPress={renameActivityHandler}
         onDeleteButtonPress={openConfirmDeleteModalHandler}
       />
@@ -120,6 +126,7 @@ const ClockItScreen = ({ navigation, route }) => {
         onPress={dismissModalHandler}
         screenToNavigateTo="Home"
       />
+      <ManualTimeInput modalVisible={manualTimeInputVisible} />
       <StopWatch addDataToFirebase={finishedHandler} name={userCtx.currentActivityItem.name} />
     </GradientView>
   );
