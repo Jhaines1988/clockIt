@@ -1,10 +1,17 @@
 import React, { useContext, useRef, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import ReusableUIButton from '../../components/buttons/ReusableUIButton';
 import GradientView from '../../components/UI/BackgroundContainer';
 import FinishedClocking from '../../components/UI/FinishedClocking';
 import { ClockItColors } from '../../constants/styles';
-import { updateUserActivities } from '../../db/writeClockitData';
+import { renameActivityInHistory, updateUserActivities } from '../../db/writeClockitData';
 import { UserContext } from '../../store/User-Context';
 function RenameActivityScreen({ navigation, route }) {
   const userCtx = useContext(UserContext);
@@ -19,6 +26,7 @@ function RenameActivityScreen({ navigation, route }) {
     try {
       userCtx.currentActivityItem.name = text;
       await updateUserActivities(userId, userCtx.activities);
+      await renameActivityInHistory(userId, userCtx.currentActivityItem.id, text);
       userCtx.dispatch({ type: 'RENAME', payload: userCtx.currentActivityItem });
       handleModalOpenClose();
     } catch (error) {
@@ -32,36 +40,46 @@ function RenameActivityScreen({ navigation, route }) {
 
   return (
     <GradientView>
-      <FinishedClocking
-        modalVisible={modalVisible}
-        onPress={handleModalOpenClose}
-        displayText={`Renamed ${originalName.current} to ${text}`}
-        screenToNavigateTo={{ name: 'Clockit', params: { userId } }}
-      />
-      <View style={styles.originalNameContainer}>
-        <Text style={styles.heading}> Rename</Text>
-        <Text style={styles.originalName}>{originalName.current}</Text>
-      </View>
-      <SafeAreaView style={styles.safeAreaWrapper}>
-        <View style={styles.textInputContainer}>
-          <TextInput placeholder="" style={styles.input} onChangeText={onChangeText} value={text} />
+      <KeyboardAvoidingView behavior="padding" style={styles.keyBoardAvoidingView}>
+        <FinishedClocking
+          modalVisible={modalVisible}
+          onPress={handleModalOpenClose}
+          displayText={`Renamed ${originalName.current} to ${text}`}
+          screenToNavigateTo={{ name: 'Clockit', params: { userId } }}
+        />
+        <View style={styles.originalNameContainer}>
+          <Text style={styles.heading}> Rename</Text>
+          <Text style={styles.originalName}>{originalName.current}</Text>
         </View>
-        <View style={styles.buttonContainer}>
-          <ReusableUIButton
-            onPress={renameActivityHandler}
-            buttonStyle={styles.button}
-            buttonTextContainerStyle={styles.buttonTextContainer}
-            buttonTextStyle={styles.buttonText}>
-            Rename
-          </ReusableUIButton>
-        </View>
-      </SafeAreaView>
+        <SafeAreaView style={styles.safeAreaWrapper}>
+          <View style={styles.textInputContainer}>
+            <TextInput
+              placeholder=""
+              style={styles.input}
+              onChangeText={onChangeText}
+              value={text}
+            />
+          </View>
+          <View style={styles.buttonContainer}>
+            <ReusableUIButton
+              onPress={renameActivityHandler}
+              buttonStyle={styles.button}
+              buttonTextContainerStyle={styles.buttonTextContainer}
+              buttonTextStyle={styles.buttonText}>
+              Rename
+            </ReusableUIButton>
+          </View>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     </GradientView>
   );
 }
 
 const styles = StyleSheet.create({
   screenContainer: {},
+  keyBoardAvoidingView: {
+    flex: 1,
+  },
   originalNameContainer: { flex: 0.5, justifyContent: 'flex-end', marginBottom: 60 },
   heading: { fontFamily: 'Manrope_400Regular', color: 'white', fontSize: 32, textAlign: 'center' },
   originalName: {

@@ -2,15 +2,20 @@ import { doc, getDoc } from 'firebase/firestore';
 import { useContext, useEffect, useState } from 'react';
 import { addToHistory, instantiateNewActivitiesDocument } from '../db/writeClockitData';
 import { db } from '../firebase';
+import { HistoryContext } from '../store/History-Context';
 import { UserContext } from '../store/User-Context';
-import { compareTimeStamp } from '../utils/DateTimeHelpers/DateTimeHelpers';
+
+import { compareTimeStamp } from '../unused';
 function useFetchUserActivities(userId) {
   const userCtx = useContext(UserContext);
+  const historyCtx = useContext(HistoryContext);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchActivities() {
       try {
+        // await writeMockData(105);wr
+
         const activitiesOnLoad = await getDoc(doc(db, userId, 'activities'));
         if (activitiesOnLoad.exists()) {
           const activitiesArray = activitiesOnLoad.data().weeklyActivities;
@@ -24,14 +29,15 @@ function useFetchUserActivities(userId) {
               newWeekItem.name = item.name;
               return newWeekItem;
             });
-            // functions that add currentUserData to history and reset the data for the current week:
 
-            await addToHistory(userId, activitiesOnLoad.data());
+            await addToHistory(activitiesOnLoad.data(), userId);
+
             await instantiateNewActivitiesDocument(userId, newWeekArray);
-            // await instantiateNewWeek(userId);
             userCtx.dispatch({ type: 'INITIALIZE', payload: newWeekArray });
+            historyCtx.dispatch({ type: 'INITIALIZENAMES', payload: newWeekArray });
           } else {
             userCtx.dispatch({ type: 'INITIALIZE', payload: activitiesArray });
+            historyCtx.dispatch({ type: 'INITIALIZENAMES', payload: activitiesArray });
           }
         }
         setIsLoading(false);
@@ -40,7 +46,7 @@ function useFetchUserActivities(userId) {
       }
     }
     fetchActivities();
-    return () => {};
+    // return () => {};
   }, [userId]);
   return isLoading;
 }

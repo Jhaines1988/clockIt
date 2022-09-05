@@ -1,4 +1,5 @@
-import { Timestamp } from 'firebase/firestore';
+import { doc, setDoc, Timestamp } from 'firebase/firestore';
+import { db } from '../../firebase';
 export const findDay = () => {
   let todaysDate = new Date();
   let offSet = todaysDate.getTimezoneOffset();

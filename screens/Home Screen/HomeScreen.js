@@ -19,9 +19,11 @@ import { UserContext } from '../../store/User-Context.js';
 // hooks
 
 import useFetchUserActivities from '../../hooks/useFetchUserActivities';
+import { HistoryContext } from '../../store/History-Context';
 const HomeScreen = ({ navigation, route }) => {
   const authCtx = useContext(AuthContext);
   const userCtx = useContext(UserContext);
+  const historyCtx = useContext(HistoryContext);
   const userId = authCtx.userId;
   const [modalVisible, setModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
@@ -46,6 +48,12 @@ const HomeScreen = ({ navigation, route }) => {
     });
   }
 
+  function activityItemOnLongPressHandler(item) {
+    userCtx.setCurrentActivityItem(item);
+
+    navigation.navigate('HistoryScreen', { name: item.name, id: item.id });
+  }
+
   if (isLoading) {
     return (
       <GradientView>
@@ -66,6 +74,7 @@ const HomeScreen = ({ navigation, route }) => {
       <ActivityFlatList
         data={userCtx.activities}
         onItemPress={activityItemPressHandler}
+        onLongItemPress={activityItemOnLongPressHandler}
         keyExtractor={(item) => item.id}
       />
       <View style={styles.addButtonSettingsContainer}>
@@ -78,6 +87,7 @@ const HomeScreen = ({ navigation, route }) => {
           onPress={openCloseSettingsModalHandler}
           onLogout={authCtx.logout}
         />
+
         <SettingsCog onPress={openCloseSettingsModalHandler} />
       </View>
     </GradientView>
@@ -92,6 +102,7 @@ const styles = StyleSheet.create({
   addButtonSettingsContainer: {
     flex: 1,
     width: '100%',
+    justifyContent: 'center',
   },
 });
 

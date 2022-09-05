@@ -13,7 +13,7 @@ const SettingsCog = ({ onPress }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignSelf: 'flex-start', marginHorizontal: 16, marginBottom: 16 },
+  container: { flex: 1, alignSelf: 'flex-start', marginHorizontal: 16, marginBottom: 28 },
   button: {
     alignItems: 'center',
     padding: 10,
