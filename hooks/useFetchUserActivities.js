@@ -6,7 +6,6 @@ import { HistoryContext } from '../store/History-Context';
 import { UserContext } from '../store/User-Context';
 
 import { compareTimeStamp } from '../unused';
-import { writeMockData } from '../utils/mockDataFunctions/writeMockDataToHistory';
 function useFetchUserActivities(userId) {
   const userCtx = useContext(UserContext);
   const historyCtx = useContext(HistoryContext);
@@ -35,6 +34,7 @@ function useFetchUserActivities(userId) {
 
             await instantiateNewActivitiesDocument(userId, newWeekArray);
             userCtx.dispatch({ type: 'INITIALIZE', payload: newWeekArray });
+            historyCtx.dispatch({ type: 'INITIALIZENAMES', payload: newWeekArray });
           } else {
             userCtx.dispatch({ type: 'INITIALIZE', payload: activitiesArray });
             historyCtx.dispatch({ type: 'INITIALIZENAMES', payload: activitiesArray });

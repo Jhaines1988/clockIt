@@ -58,7 +58,7 @@ const HistoryScreen = ({ navigation, route }) => {
       <SafeAreaView style={styles.cardContainer}>
         <FlatList
           initialNumToRender={4}
-          onEndReachedThreshold={0.1}
+          onEndReachedThreshold={0.4}
           onEndReached={(info) => fetchMoreData(info)}
           data={historyCtx.history[id].history}
           renderItem={({ item }) => {

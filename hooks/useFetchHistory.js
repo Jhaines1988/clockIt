@@ -35,7 +35,9 @@ const useFetchHistory = (userId, activityId) => {
       }
     }
 
-    if (!historyCtx.history[activityId].history.length) {
+    // console.log('THIS RUNS', historyCtx.history[activityId].history);
+
+    if (historyCtx.history[activityId].history.length === 0) {
       getHistory();
     } else {
       setIsLoading(false);
@@ -44,7 +46,7 @@ const useFetchHistory = (userId, activityId) => {
     return () => {
       // lastVisible.current = null;
     };
-  }, []);
+  }, [userId]);
 
   return [isLoading, lastVisible];
 };
