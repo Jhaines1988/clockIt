@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { Alert, Modal, StyleSheet, Text, View } from 'react-native';
+import {
+  Alert,
+  Modal,
+  StyleSheet,
+  Text,
+  KeyboardAvoidingView,
+  ScrollView,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { add } from '../../app/userHomeScreenInformation';
 import { ClockItColors } from '../../constants/styles';
@@ -13,6 +22,9 @@ function ActivityInputContainer({
   userId,
   addingActivitiesToHomeScreenHandler,
 }) {
+  const { height, width } = useWindowDimensions();
+
+  console.log('HEIGHT', (height * 0.05) | 0, 'WIDTH', width);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userHomeScreen);
   const [activity, setActivity] = useState('');
@@ -42,47 +54,79 @@ function ActivityInputContainer({
     }
   }
   return (
-    <Modal animationType="slide" visible={modalVisible} onRequestClose={onClose}>
-      <GradientView style={styles.activityInputContainer}>
-        <View style={styles.newActivityTextContainer}>
-          <Text style={styles.newActivityText}>New Activity</Text>
-        </View>
-        <ActivityInput
-          label="Activity Name"
-          textInputConfiguration={{
-            onChangeText: handleActivityChange,
-            value: activity,
-          }}
-        />
-        <View style={styles.buttonContainer}>
-          <ReusableUIButton
-            onPress={onClose}
-            buttonStyle={styles.cancelButton}
-            buttonTextContainerStyle={styles.buttonTextContainer}
-            buttonTextStyle={styles.cancelButtonText}>
-            Cancel
-          </ReusableUIButton>
-          <ReusableUIButton
-            onPress={onSaveHandler}
-            buttonStyle={styles.saveButton}
-            buttonTextContainerStyle={styles.buttonTextContainer}
-            buttonTextStyle={styles.saveButtonText}>
-            Save
-          </ReusableUIButton>
-        </View>
+    <Modal
+      animationType="slide"
+      presentationStyle="fullScreen"
+      visible={modalVisible}
+      onRequestClose={onClose}>
+      <GradientView>
+        <ScrollView
+          contentContainerStyle={[styles.scrollView, { paddingVertical: (height * 0.1) | 0 }]}>
+          <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior="position">
+            <View
+              style={[
+                styles.inputWrapper,
+                { width: (width * 0.8) | 0, paddingBottom: (height * 0.05) | 0 },
+              ]}>
+              <View style={styles.newActivityTextContainer}>
+                <Text style={styles.newActivityText}>New Activity</Text>
+              </View>
+              <ActivityInput
+                label="Activity Name"
+                textInputConfiguration={{
+                  onChangeText: handleActivityChange,
+                  value: activity,
+                }}
+              />
+              <View style={styles.buttonContainer}>
+                <ReusableUIButton
+                  onPress={onClose}
+                  buttonStyle={styles.cancelButton}
+                  buttonTextContainerStyle={styles.buttonTextContainer}
+                  buttonTextStyle={styles.cancelButtonText}>
+                  Cancel
+                </ReusableUIButton>
+                <ReusableUIButton
+                  onPress={onSaveHandler}
+                  buttonStyle={styles.saveButton}
+                  buttonTextContainerStyle={styles.buttonTextContainer}
+                  buttonTextStyle={styles.saveButtonText}>
+                  Save
+                </ReusableUIButton>
+              </View>
+            </View>
+          </KeyboardAvoidingView>
+        </ScrollView>
       </GradientView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  activityInputContainer: { flex: 1 },
+  scrollView: { flex: 1 },
+
+  keyboardAvoidingView: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  inputWrapper: { flex: 1, justifyContent: 'center' },
   newActivityTextContainer: {
     flex: 0.1,
-    alignItems: 'flex-end',
     justifyContent: 'center',
   },
-  newActivityText: { textAlign: 'center', color: 'white', fontSize: 40 },
+  newActivityText: {
+    textAlign: 'center',
+    color: 'white',
+    fontSize: 40,
+    fontFamily: 'Manrope_600SemiBold',
+  },
+  buttonContainer: {
+    flex: 0.1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   cancelButtonText: {
     textAlign: 'center',
     color: 'white',
@@ -119,6 +163,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   buttonTextContainer: {},
-  buttonContainer: { flexDirection: 'row', justifyContent: 'center' },
 });
 export default ActivityInputContainer;
