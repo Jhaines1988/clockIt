@@ -4,9 +4,10 @@ import { ClockItColors } from '../../constants/styles';
 import { convertCentisecondsToHistoryScreenFormat } from '../../utils/DateTimeHelpers/convertCentisecondsToHistoryScreenFormat';
 import { monthMap } from '../../utils/DateTimeHelpers/DateTimeMaps';
 import IconButton from '../buttons/IconButton';
-
+import TotalTimeDisplay from './TotalTimeDisplay';
 import EditHistoryCard from './EditHistoryCard';
 import WeeklyDataFlatList from './WeeklyDataFlatList';
+import DateTimeDisplay from './DateTimeDisplay';
 const window = Dimensions.get('window');
 const HistoryCard = ({ item }) => {
   const weekStart = new Date(item.startedAt);
@@ -28,47 +29,23 @@ const HistoryCard = ({ item }) => {
         onPress={onEditButtonPressHandler}
         week={item.week}
         dateString={dateString}
+        totalTime={item.totalTime}
       />
-      <View style={cardStyles.dateHeading}>
-        <Text style={cardStyles.date}>{dateString}</Text>
-      </View>
+      <DateTimeDisplay dateString={dateString} />
       <View style={cardStyles.cardContainer}>
-        <View style={cardStyles.totalContainer}>
-          <Text style={cardStyles.totalText}>Total </Text>
-          <View style={cardStyles.totalAndEditIconContainer}>
-            <Text style={[cardStyles.totalText, { fontSize: 18 }]}>
-              {convertCentisecondsToHistoryScreenFormat(item.totalTime)}
-            </Text>
-
-            <IconButton
-              style={{
-                margin: 0,
-                borderRadius: 0,
-              }}
-              icon="md-pencil-sharp"
-              color="blue"
-              size={24}
-              onPress={onEditButtonPressHandler}
-            />
-          </View>
-        </View>
+        <TotalTimeDisplay
+          totalTime={item.totalTime}
+          onEditButtonPressHandler={onEditButtonPressHandler}
+          includeIcon={true}
+        />
         <WeeklyDataFlatList week={item.week} />
       </View>
     </>
   );
 };
-const DateHeading = ({ weekStart }) => {
-  return (
-    <View style={cardStyles.dateHeading}>
-      <Text style={cardStyles.date}>
-        {monthMap[weekStart.getMonth()]} {weekStart.getDate()}, {weekStart.getFullYear()}
-      </Text>
-    </View>
-  );
-};
+
 export default HistoryCard;
 const cardStyles = StyleSheet.create({
-  dateHeading: { marginBottom: 8, marginHorizontal: 24 },
   cardContainer: {
     flex: 0.5,
     backgroundColor: 'white',
@@ -96,10 +73,5 @@ const cardStyles = StyleSheet.create({
   totalAndEditIconContainer: {
     flexDirection: 'row',
     marginRight: 8,
-  },
-  date: {
-    color: 'white',
-    fontFamily: 'Manrope_400Regular',
-    fontSize: 16,
   },
 });

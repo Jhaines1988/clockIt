@@ -1,23 +1,15 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Modal,
-  FlatList,
-  TextInput,
-  useWindowDimensions,
-  SafeAreaView,
-} from 'react-native';
 import React from 'react';
-import GradientView from '../UI/BackgroundContainer';
-import ReusableUIButton from '../buttons/ReusableUIButton';
-import { convertCentisecondsToEditHistoryScreenFormat } from '../../utils/DateTimeHelpers/convertCentisecondsToHistoryScreenFormat';
-import { dayMap, monthMap } from '../../utils/DateTimeHelpers/DateTimeMaps';
+import { FlatList, Modal, SafeAreaView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { ClockItColors } from '../../constants/styles';
+import ReusableUIButton from '../buttons/ReusableUIButton';
+import GradientView from '../UI/BackgroundContainer';
+import DateTimeDisplay from './DateTimeDisplay';
 import RenderItemEditHistoryCard from './RenderItemEditHistoryCard';
-const EditHistoryCard = ({ modalVisible, onPress, week, dateString }) => {
-  console.log('WEEK------', week);
+import TotalTimeDisplay from './TotalTimeDisplay';
+
+const EditHistoryCard = ({ modalVisible, onPress, week, dateString, totalTime }) => {
   const { height, width } = useWindowDimensions();
+  console.log('WEEK------', week);
   return (
     <Modal visible={modalVisible} presentationStyle="overFullScreen" animationType="slide">
       <GradientView>
@@ -25,16 +17,15 @@ const EditHistoryCard = ({ modalVisible, onPress, week, dateString }) => {
           style={{
             flex: 1,
             justifyContent: 'center',
-            // backgroundColor: 'black',
           }}>
-          <View style={styles.dateHeading}>
-            <Text style={styles.date}>{dateString}</Text>
-          </View>
-          <View
-            style={[
-              styles.flatListContainer,
-              { width: (width / 1.13) | 0, maxHeight: (height / 1.9) | 0 },
-            ]}>
+          <DateTimeDisplay dateString={dateString} />
+          <View style={[styles.flatListContainer, { width: width / 1.13 }]}>
+            <TotalTimeDisplay
+              totalTime={totalTime}
+              onEditButtonPressHandler={null}
+              includeIcon={false}
+              totalContainerStyles={{ flex: 1 }}
+            />
             <FlatList
               bounces={false}
               contentContainerStyle={styles.flatList}
@@ -48,7 +39,7 @@ const EditHistoryCard = ({ modalVisible, onPress, week, dateString }) => {
           <View style={styles.buttonContainer}>
             <ReusableUIButton
               onPress={onPress}
-              buttonStyle={styles.buttonStyle}
+              buttonStyle={[styles.buttonStyle, { marginHorizontal: width / 6 }]}
               buttonTextContainerStyle={styles.buttonTextContainerStyle}
               buttonTextStyle={styles.buttonTextStyle}>
               Close
@@ -79,23 +70,18 @@ const styles = StyleSheet.create({
     margin: 24,
     marginTop: 0,
   },
-  dateHeading: { marginBottom: 8, marginHorizontal: 24 },
-  date: {
-    color: 'white',
-    fontFamily: 'Manrope_400Regular',
-    fontSize: 14,
-  },
+
   flatList: {
-    margin: 24,
+    marginHorizontal: 24,
   },
   buttonContainer: {
     flex: 0.1,
     justifyContent: 'center',
   },
   buttonStyle: {
-    flex: 0.6,
+    flex: 0.75,
     backgroundColor: ClockItColors.buttonLime,
-    marginHorizontal: 50,
+
     borderRadius: 60,
     justifyContent: 'center',
   },
