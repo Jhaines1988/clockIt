@@ -1,4 +1,4 @@
-const weekSoFar = function (item) {
+export const weekSoFar = function (item) {
   const week = Object.keys(item).reduce((acc, key) => {
     if (key !== 'id' && key !== 'name' && key !== 'totalTime') {
       acc.push({ date: key, time: item[key] });
@@ -7,4 +7,3 @@ const weekSoFar = function (item) {
   }, []);
   return week;
 };
-export default weekSoFar;

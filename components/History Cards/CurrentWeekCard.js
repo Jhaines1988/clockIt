@@ -3,7 +3,7 @@ import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { ClockItColors } from '../../constants/styles';
 import { lastSunday } from '../../utils/DateTimeHelpers/DateTimeHelpers';
 import { dayMap, monthMap } from '../../utils/DateTimeHelpers/DateTimeMaps';
-import weekSoFar from './helpers/weekSoFar';
+import { weekSoFar } from './helpers/weekSoFar';
 import TotalTimeDisplay from './TotalTimeDisplay';
 import WeeklyDataFlatList from './WeeklyDataFlatList';
 const window = Dimensions.get('window');
