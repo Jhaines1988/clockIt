@@ -6,7 +6,7 @@ import GradientView from '../UI/BackgroundContainer';
 import ReusableUIButton from '../buttons/ReusableUIButton';
 import { UserContext } from '../../store/User-Context';
 import { ClockItColors } from '../../constants/styles';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { add } from '../../app/userHomeScreenInformation';
 function ActivityInputContainer({
   modalVisible,
@@ -17,6 +17,7 @@ function ActivityInputContainer({
   const userCtx = useContext(UserContext);
 
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.userHomeScreen);
   const [activity, setActivity] = useState('');
   function handleActivityChange(activity) {
     setActivity(activity);
