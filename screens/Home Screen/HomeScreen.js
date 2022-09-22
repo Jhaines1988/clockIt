@@ -8,6 +8,7 @@ import ActivityFlatList from '../../components/ActivityListItems/ActivityFlatLis
 import LoadingOverlay from '../../components/auth/ui/LoadingOverlay';
 import AddButton from '../../components/buttons/AddButton';
 import GradientView from '../../components/UI/BackgroundContainer';
+import WeekDisplay from '../../components/UI/WeekDisplay';
 function HomeScreen({ navigation }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userHomeScreen);
@@ -34,6 +35,7 @@ function HomeScreen({ navigation }) {
   }
   return (
     <GradientView>
+      <WeekDisplay weekOf="This Week" />
       <ActivityInputContainer
         userId={user.userId}
         modalVisible={inputContainerModalVisible}
