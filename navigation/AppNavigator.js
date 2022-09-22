@@ -27,6 +27,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getUserActivitiesAsync } from '../app/userHomeScreenInformation';
 import LoadingOverlay from '../components/auth/ui/LoadingOverlay';
 import GradientView from '../components/UI/BackgroundContainer';
+import ClockItLogoHeader from '../components/UI/ClockItLogoHeader';
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -64,7 +65,11 @@ const AuthenticatedStack = () => {
             headerStyle: { backgroundColor: ClockItColors.blue },
             headerTintColor: 'white',
           }}>
-          <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ headerTitle: (props) => <ClockItLogoHeader {...props} /> }}
+          />
           {/* <Stack.Screen
             name="Clockit"
             component={ClockItScreen}
