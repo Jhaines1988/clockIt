@@ -6,6 +6,13 @@ import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadingOverlay from './components/auth/ui/LoadingOverlay';
 import Navigation from './navigation/AppNavigator';
+import store from './app/store';
+import thunk from 'redux-thunk';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserId } from './app/userHomeScreenInformation';
+import { Provider } from 'react-redux';
+
 import {
   useFonts,
   Manrope_300Light,
@@ -15,7 +22,7 @@ import {
   Manrope_700Bold,
   Manrope_800ExtraBold,
 } from '@expo-google-fonts/manrope';
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -53,16 +60,19 @@ export default function App() {
   }
 
   return (
-    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-      <AuthContextProvider>
-        <Root />
-      </AuthContextProvider>
-    </View>
+    <Provider store={store}>
+      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <AuthContextProvider>
+          <Root />
+        </AuthContextProvider>
+      </View>
+    </Provider>
   );
 }
 
 function Root() {
   const [appIsReady, setAppIsReady] = useState(false);
+  const dispatch = useDispatch();
 
   const authCtx = useContext(AuthContext);
   const userCtx = useContext(UserContext);
@@ -74,6 +84,7 @@ function Root() {
 
       if (token && uid) {
         authCtx.authenticate(token, uid);
+        dispatch(setUserId(uid));
         setAppIsReady(true);
       } else {
         setAppIsReady(true);

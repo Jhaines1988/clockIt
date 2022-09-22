@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View, Image, Alert } from 'react-na
 
 const AddButton = ({ onPress, numUserActivities }) => {
   const handleButtonPress = () => {
-    if (numUserActivities === 6) {
+    if (numUserActivities === 10) {
       Alert.alert('Sorry! You Have reached the maximum number of activities to track');
     } else {
       onPress();

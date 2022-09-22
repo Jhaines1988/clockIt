@@ -27,6 +27,10 @@ const displayTime = (hundredthsOfSecond) => {
 
   min = min % 60;
 
+  // if (hours >= 1) {
+  //   return `${padNumToTwo(hours)}:${padNumToTwo(min)}:${padNumToTwo(remainingSeconds)}`;
+  // }
+
   return `${padNumToTwo(hours)}:${padNumToTwo(min)}:${padNumToTwo(remainingSeconds)}:${padNumToTwo(
     remainingHundredthsOfSecond
   )}`;

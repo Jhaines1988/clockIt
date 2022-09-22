@@ -2,13 +2,7 @@ import { StyleSheet, Text, View, Modal, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import { ClockItColors } from '../../constants/styles';
 import ReusableUIButton from '../buttons/ReusableUIButton';
-const EditActivityModal = ({
-  modalVisible,
-  onPress,
-  onRenameButtonPress,
-  onDeleteButtonPress,
-  onManualEntryButtonPress,
-}) => {
+const EditActivityModal = ({ modalVisible, onPress, onRenameButtonPress, onDeleteButtonPress }) => {
   return (
     <Modal
       visible={modalVisible}
@@ -17,13 +11,6 @@ const EditActivityModal = ({
       transparent={true}>
       <Pressable style={styles.editingModalContainer} onPress={onPress}>
         <View style={styles.editingFunctionContainer}>
-          <ReusableUIButton
-            onPress={onManualEntryButtonPress}
-            buttonTextContainerStyle={styles.buttonTextContainer}
-            buttonStyle={styles.button}
-            buttonTextStyle={styles.manualEntryButtonText}>
-            Manually Enter Time
-          </ReusableUIButton>
           <ReusableUIButton
             onPress={onRenameButtonPress}
             buttonTextContainerStyle={styles.buttonTextContainer}
@@ -65,11 +52,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   renameButtonText: { fontFamily: 'Manrope_500Medium', color: ClockItColors.blue, fontSize: 18 },
-  manualEntryButtonText: {
-    fontFamily: 'Manrope_500Medium',
-    color: ClockItColors.darkestBlue,
-    fontSize: 18,
-  },
+
   deleteButtonText: {
     fontFamily: 'Manrope_500Medium',
     color: ClockItColors.confirmDelete,

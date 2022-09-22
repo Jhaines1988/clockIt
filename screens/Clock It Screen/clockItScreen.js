@@ -1,39 +1,40 @@
-import React, { useState, useContext, useLayoutEffect } from 'react';
+import React, { useContext, useLayoutEffect, useState } from 'react';
 import { Alert } from 'react-native';
 
 // components
 import IconButton from '../../components/buttons/IconButton';
 import StopWatch from '../../components/stopWatch/stopwatch';
-import FinishedClocking from '../../components/UI/FinishedClocking';
-import EditActivityModal from '../../components/UI/EditActivityModal';
 import GradientView from '../../components/UI/BackgroundContainer';
 import ConfirmDeleteModal from '../../components/UI/ConfirmDeleteModal';
+import EditActivityModal from '../../components/UI/EditActivityModal';
+import FinishedClocking from '../../components/UI/FinishedClocking';
 
 // context
 
 import { UserContext } from '../../store/User-Context';
+
+// redux
+import { useDispatch, useSelector } from 'react-redux';
+import { update, updateUserActivitiesAsync } from '../../app/userHomeScreenInformation';
 // writing to database
 
-import { onStopWatchFinish } from '../../db/writeClockitData';
 import { deleteItemFromActivitiesList } from '../../db/deleteClockitData';
-import ManualTimeInput from '../../components/manualTimeInput/ManualTimeInput';
+import { onStopWatchFinish } from '../../db/writeClockitData';
 
 const ClockItScreen = ({ navigation, route }) => {
+  const user = useSelector((state) => state.userHomeScreen);
+  const history = useSelector((state) => state.userHistory);
+  const dispatch = useDispatch();
   const userCtx = useContext(UserContext);
   const [isFinished, setIsFinished] = useState(false);
   const [editingModalOpen, setEditingModalOpen] = useState(false);
   const [confirmingDeleteModalOpen, setConfirmingDeleteModalOpen] = useState(false);
-  const [manualTimeInputVisible, setManualTimeInputVisible] = useState(false);
 
-  const { userId } = route.params;
+  const userId = user.userId;
   const editingModalHandler = () => {
     setEditingModalOpen(!editingModalOpen);
   };
 
-  const manualTimeInputVisibleHandler = () => {
-    setEditingModalOpen(false);
-    setManualTimeInputVisible(!manualTimeInputVisible);
-  };
   const openConfirmDeleteModalHandler = () => {
     setEditingModalOpen(false);
     setConfirmingDeleteModalOpen(true);
@@ -58,12 +59,16 @@ const ClockItScreen = ({ navigation, route }) => {
   };
 
   async function addDataToFirebase(time) {
-    userCtx.dispatch({
-      type: 'UPDATE',
-      payload: { updatedActivity: userCtx.currentActivityItem, time },
-    });
+    // console.log('ADDING TIME', time);
+    // userCtx.dispatch({
+    //   type: 'UPDATE',
+    //   payload: { updatedActivity: user.currentActivityItem, time },
+    // });
+
+    // dispatch(update({ updatedActivity: user.currentActivityItem, time }));
     try {
-      await onStopWatchFinish(userId, userCtx.activities);
+      dispatch(updateUserActivitiesAsync(time));
+      // await onStopWatchFinish(userId, user.activities);
     } catch (error) {
       console.log('Error Writing Activity to Firebase', error);
     }
@@ -72,8 +77,8 @@ const ClockItScreen = ({ navigation, route }) => {
     try {
       const updatedArray = await deleteItemFromActivitiesList(
         userId,
-        userCtx.activities,
-        userCtx.currentActivityItem.id
+        user.activities,
+        user.currentActivityItem.id
       );
       if (updatedArray) {
         userCtx.dispatch({ type: 'DELETE', payload: updatedArray });
@@ -94,14 +99,16 @@ const ClockItScreen = ({ navigation, route }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <IconButton
-          icon="ellipsis-vertical-outline"
-          color="white"
-          size={24}
-          onPress={editingModalHandler}
-        />
-      ),
+      // headerRight: () => (
+      //   <IconButton
+      //     icon="ellipsis-vertical-outline"
+      //     color="white"
+      //     size={24}
+      //     onPress={editingModalHandler}
+      //   />
+      // ),
+
+      headerTitle: `Clocking ${user.currentActivityItem.name}`,
     });
 
     return () => {};
@@ -116,7 +123,6 @@ const ClockItScreen = ({ navigation, route }) => {
       <EditActivityModal
         modalVisible={editingModalOpen}
         onPress={editingModalHandler}
-        onManualEntryButtonPress={manualTimeInputVisibleHandler}
         onRenameButtonPress={renameActivityHandler}
         onDeleteButtonPress={openConfirmDeleteModalHandler}
       />
@@ -126,8 +132,8 @@ const ClockItScreen = ({ navigation, route }) => {
         onPress={dismissModalHandler}
         screenToNavigateTo="Home"
       />
-      <ManualTimeInput modalVisible={manualTimeInputVisible} />
-      <StopWatch addDataToFirebase={finishedHandler} name={userCtx.currentActivityItem.name} />
+
+      <StopWatch addDataToFirebase={finishedHandler} name={user.currentActivityItem.name} />
     </GradientView>
   );
 };

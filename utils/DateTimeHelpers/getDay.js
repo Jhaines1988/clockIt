@@ -11,7 +11,7 @@ export const findDay = () => {
 export const findTheNextSunday = (date) => {
   let currentDayOfWeek = date.getDay();
   let currentDate = date.getDate();
-  console.log(currentDayOfWeek, currentDate);
+
   let daysRemaining = 7 - currentDayOfWeek;
   console.log('days', daysRemaining);
   let nextSunday = new Date(date);

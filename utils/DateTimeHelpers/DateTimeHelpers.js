@@ -52,3 +52,40 @@ export const findTheNextSunday = (date) => {
   nextSunday.setHours(0, 0, 0, 0);
   return nextSunday;
 };
+
+export const generateWeekForFlatList = (day, dateCreated, range = 6) => {
+  const validDates = [];
+
+  day.setHours(0, 0, 0, 0);
+
+  for (let i = range; i >= 0; i--) {
+    validDates.push({
+      label: day.toDateString(),
+      value: day.toDateString(),
+      id: day.valueOf().toString(),
+    });
+
+    if (day.valueOf() <= lastSunday().valueOf()) {
+      break;
+    }
+    day.setDate(day.getDate() - 1);
+  }
+
+  return validDates;
+};
+
+export const lastSunday = () => {
+  const lastSunday = findDay();
+  lastSunday.setDate(lastSunday.getDate() - lastSunday.getDay());
+  lastSunday.setHours(0, 0, 0, 0);
+  return lastSunday;
+};
+
+export const compareDatesForManualEntry = (dateFromUserInput) => {
+  const lastSunday = findDay();
+  lastSunday.setDate(lastSunday.getDate() - lastSunday.getDay());
+  lastSunday.setHours(0, 0, 0, 0);
+  dateFromUserInput.setDate(dateFromUserInput.getDate() - dateFromUserInput.getDay());
+
+  return dateFromUserInput.toISOString() === lastSunday.toISOString();
+};

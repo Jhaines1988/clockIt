@@ -14,3 +14,11 @@ export const ClockItColors = {
   modalOverlay: 'rgba(4, 5, 115, 0.6)',
   confirmDelete: '#EE4266',
 };
+
+export const LargeHeaderStyles = {
+  fontFamily: 'Manrope_700Bold',
+  color: 'white',
+  fontSize: 40,
+};
+
+export const SemiBoldHeaderStyles = { ...LargeHeaderStyles, fontSize: 25 };

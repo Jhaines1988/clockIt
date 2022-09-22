@@ -9,7 +9,6 @@ export const UserContext = createContext({
   activities: initialActivitiesState,
   setCurrentActivityItem: () => {},
   dispatch: () => {},
-
   getUID: () => {},
   setUID: () => {},
 });
@@ -24,11 +23,20 @@ const updateActivitiesReducer = (state, action) => {
       addedActivitiesState.push(action.payload);
       return addedActivitiesState;
     case 'UPDATE':
+      // console.log(action.payload);
+      const isEdit = action.payload.edit;
       const updatedWeeklyArray = state.map((item) => {
         if (item.id === action.payload.updatedActivity.id) {
-          const day = findDay().toDateString();
-          item.totalTime += action.payload.time;
-          item[day] ? (item[day] += action.payload.time) : (item[day] = action.payload.time);
+          const day = action.payload.day ? action.payload.day : findDay().toDateString();
+          if (isEdit) {
+            item[day] ? (item.totalTime -= item[day]) : (item.totalTime -= 0);
+
+            item[day] = action.payload.time;
+            item.totalTime += action.payload.time;
+          } else {
+            item.totalTime += action.payload.time;
+            item[day] ? (item[day] += action.payload.time) : (item[day] = action.payload.time);
+          }
         }
         return item;
       });

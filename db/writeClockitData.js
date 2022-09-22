@@ -1,4 +1,13 @@
-import { arrayUnion, doc, setDoc, Timestamp, updateDoc, writeBatch } from 'firebase/firestore';
+import {
+  arrayUnion,
+  doc,
+  getDoc,
+  runTransaction,
+  setDoc,
+  Timestamp,
+  updateDoc,
+  writeBatch,
+} from 'firebase/firestore';
 import { db } from '../firebase';
 import { findDay, getStartAndEndOfWeek } from '../utils/DateTimeHelpers/getDay';
 
@@ -113,20 +122,56 @@ export const instantiateNewActivitiesDocument = async (id, activities = []) => {
 /* Methods for adding data from stop watch */
 
 export const onStopWatchFinish = async (userId, currentActivities) => {
+  console.log('ONSTOP', currentActivities);
   try {
     await updateUserActivities(userId, currentActivities);
   } catch (error) {
     console.log('Error in "On Stop Watch Finish ":', error.message);
   }
 };
-export const updateUserActivities = async (id, updatedActivities) => {
+export const updateUserActivities = async (userId, updatedActivities) => {
   try {
-    await updateDoc(doc(db, id, 'activities'), {
+    await updateDoc(doc(db, userId, 'activities'), {
       weeklyActivities: updatedActivities,
     });
   } catch (error) {
     console.log('Error Updating user Activities:', error);
     throw new Error(error);
+  }
+};
+export const updateUserActivitiesFromManualInput = async (
+  userId,
+  activityId,
+  dateId,
+  dayOfWeektoUpdate,
+  time
+) => {
+  /*
+  Adding time to the current week
+    we have to update the DB and the local state.
+
+
+  */
+
+  try {
+    await runTransaction(db, async (transaction) => {
+      const historyDocRef = doc(db, userId, 'History', activityId.toString(), dateId);
+      const historyDoc = await transaction.get(historyDocRef);
+
+      if (!historyDoc.exists()) {
+        throw 'Document does not exist!';
+      }
+      const historyArray = historyDoc.data().week;
+      let historyTotalTime = historyDoc.data().totalTime;
+
+      historyTotalTime += time;
+      historyArray[dayOfWeektoUpdate].time += time;
+
+      transaction.update(historyDocRef, { week: historyArray, totalTime: historyTotalTime });
+    });
+    console.log('Transaction successfully committed!');
+  } catch (error) {
+    console.log('Transaction ERROR!', error);
   }
 };
 
