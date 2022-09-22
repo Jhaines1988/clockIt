@@ -108,6 +108,7 @@ const AuthenticatedStack = () => {
 };
 
 function BottomTabNavigation() {
+  const user = useSelector((state) => state.userHomeScreen);
   return (
     <BottomTab.Navigator
       screenOptions={({ route }) => ({
@@ -135,14 +136,14 @@ function BottomTabNavigation() {
         name="ClockItScreen"
         component={ClockItScreen}
         options={{
-          headerTitle: '',
-
-          tabBarLabel: 'ClockIt',
+          headerTitle: `Clocking ${user.currentActivityItem.name}` || '',
+          tabBarLabel: 'Clock It',
         }}
       />
       <BottomTab.Screen
         options={{
           tabBarLabel: 'This Week',
+          headerTitle: `${user.currentActivityItem.name}` || '',
         }}
         name="ActivityHomeScreen"
         component={ActivityHomeScreen}
@@ -150,7 +151,7 @@ function BottomTabNavigation() {
       <BottomTab.Screen
         options={{
           tabBarLabel: 'History',
-          headerTitle: 'History',
+          headerTitle: `${user.currentActivityItem.name} History` || '',
         }}
         name="EditHistoryScreen"
         component={EditHistoryScreen}

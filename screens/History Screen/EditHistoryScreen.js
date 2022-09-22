@@ -1,5 +1,5 @@
 import { Button, FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useLayoutEffect } from 'react';
 import GradientView from '../../components/UI/BackgroundContainer';
 import { useSelector, useDispatch } from 'react-redux';
 import { initializeNames } from '../../app/userHistory';
@@ -13,6 +13,7 @@ const EditHistoryScreen = ({ navigation }) => {
   useEffect(() => {
     dispatch(getUserHistoryAsync(user.userId));
   }, [dispatch]);
+
   return (
     <GradientView>
       <SafeAreaView style={styles.safeAreaContainer}>

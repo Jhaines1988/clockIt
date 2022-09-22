@@ -97,22 +97,6 @@ const ClockItScreen = ({ navigation, route }) => {
     }
   };
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      // headerRight: () => (
-      //   <IconButton
-      //     icon="ellipsis-vertical-outline"
-      //     color="white"
-      //     size={24}
-      //     onPress={editingModalHandler}
-      //   />
-      // ),
-
-      headerTitle: `Clocking ${user.currentActivityItem.name}`,
-    });
-
-    return () => {};
-  }, [navigation]);
   return (
     <GradientView>
       <ConfirmDeleteModal
