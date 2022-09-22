@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { updateUserActivities } from '../db/writeClockitData';
 import { db } from '../firebase';
 import { findDay } from '../unused';
 
@@ -60,8 +59,8 @@ export const userHomeScreenInformation = createSlice({
     setCurrentActivityItem: (state, action) => {
       state.currentActivityItem = action.payload;
     },
-    add: (state, newActivity) => {
-      return { ...state, activities: state.activities.concat(newActivity) };
+    add: (state, action) => {
+      state.activities.push(action.payload);
     },
     setUserId: (state, action) => {
       state.userId = action.payload;
