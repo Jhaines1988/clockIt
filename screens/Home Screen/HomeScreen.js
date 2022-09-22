@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { SafeAreaView, View, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { initializeNames } from '../../app/userHistory';
 import { setCurrentActivityItem } from '../../app/userHomeScreenInformation';
@@ -40,21 +40,28 @@ function HomeScreen({ navigation }) {
         onClose={startStopAddActivityHandler}
         addingActivitiesToHomeScreenHandler={addingActivitiesToHomeScreenHandler}
       />
-
-      <ActivityFlatList
-        data={user.activities}
-        onItemPress={onSelectActivity}
-        onLongItemPress={() => {}}
-        keyExtractor={(item) => item.id}
-      />
-      <AddButton numUserActivities={user.activities.length} onPress={startStopAddActivityHandler} />
+      <SafeAreaView style={styles.safeAreaViewContainer}>
+        <ActivityFlatList
+          data={user.activities}
+          onItemPress={onSelectActivity}
+          onLongItemPress={() => {}}
+          keyExtractor={(item) => item.id}
+        />
+      </SafeAreaView>
+      <View style={styles.addButtonContainer}>
+        <AddButton
+          numUserActivities={user.activities.length}
+          onPress={startStopAddActivityHandler}
+        />
+      </View>
     </GradientView>
   );
 }
 
 const styles = StyleSheet.create({
-  addButtonSettingsContainer: {
-    flex: 1,
+  safeAreaViewContainer: { flex: 1 },
+  addButtonContainer: {
+    flex: 0.3,
     width: '100%',
     justifyContent: 'center',
   },
