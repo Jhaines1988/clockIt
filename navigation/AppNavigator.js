@@ -28,6 +28,8 @@ import { getUserActivitiesAsync } from '../app/userHomeScreenInformation';
 import LoadingOverlay from '../components/auth/ui/LoadingOverlay';
 import GradientView from '../components/UI/BackgroundContainer';
 import ClockItLogoHeader from '../components/UI/ClockItLogoHeader';
+import { Button } from 'react-native';
+import IconButton from '../components/buttons/IconButton';
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -45,6 +47,8 @@ function AuthStack() {
 }
 const AuthenticatedStack = () => {
   const user = useSelector((state) => state.userHomeScreen);
+
+  const authCtx = useContext(AuthContext);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getUserActivitiesAsync(user.userId));
@@ -64,41 +68,24 @@ const AuthenticatedStack = () => {
           screenOptions={{
             headerStyle: { backgroundColor: ClockItColors.blue },
             headerTintColor: 'white',
+            headerRight: () => {
+              return (
+                <IconButton
+                  icon="log-out-outline"
+                  size={24}
+                  color="white"
+                  onPress={() => {
+                    authCtx.logout;
+                  }}
+                />
+              );
+            },
           }}>
           <Stack.Screen
             name="Home"
             component={HomeScreen}
             options={{ headerTitle: (props) => <ClockItLogoHeader {...props} /> }}
           />
-          {/* <Stack.Screen
-            name="Clockit"
-            component={ClockItScreen}
-            options={{
-              headerTitle: '',
-              headerBackTitle: 'Back',
-            }}
-          /> */}
-          {/* <Stack.Screen
-            name="RenameActivityScreen"
-            options={{ headerTitle: '', headerBackTitle: 'Back' }}
-            component={RenameActivityScreen}
-          />
-          <Stack.Screen
-            name="HistoryScreen"
-            options={{ headerTitle: '', headerBackTitle: 'Back' }}
-            component={HistoryScreen}
-          /> */}
-          {/* <Stack.Screen
-            name="EditHistoryScreen"
-            options={{ headerTitle: '', headerBackTitle: 'Back' }}
-            component={EditHistoryScreen}
-          /> */}
-          <Stack.Screen
-            name="ManualTimeInputScreen"
-            options={{ headerTitle: '', headerBackTitle: 'Back' }}
-            component={ManualTimeInputScreen}
-          />
-
           <Stack.Screen
             name="ActivityScreen"
             options={{ headerTitle: '', headerBackTitle: 'Home' }}

@@ -24,7 +24,6 @@ function ActivityInputContainer({
 }) {
   const { height, width } = useWindowDimensions();
 
-  console.log('HEIGHT', (height * 0.05) | 0, 'WIDTH', width);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userHomeScreen);
   const [activity, setActivity] = useState('');
