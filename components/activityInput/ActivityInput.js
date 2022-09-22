@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 function ActivityInput({ label, textInputConfiguration }) {
   return (
@@ -8,6 +8,7 @@ function ActivityInput({ label, textInputConfiguration }) {
       <TextInput
         style={[styles.textInput]}
         placeholder="Type Your Activity Here"
+        placeholderTextColor="gray"
         {...textInputConfiguration}
       />
     </View>
@@ -15,18 +16,22 @@ function ActivityInput({ label, textInputConfiguration }) {
 }
 
 const styles = StyleSheet.create({
-  textInputContainer: { flex: 0.2, marginTop: 50, marginBottom: 20, alignItems: 'flex-start' },
+  textInputContainer: {
+    flex: 0.15,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
   label: {
     fontSize: 20,
     color: 'white',
-    fontWeight: '600',
+    fontFamily: 'Manrope_600SemiBold',
     marginBottom: 4,
     lineHeight: 27,
     textAlign: 'center',
   },
   textInput: {
-    flex: 0.3,
-    width: 330,
+    flex: 0.4,
+    width: '100%',
     backgroundColor: 'white',
     padding: 6,
     borderRadius: 8,
