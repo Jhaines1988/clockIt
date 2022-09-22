@@ -6,6 +6,8 @@ import GradientView from '../UI/BackgroundContainer';
 import ReusableUIButton from '../buttons/ReusableUIButton';
 import { UserContext } from '../../store/User-Context';
 import { ClockItColors } from '../../constants/styles';
+import { useDispatch } from 'react-redux';
+import { add } from '../../app/userHomeScreenInformation';
 function ActivityInputContainer({
   modalVisible,
   onClose,
@@ -13,6 +15,8 @@ function ActivityInputContainer({
   addingActivitiesToHomeScreenHandler,
 }) {
   const userCtx = useContext(UserContext);
+
+  const dispatch = useDispatch();
   const [activity, setActivity] = useState('');
   function handleActivityChange(activity) {
     setActivity(activity);
@@ -26,8 +30,8 @@ function ActivityInputContainer({
     }
     try {
       const newActivity = await addActivityToUserHomeScreen(activity, userId);
-
-      userCtx.dispatch({ type: 'ADD', payload: newActivity });
+      dispatch(add(newActivity));
+      // userCtx.dispatch({ type: 'ADD', payload: newActivity });
       setActivity('');
     } catch (error) {
       // throw errors from dispatch here
