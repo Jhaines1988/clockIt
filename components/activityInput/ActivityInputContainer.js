@@ -14,8 +14,6 @@ function ActivityInputContainer({
   userId,
   addingActivitiesToHomeScreenHandler,
 }) {
-  const userCtx = useContext(UserContext);
-
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userHomeScreen);
   const [activity, setActivity] = useState('');
@@ -24,7 +22,7 @@ function ActivityInputContainer({
   }
 
   async function onSaveHandler() {
-    if (userCtx.activities.some((item) => item.name === activity)) {
+    if (user.activities.some((item) => item.name === activity)) {
       Alert.alert('Please make your activity names unique');
       setActivity('');
       return;
