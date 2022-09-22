@@ -20,15 +20,15 @@ const CurrentWeekCard = ({ item, onEditButtonPressHandler }) => {
   const month = monthMap[weekStart.getMonth()];
   const year = weekStart.getFullYear();
   return (
-    <View style={cardStyles.currentWeekContainer}>
-      <Text style={cardStyles.dateHeading}>
+    <View style={styles.currentWeekContainer}>
+      <Text style={styles.dateHeading}>
         {dayOfWeek}, {month} {date} {year}
       </Text>
-      <View style={cardStyles.cardContainer}>
-        <View style={cardStyles.totalContainer}>
-          <Text style={cardStyles.totalText}>Total </Text>
-          <View style={cardStyles.totalAndEditIconContainer}>
-            <Text style={[cardStyles.totalText, { fontSize: 18 }]}>
+      <View style={styles.cardContainer}>
+        <View style={styles.totalContainer}>
+          <Text style={styles.totalText}>Total </Text>
+          <View style={styles.totalAndEditIconContainer}>
+            <Text style={[styles.totalText, { fontSize: 18 }]}>
               {convertCentisecondsToHistoryScreenFormat(item.totalTime)}
             </Text>
 
@@ -52,7 +52,7 @@ const CurrentWeekCard = ({ item, onEditButtonPressHandler }) => {
   );
 };
 
-const cardStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   currentWeekContainer: { flex: 1, alignItems: 'start' },
   dateHeading: {
     width: '100%',
