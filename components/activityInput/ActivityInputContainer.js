@@ -1,13 +1,12 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, Modal, StyleSheet, Alert } from 'react-native';
-import ActivityInput from './ActivityInput';
-import { addActivityToUserHomeScreen } from '../../db/writeClockitData';
-import GradientView from '../UI/BackgroundContainer';
-import ReusableUIButton from '../buttons/ReusableUIButton';
-import { UserContext } from '../../store/User-Context';
-import { ClockItColors } from '../../constants/styles';
+import React, { useState } from 'react';
+import { Alert, Modal, StyleSheet, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { add } from '../../app/userHomeScreenInformation';
+import { ClockItColors } from '../../constants/styles';
+import { addActivityToUserHomeScreen } from '../../db/writeClockitData';
+import ReusableUIButton from '../buttons/ReusableUIButton';
+import GradientView from '../UI/BackgroundContainer';
+import ActivityInput from './ActivityInput';
 function ActivityInputContainer({
   modalVisible,
   onClose,
@@ -22,6 +21,10 @@ function ActivityInputContainer({
   }
 
   async function onSaveHandler() {
+    if (activity.trim() === '') {
+      Alert.alert('Activities must have a name');
+      return;
+    }
     if (user.activities.some((item) => item.name === activity)) {
       Alert.alert('Please make your activity names unique');
       setActivity('');
