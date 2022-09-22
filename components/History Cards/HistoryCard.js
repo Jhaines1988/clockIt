@@ -14,6 +14,9 @@ const HistoryCard = ({ item }) => {
   function openCloseEditHistoryCardModal() {
     setEditHistoryCardModalOpen(!editHistoryCardModalOpen);
   }
+  const dateString = `${
+    monthMap[weekStart.getMonth()]
+  } ${weekStart.getDate()}, ${weekStart.getFullYear()}`;
 
   function onEditButtonPressHandler() {
     setEditHistoryCardModalOpen(!editHistoryCardModalOpen);
@@ -24,11 +27,10 @@ const HistoryCard = ({ item }) => {
         modalVisible={editHistoryCardModalOpen}
         onPress={onEditButtonPressHandler}
         week={item.week}
+        dateString={dateString}
       />
       <View style={cardStyles.dateHeading}>
-        <Text style={cardStyles.date}>
-          {monthMap[weekStart.getMonth()]} {weekStart.getDate()}, {weekStart.getFullYear()}
-        </Text>
+        <Text style={cardStyles.date}>{dateString}</Text>
       </View>
       <View style={cardStyles.cardContainer}>
         <View style={cardStyles.totalContainer}>

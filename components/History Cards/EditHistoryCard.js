@@ -15,7 +15,7 @@ import { convertCentisecondsToEditHistoryScreenFormat } from '../../utils/DateTi
 import { dayMap, monthMap } from '../../utils/DateTimeHelpers/DateTimeMaps';
 import { ClockItColors } from '../../constants/styles';
 import RenderItemEditHistoryCard from './RenderItemEditHistoryCard';
-const EditHistoryCard = ({ modalVisible, onPress, week }) => {
+const EditHistoryCard = ({ modalVisible, onPress, week, dateString }) => {
   console.log('WEEK------', week);
   const { height, width } = useWindowDimensions();
   return (
@@ -27,6 +27,9 @@ const EditHistoryCard = ({ modalVisible, onPress, week }) => {
             justifyContent: 'center',
             // backgroundColor: 'black',
           }}>
+          <View style={styles.dateHeading}>
+            <Text style={styles.date}>{dateString}</Text>
+          </View>
           <View
             style={[
               styles.flatListContainer,
@@ -45,9 +48,9 @@ const EditHistoryCard = ({ modalVisible, onPress, week }) => {
           <View style={styles.buttonContainer}>
             <ReusableUIButton
               onPress={onPress}
-              buttonStyle={{ flex: 0.6, backgroundColor: 'blue' }}
-              buttonTextContainerStyle={{}}
-              buttonTextStyle={{}}>
+              buttonStyle={styles.buttonStyle}
+              buttonTextContainerStyle={styles.buttonTextContainerStyle}
+              buttonTextStyle={styles.buttonTextStyle}>
               Close
             </ReusableUIButton>
           </View>
@@ -74,9 +77,37 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     justifyContent: 'center',
     margin: 24,
+    marginTop: 0,
+  },
+  dateHeading: { marginBottom: 8, marginHorizontal: 24 },
+  date: {
+    color: 'white',
+    fontFamily: 'Manrope_400Regular',
+    fontSize: 14,
   },
   flatList: {
     margin: 24,
   },
-  buttonContainer: { flex: 0.3, backgroundColor: ClockItColors.buttonLime },
+  buttonContainer: {
+    flex: 0.1,
+    justifyContent: 'center',
+  },
+  buttonStyle: {
+    flex: 0.6,
+    backgroundColor: ClockItColors.buttonLime,
+    marginHorizontal: 50,
+    borderRadius: 60,
+    justifyContent: 'center',
+  },
+  buttonTextContainerStyle: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  buttonTextStyle: {
+    fontFamily: 'Manrope_600SemiBold',
+    fontSize: 28,
+    lineHeight: 38,
+    color: ClockItColors.darkestBlue,
+    textAlign: 'center',
+  },
 });
