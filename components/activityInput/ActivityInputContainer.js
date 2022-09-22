@@ -31,12 +31,8 @@ function ActivityInputContainer({
     try {
       const newActivity = await addActivityToUserHomeScreen(activity, userId);
       dispatch(add(newActivity));
-      // userCtx.dispatch({ type: 'ADD', payload: newActivity });
       setActivity('');
     } catch (error) {
-      // throw errors from dispatch here
-      // ex if theres two items with the same name etc.
-
       return;
     } finally {
       addingActivitiesToHomeScreenHandler();
