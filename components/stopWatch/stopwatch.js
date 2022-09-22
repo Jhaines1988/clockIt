@@ -1,13 +1,14 @@
 import React, { useRef, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import {
   FinishButton,
   ResetButton,
 } from '../../components/buttons/StopWatchButtons/TimeControlButtons';
 import { ClockItColors } from '../../constants/styles';
 import displayTime from '../../utils/padNumToTwo';
-
+const ONE_HOUR = 360000;
 const StopWatch = ({ addDataToFirebase, name }) => {
+  const { width, height } = useWindowDimensions();
   const [time, setTime] = useState(0);
   const [running, setRunning] = useState(false);
   const [lap, setLap] = useState([]);
@@ -74,15 +75,24 @@ const StopWatch = ({ addDataToFirebase, name }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.activityInfoContainer}>
-        <Text style={styles.clockingLabel}>Clocking</Text>
-        <Text style={styles.activityName}>{name}</Text>
-      </View>
+    <View style={[styles.container, { height: height / 1.5 }]}>
       <View style={styles.timeAndStartButtonContainer}>
-        <View style={styles.textContainer}>
-          <Text style={styles.timeDisplay}>
-            {'  '}
+        <View style={[styles.textContainer, { width: width, marginBottom: height / 20 }]}>
+          <Text
+            style={[
+              styles.timeDisplay,
+              {
+                width: width,
+                marginHorizontal: width * 0.025,
+              },
+              time >= ONE_HOUR
+                ? {
+                    paddingRight: width * 0.18,
+                    paddingLeft: width * 0.18,
+                    fontFamily: 'Manrope_600SemiBold',
+                  }
+                : { paddingRight: width * 0.25, paddingLeft: width * 0.25 },
+            ]}>
             {displayTime(time)}
           </Text>
         </View>
@@ -106,47 +116,31 @@ const StopWatch = ({ addDataToFirebase, name }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
-    justifyContent: 'space-between',
-  },
-  activityInfoContainer: {
-    alignItems: 'center',
-
-    flex: 1,
     justifyContent: 'center',
-  },
-  clockingLabel: {
-    paddingTop: 55,
-    fontSize: 22,
-    lineHeight: 25,
-    fontFamily: 'Manrope_600SemiBold',
-    color: 'white',
-  },
-  activityName: { fontFamily: 'Manrope_700Bold', color: 'white', fontSize: 44, lineHeight: 55 },
-  timeAndStartButtonContainer: {
-    flex: 2,
-    justifyContent: 'flex-end',
-
     alignItems: 'center',
+    width: '100%',
+  },
+
+  timeAndStartButtonContainer: {
+    flex: 5,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   textContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
+    flex: 2,
+    justifyContent: 'flex-end',
   },
   timeDisplay: {
-    fontSize: 60,
-    flex: 1,
-    paddingHorizontal: 50,
-    fontFamily: 'Manrope_800ExtraBold',
+    fontSize: 44,
+    fontFamily: 'Manrope_700Bold',
     color: 'white',
   },
   resetFinishContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center',
+
     paddingVertical: 22,
   },
 });

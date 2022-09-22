@@ -1,12 +1,11 @@
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { ClockItColors } from '../../constants/styles';
-import { convertCentiSecondsToHMS } from '../../utils/convertCentisecondstoHMS';
-
+import { convertCentisecondsToHistoryScreenFormat } from '../../utils/DateTimeHelpers/convertCentisecondsToHistoryScreenFormat';
 const ActivityListItem = ({ item, onPress, onLongPress }) => {
   return (
     <TouchableOpacity onLongPress={onLongPress} onPress={onPress} style={[styles.item]}>
       <Text style={[styles.title]}>{item.name}</Text>
-      <Text style={[styles.time]}>{convertCentiSecondsToHMS(item.totalTime)}</Text>
+      <Text style={[styles.time]}>{convertCentisecondsToHistoryScreenFormat(item.totalTime)}</Text>
     </TouchableOpacity>
   );
 };

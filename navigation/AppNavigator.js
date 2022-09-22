@@ -1,25 +1,36 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // context
 import { AuthContext } from '../store/Auth-Context';
-import UserContextProvider, { UserContext } from '../store/User-Context';
 import HistoryContextProvider from '../store/History-Context';
+import UserContextProvider from '../store/User-Context';
 // screens
 
 import SignUpLoginScreen from '../screens/Auth/SignUp-LoginScreen';
-import HomeScreen from '../screens/Home Screen/HomeScreen';
+// import HomeScreen from '../screens/Home Screen/HomeScreen';
+import ActivityHomeScreen from '../screens/Activity Home Screen/ActivityHomeScreen';
 import ClockItScreen from '../screens/Clock It Screen/clockItScreen';
-import RenameActivityScreen from '../screens/RenameActivityScreen/RenameActivityScreen';
+import EditHistoryScreen from '../screens/History Screen/EditHistoryScreen';
 import HistoryScreen from '../screens/History Screen/HistoryScreen';
+import HomeScreen from '../screens/Home Screen/HomeScreen';
+import ManualTimeInputScreen from '../screens/Manual Time EntryScreen/ManualTimeInputScreen';
+import RenameActivityScreen from '../screens/RenameActivityScreen/RenameActivityScreen';
+import SettingsScreen from '../screens/Settings Screen/SettingsScreen';
 // helpers
-import { ClockItColors } from '../constants/styles';
+import { ClockItColors, SemiBoldHeaderStyles } from '../constants/styles';
 // components
-import IconButton from '../components/buttons/IconButton';
+import { Ionicons } from '@expo/vector-icons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserActivitiesAsync } from '../app/userHomeScreenInformation';
+import LoadingOverlay from '../components/auth/ui/LoadingOverlay';
+import GradientView from '../components/UI/BackgroundContainer';
+import ClockItLogoHeader from '../components/UI/ClockItLogoHeader';
 
 const Stack = createNativeStackNavigator();
-
+const BottomTab = createBottomTabNavigator();
 //
 function AuthStack() {
   return (
@@ -33,6 +44,19 @@ function AuthStack() {
   );
 }
 const AuthenticatedStack = () => {
+  const user = useSelector((state) => state.userHomeScreen);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getUserActivitiesAsync(user.userId));
+  }, [dispatch]);
+
+  if (!user.loaded) {
+    return (
+      <GradientView>
+        <LoadingOverlay message="Getting Your Activities" />
+      </GradientView>
+    );
+  }
   return (
     <UserContextProvider>
       <HistoryContextProvider>
@@ -41,16 +65,20 @@ const AuthenticatedStack = () => {
             headerStyle: { backgroundColor: ClockItColors.blue },
             headerTintColor: 'white',
           }}>
-          <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
           <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ headerTitle: (props) => <ClockItLogoHeader {...props} /> }}
+          />
+          {/* <Stack.Screen
             name="Clockit"
             component={ClockItScreen}
             options={{
               headerTitle: '',
               headerBackTitle: 'Back',
             }}
-          />
-          <Stack.Screen
+          /> */}
+          {/* <Stack.Screen
             name="RenameActivityScreen"
             options={{ headerTitle: '', headerBackTitle: 'Back' }}
             component={RenameActivityScreen}
@@ -59,6 +87,22 @@ const AuthenticatedStack = () => {
             name="HistoryScreen"
             options={{ headerTitle: '', headerBackTitle: 'Back' }}
             component={HistoryScreen}
+          /> */}
+          {/* <Stack.Screen
+            name="EditHistoryScreen"
+            options={{ headerTitle: '', headerBackTitle: 'Back' }}
+            component={EditHistoryScreen}
+          /> */}
+          <Stack.Screen
+            name="ManualTimeInputScreen"
+            options={{ headerTitle: '', headerBackTitle: 'Back' }}
+            component={ManualTimeInputScreen}
+          />
+
+          <Stack.Screen
+            name="ActivityScreen"
+            options={{ headerTitle: '', headerBackTitle: 'Home' }}
+            component={BottomTabNavigation}
           />
         </Stack.Navigator>
       </HistoryContextProvider>
@@ -66,6 +110,66 @@ const AuthenticatedStack = () => {
   );
 };
 
+function BottomTabNavigation() {
+  const user = useSelector((state) => state.userHomeScreen);
+  return (
+    <BottomTab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: () => {
+          let iconName;
+          if (route.name === 'ActivityHomeScreen') {
+            iconName = 'document-text-outline';
+          } else if (route.name === 'ClockItScreen') {
+            iconName = 'stopwatch-outline';
+          } else if (route.name === 'SettingsScreen') {
+            iconName = 'settings-outline';
+          } else if (route.name === 'EditHistoryScreen') {
+            iconName = 'calendar-outline';
+          }
+          return <Ionicons name={iconName} color="white" size={24} />;
+        },
+        headerStyle: { backgroundColor: ClockItColors.blue, height: 80 },
+        headerShadowVisible: false,
+        headerTitleStyle: [SemiBoldHeaderStyles],
+        tabBarActiveTintColor: 'red',
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: { backgroundColor: 'black' },
+      })}>
+      <BottomTab.Screen
+        name="ClockItScreen"
+        component={ClockItScreen}
+        options={{
+          headerTitle: `Clocking ${user.currentActivityItem.name}` || '',
+          tabBarLabel: 'Clock It',
+        }}
+      />
+      <BottomTab.Screen
+        options={{
+          tabBarLabel: 'This Week',
+          headerTitle: `${user.currentActivityItem.name}` || '',
+        }}
+        name="ActivityHomeScreen"
+        component={ActivityHomeScreen}
+      />
+      <BottomTab.Screen
+        options={{
+          tabBarLabel: 'History',
+          headerTitle: `${user.currentActivityItem.name} History` || '',
+        }}
+        name="EditHistoryScreen"
+        component={EditHistoryScreen}
+      />
+      <BottomTab.Screen
+        options={{
+          tabBarLabel: 'Settings',
+          headerTitle: 'Settings',
+        }}
+        name="SettingsScreen"
+        component={SettingsScreen}
+      />
+    </BottomTab.Navigator>
+  );
+}
 const Navigation = () => {
   const authCtx = useContext(AuthContext);
   return (

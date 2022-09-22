@@ -3,19 +3,29 @@ import React, { useContext, useState } from 'react';
 import { Dimensions, FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import LoadingOverlay from '../../components/auth/ui/LoadingOverlay';
 import GradientView from '../../components/UI/BackgroundContainer';
+import { ClockItColors } from '../../constants/styles';
 import { db } from '../../firebase';
 import useFetchHistory from '../../hooks/useFetchHistory';
 import { AuthContext } from '../../store/Auth-Context';
 import { HistoryContext } from '../../store/History-Context';
 import { convertCentiSecondsToHMS } from '../../utils/convertCentisecondstoHMS';
+import { convertCentisecondsToHistoryScreenFormat } from '../../utils/DateTimeHelpers/convertCentisecondsToHistoryScreenFormat';
+import { monthMap, dayMap } from '../../utils/DateTimeHelpers/DateTimeMaps';
+import { Feather } from '@expo/vector-icons';
+import IconButton from '../../components/buttons/IconButton';
 const window = Dimensions.get('window');
 
 const HistoryScreen = ({ navigation, route }) => {
   const authCtx = useContext(AuthContext);
   const { name, id } = route.params;
   const historyCtx = useContext(HistoryContext);
+  const [modalVisible, setModalVisible] = useState(false);
   const [isLoading, lastVisible] = useFetchHistory(authCtx.userId, id);
 
+  function onEditButtonPressHandler(item) {
+    historyCtx.dispatch({ type: 'EDIT_ITEM', payload: { id } });
+    navigation.navigate('EditHistoryScreen');
+  }
   async function fetchMoreData() {
     if (historyCtx.history[id].fullyLoaded) {
       return;
@@ -57,12 +67,13 @@ const HistoryScreen = ({ navigation, route }) => {
       <ItemName name={name} />
       <SafeAreaView style={styles.cardContainer}>
         <FlatList
+          indicatorStyle="white"
           initialNumToRender={4}
-          onEndReachedThreshold={0.4}
+          onEndReachedThreshold={0.3}
           onEndReached={(info) => fetchMoreData(info)}
           data={historyCtx.history[id].history}
           renderItem={({ item }) => {
-            return <HistoryCard item={item} />;
+            return <HistoryCard onEditButtonPressHandler={onEditButtonPressHandler} item={item} />;
           }}
           keyExtractor={(item) => item.startedAt}
         />
@@ -77,50 +88,166 @@ const styles = StyleSheet.create({ cardContainer: { flex: 1 } });
 const ItemName = ({ name }) => {
   return (
     <View style={itemNameStyles.titleContainer}>
-      <Text style={itemNameStyles.title}>{name}</Text>
+      <Text style={itemNameStyles.title}>History</Text>
     </View>
   );
 };
 
 const itemNameStyles = StyleSheet.create({
-  titleContainer: { flex: 0.1 },
-  title: { fontFamily: 'Manrope_700Bold', fontSize: 44 },
+  titleContainer: { flex: 0.1, marginBottom: 30 },
+  title: { fontFamily: 'Manrope_700Bold', fontSize: 40, color: 'white', lineHeight: 55 },
 });
 
-const HistoryCard = ({ item }) => {
-  // console.log(item, 'hereher');
+export const CurrentWeekCard = ({ item, onEditButtonPressHandler }) => {
+  const weekSoFar = Object.keys(item).reduce((acc, key) => {
+    if (key !== 'id' && key !== 'name' && key !== 'totalTime') {
+      acc.push({ date: key, time: item[key] });
+    }
+    return acc;
+  }, []);
 
   return (
-    <View style={cardStyles.cardContainer}>
-      <Text style={cardStyles.date}>
-        Week of {item.startedAt.toDate().toLocaleDateString()} -{' '}
-        {item.endedAt.toDate().toLocaleDateString()}
-      </Text>
-      <View>
-        <Text>Total Time {convertCentiSecondsToHMS(item.totalTime)}</Text>
+    <>
+      <View style={cardStyles.cardContainer}>
+        <View style={cardStyles.totalContainer}>
+          <Text style={cardStyles.totalText}>Total </Text>
+          <View style={cardStyles.totalAndEditIconContainer}>
+            <Text style={[cardStyles.totalText, { fontSize: 18 }]}>
+              {convertCentisecondsToHistoryScreenFormat(item.totalTime)}
+            </Text>
+            {/* <Feather name="edit" size={24} color="blue" /> */}
+            <IconButton
+              style={{
+                margin: 0,
+                borderRadius: 0,
+              }}
+              icon="md-pencil-sharp"
+              color="blue"
+              size={24}
+              onPress={() => {
+                onEditButtonPressHandler(item);
+              }}
+            />
+          </View>
+        </View>
+        <WeeklyDataFlatList week={weekSoFar} />
       </View>
-      <WeeklyDataFlatList week={item.week} />
-    </View>
+    </>
+  );
+};
+export const HistoryCard = ({ item, onEditButtonPressHandler }) => {
+  const weekStart = item.startedAt.toDate();
+  const weekEnd = item.endedAt.toDate();
+  return (
+    <>
+      <View style={cardStyles.dateHeading}>
+        <Text style={cardStyles.date}>
+          {monthMap[weekStart.getMonth()]} {weekStart.getDate()}, {weekStart.getFullYear()}
+        </Text>
+      </View>
+      <View style={cardStyles.cardContainer}>
+        <View style={cardStyles.totalContainer}>
+          <Text style={cardStyles.totalText}>Total </Text>
+          <View style={cardStyles.totalAndEditIconContainer}>
+            <Text style={[cardStyles.totalText, { fontSize: 18 }]}>
+              {convertCentisecondsToHistoryScreenFormat(item.totalTime)}
+            </Text>
+            {/* <Feather name="edit" size={24} color="blue" /> */}
+            <IconButton
+              style={{
+                margin: 0,
+                borderRadius: 0,
+              }}
+              icon="md-pencil-sharp"
+              color="blue"
+              size={24}
+              onPress={() => {
+                onEditButtonPressHandler(item);
+              }}
+            />
+          </View>
+        </View>
+        <WeeklyDataFlatList week={item.week} />
+      </View>
+    </>
   );
 };
 
 const cardStyles = StyleSheet.create({
+  dateHeading: { marginBottom: 8, marginHorizontal: 24 },
   cardContainer: {
-    flex: 1,
+    flex: 0.5,
     backgroundColor: 'white',
-    paddingBottom: 22,
-    marginBottom: 22,
-    width: window.width / 1.1,
-    height: window.height / 3,
+    marginHorizontal: 24,
+    marginBottom: 50,
+    width: (window.width / 1.13) | 0,
+    // maxHeight: (window.width / 5) | 0,
     borderRadius: 8,
   },
-  date: {
+  totalContainer: {
+    flex: 0.3,
+    borderBottomColor: '#D6EFFF',
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderStyle: 'solid',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  totalText: {
     fontFamily: 'Manrope_700Bold',
-    // flex: 2,
+    fontSize: 24,
+    marginHorizontal: 16,
+    color: ClockItColors.darkestBlue,
+  },
+  totalAndEditIconContainer: {
+    flexDirection: 'row',
+    marginRight: 8,
+  },
+  date: {
+    color: 'white',
+    fontFamily: 'Manrope_400Regular',
+    fontSize: 16,
   },
 });
+// const cardStyles = StyleSheet.create({
+//   dateHeading: { marginBottom: 8, marginHorizontal: 24 },
+//   cardContainer: {
+//     flex: 1,
+//     backgroundColor: 'white',
+//     marginHorizontal: 24,
+//     marginBottom: 50,
+//     width: (window.width / 1.13) | 0,
+//     height: (window.width / 1.13 - 45) | 0,
+//     borderRadius: 8,
+//   },
+//   totalContainer: {
+//     flex: 0.3,
+//     borderBottomColor: '#D6EFFF',
+//     flexDirection: 'row',
+//     borderBottomWidth: 1,
+//     borderStyle: 'solid',
+//     justifyContent: 'space-between',
+//     alignItems: 'center',
+//   },
+//   totalText: {
+//     fontFamily: 'Manrope_700Bold',
+//     fontSize: 24,
+//     marginHorizontal: 16,
+//     color: ClockItColors.darkestBlue,
+//   },
+//   totalAndEditIconContainer: {
+//     flexDirection: 'row',
+//     marginRight: 8,
+//   },
+//   date: {
+//     color: 'white',
+//     fontFamily: 'Manrope_400Regular',
+//     fontSize: 16,
+//   },
+// });
 
 const WeeklyDataFlatList = ({ week }) => {
+  console.log('week', week);
   return (
     <SafeAreaView style={weeklyDataFlatListStyles.flatListContainer}>
       <FlatList
@@ -136,16 +263,16 @@ const WeeklyDataFlatList = ({ week }) => {
 };
 
 const weeklyDataFlatListStyles = StyleSheet.create({
-  flatListContainer: { flex: 1 },
-  list: { paddingHorizontal: 4, paddingTop: 2 },
+  flatListContainer: { flex: 1, marginTop: 18, marginBottom: 24, marginHorizontal: 16 },
+  list: {},
 });
 
 const WeeklyDataFlatListItem = ({ time, date }) => {
   return (
     <View style={weeklyDataFlatListItemStyles.dateTimeWrapper}>
-      <Text style={weeklyDataFlatListItemStyles.date}>{date.slice(0, -4)}:</Text>
+      <Text style={weeklyDataFlatListItemStyles.date}>{dayMap[date.slice(0, 3)]}</Text>
       <Text style={weeklyDataFlatListItemStyles.time}>
-        {convertCentiSecondsToHMS(time).slice(0, -4)}
+        {convertCentisecondsToHistoryScreenFormat(time)}
       </Text>
     </View>
   );
@@ -154,9 +281,20 @@ const WeeklyDataFlatListItem = ({ time, date }) => {
 const weeklyDataFlatListItemStyles = StyleSheet.create({
   dateTimeWrapper: {
     flexDirection: 'row',
-    padding: 2,
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 4,
   },
-  date: { fontFamily: 'Manrope_600SemiBold', marginRight: 4, fontSize: 16 },
-  time: { fontFamily: 'Manrope_600SemiBold', fontSize: 16 },
+  date: {
+    fontFamily: 'Manrope_400Regular',
+
+    fontSize: 16,
+    color: ClockItColors.darkestBlue,
+  },
+  time: {
+    fontFamily: 'Manrope_400Regular',
+
+    fontSize: 16,
+    color: ClockItColors.darkestBlue,
+  },
 });

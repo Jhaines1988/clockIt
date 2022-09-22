@@ -1,106 +1,69 @@
-import React, { useContext, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-
-// components
+import { useEffect, useState } from 'react';
+import { SafeAreaView, View, StyleSheet } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { initializeNames } from '../../app/userHistory';
+import { setCurrentActivityItem } from '../../app/userHomeScreenInformation';
 import ActivityInputContainer from '../../components/activityInput/ActivityInputContainer';
 import ActivityFlatList from '../../components/ActivityListItems/ActivityFlatList';
 import LoadingOverlay from '../../components/auth/ui/LoadingOverlay';
 import AddButton from '../../components/buttons/AddButton';
 import GradientView from '../../components/UI/BackgroundContainer';
-import SettingsCog from '../../components/UI/SettingsCog';
-import SettingsModal from '../../components/UI/SettingsModal';
-import WeekAndLogoDisplay from '../../components/UI/WeeKAndTitleDisplay';
-
-//Helpers
-import { getStartOfWeek } from '../../utils/DateTimeHelpers/DateTimeHelpers';
-// context
-import { AuthContext } from '../../store/Auth-Context';
-import { UserContext } from '../../store/User-Context.js';
-// hooks
-
-import useFetchUserActivities from '../../hooks/useFetchUserActivities';
-import { HistoryContext } from '../../store/History-Context';
-const HomeScreen = ({ navigation, route }) => {
-  const authCtx = useContext(AuthContext);
-  const userCtx = useContext(UserContext);
-  const historyCtx = useContext(HistoryContext);
-  const userId = authCtx.userId;
-  const [modalVisible, setModalVisible] = useState(false);
-  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+import WeekDisplay from '../../components/UI/WeekDisplay';
+function HomeScreen({ navigation }) {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.userHomeScreen);
+  const [inputContainerModalVisible, setInputContainerModalVisible] = useState(false);
   const [addingActivities, setAddingActivities] = useState(false);
 
-  const isLoading = useFetchUserActivities(userId);
-
+  function onSelectActivity(item) {
+    dispatch(setCurrentActivityItem(item));
+    navigation.navigate('ActivityScreen');
+  }
   function addingActivitiesToHomeScreenHandler() {
     setAddingActivities(!addingActivities);
   }
   function startStopAddActivityHandler() {
-    setModalVisible(!modalVisible);
+    setInputContainerModalVisible(!inputContainerModalVisible);
   }
-  function openCloseSettingsModalHandler() {
-    setSettingsModalVisible(!settingsModalVisible);
+  useEffect(() => {
+    dispatch(initializeNames({ activities: user.activities }));
+    return () => {};
+  }, [dispatch]);
+
+  if (!user.loaded) {
+    return <LoadingOverlay message="Cleaning things up..." />;
   }
-  function activityItemPressHandler(item) {
-    userCtx.setCurrentActivityItem(item);
-
-    navigation.navigate('Clockit', {
-      userId: userId,
-    });
-  }
-
-  function activityItemOnLongPressHandler(item) {
-    userCtx.setCurrentActivityItem(item);
-
-    navigation.navigate('HistoryScreen', { name: item.name, id: item.id });
-  }
-
-  if (isLoading) {
-    return (
-      <GradientView>
-        <LoadingOverlay message="Cleaning things up.." />
-      </GradientView>
-    );
-  }
-
   return (
-    <GradientView style={styles.container}>
-      <WeekAndLogoDisplay weekOf={getStartOfWeek()} />
+    <GradientView>
+      <WeekDisplay weekOf="This Week" />
       <ActivityInputContainer
-        userId={userId}
-        modalVisible={modalVisible}
+        userId={user.userId}
+        modalVisible={inputContainerModalVisible}
         onClose={startStopAddActivityHandler}
         addingActivitiesToHomeScreenHandler={addingActivitiesToHomeScreenHandler}
       />
-      <ActivityFlatList
-        data={userCtx.activities}
-        onItemPress={activityItemPressHandler}
-        onLongItemPress={activityItemOnLongPressHandler}
-        keyExtractor={(item) => item.id}
-      />
-      <View style={styles.addButtonSettingsContainer}>
+      <SafeAreaView style={styles.safeAreaViewContainer}>
+        <ActivityFlatList
+          data={user.activities}
+          onItemPress={onSelectActivity}
+          onLongItemPress={() => {}}
+          keyExtractor={(item) => item.id}
+        />
+      </SafeAreaView>
+      <View style={styles.addButtonContainer}>
         <AddButton
-          numUserActivities={userCtx.activities.length}
+          numUserActivities={user.activities.length}
           onPress={startStopAddActivityHandler}
         />
-        <SettingsModal
-          modalVisible={settingsModalVisible}
-          onPress={openCloseSettingsModalHandler}
-          onLogout={authCtx.logout}
-        />
-
-        <SettingsCog onPress={openCloseSettingsModalHandler} />
       </View>
     </GradientView>
   );
-};
+}
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  addButtonSettingsContainer: {
-    flex: 1,
+  safeAreaViewContainer: { flex: 1 },
+  addButtonContainer: {
+    flex: 0.3,
     width: '100%',
     justifyContent: 'center',
   },

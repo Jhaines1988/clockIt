@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   renameButtonText: { fontFamily: 'Manrope_500Medium', color: ClockItColors.blue, fontSize: 18 },
+
   deleteButtonText: {
     fontFamily: 'Manrope_500Medium',
     color: ClockItColors.confirmDelete,

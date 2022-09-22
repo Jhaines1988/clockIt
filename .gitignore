@@ -19,3 +19,8 @@ firebase.js
 unused.js
 coverage
 .env
+
+
+# playgrounds
+
+attemptedPicker.js

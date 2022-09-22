@@ -1,8 +1,9 @@
 import React from 'react';
 import { ClockItColors } from '../../../constants/styles';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
 
 export const ResetButton = ({ time, running, handleResetButtonPress }) => {
+  const { height, width } = useWindowDimensions();
   return (
     <TouchableOpacity
       disabled={time > 0 ? false : true}
@@ -34,12 +35,12 @@ export function FinishButton({ time, running, handleFinishButtonPress }) {
   );
 }
 const buttonStyles = StyleSheet.create({
-  buttonWrapper: { flex: 1, backgroundColor: ClockItColors.dkBlue },
-  disabledButton: { flex: 1, backgroundColor: ClockItColors.blue, opacity: 0.4 },
-  buttonTextContainer: {},
+  buttonWrapper: { flex: 0.4, backgroundColor: ClockItColors.dkBlue },
+  disabledButton: { flex: 0.4, backgroundColor: ClockItColors.blue, opacity: 0.4 },
+  buttonTextContainer: { marginHorizontal: 4, borderWidth: 2 },
   buttonText: {
     textAlign: 'center',
-    height: 55,
+    // height: 55,
     color: 'white',
     fontSize: 20,
     textTransform: 'uppercase',

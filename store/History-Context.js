@@ -3,6 +3,7 @@ import React, { useReducer } from 'react';
 const initialActivityIdToNameMap = {};
 export const HistoryContext = React.createContext({
   history: initialActivityIdToNameMap,
+  itemToEdit: {},
   dispatch: () => {},
 });
 
@@ -52,6 +53,10 @@ const activityIdToNameReducer = (state, action) => {
         },
       };
       return newState;
+    case 'EDIT_ITEM':
+      const newStateWithItemAdded = { ...state, itemToEdit: action.payload };
+      console.log('ACTIONPAYLOAD', newStateWithItemAdded.itemToEdit);
+      return newStateWithItemAdded;
 
     default:
       return state;
