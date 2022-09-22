@@ -4,31 +4,29 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // context
 import { AuthContext } from '../store/Auth-Context';
-import UserContextProvider, { UserContext } from '../store/User-Context';
 import HistoryContextProvider from '../store/History-Context';
+import UserContextProvider from '../store/User-Context';
 // screens
 
 import SignUpLoginScreen from '../screens/Auth/SignUp-LoginScreen';
 // import HomeScreen from '../screens/Home Screen/HomeScreen';
-import ClockItScreen from '../screens/Clock It Screen/clockItScreen';
-import RenameActivityScreen from '../screens/RenameActivityScreen/RenameActivityScreen';
-import ManualTimeInputScreen from '../screens/Manual Time EntryScreen/ManualTimeInputScreen';
-import HistoryScreen from '../screens/History Screen/HistoryScreen';
-import EditHistoryScreen from '../screens/History Screen/EditHistoryScreen';
-import HomeScreen from '../screens/Home Screen/HomeScreen';
 import ActivityHomeScreen from '../screens/Activity Home Screen/ActivityHomeScreen';
+import ClockItScreen from '../screens/Clock It Screen/clockItScreen';
+import EditHistoryScreen from '../screens/History Screen/EditHistoryScreen';
+import HistoryScreen from '../screens/History Screen/HistoryScreen';
+import HomeScreen from '../screens/Home Screen/HomeScreen';
+import ManualTimeInputScreen from '../screens/Manual Time EntryScreen/ManualTimeInputScreen';
+import RenameActivityScreen from '../screens/RenameActivityScreen/RenameActivityScreen';
 import SettingsScreen from '../screens/Settings Screen/SettingsScreen';
 // helpers
-import { ClockItColors, LargeHeaderStyles, SemiBoldHeaderStyles } from '../constants/styles';
+import { ClockItColors, SemiBoldHeaderStyles } from '../constants/styles';
 // components
-import IconButton from '../components/buttons/IconButton';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import GradientView from '../components/UI/BackgroundContainer';
-import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserActivitiesAsync } from '../app/userHomeScreenInformation';
 import LoadingOverlay from '../components/auth/ui/LoadingOverlay';
+import GradientView from '../components/UI/BackgroundContainer';
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -67,15 +65,15 @@ const AuthenticatedStack = () => {
             headerTintColor: 'white',
           }}>
           <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-          <Stack.Screen
+          {/* <Stack.Screen
             name="Clockit"
             component={ClockItScreen}
             options={{
               headerTitle: '',
               headerBackTitle: 'Back',
             }}
-          />
-          <Stack.Screen
+          /> */}
+          {/* <Stack.Screen
             name="RenameActivityScreen"
             options={{ headerTitle: '', headerBackTitle: 'Back' }}
             component={RenameActivityScreen}
@@ -84,12 +82,12 @@ const AuthenticatedStack = () => {
             name="HistoryScreen"
             options={{ headerTitle: '', headerBackTitle: 'Back' }}
             component={HistoryScreen}
-          />
-          <Stack.Screen
+          /> */}
+          {/* <Stack.Screen
             name="EditHistoryScreen"
             options={{ headerTitle: '', headerBackTitle: 'Back' }}
             component={EditHistoryScreen}
-          />
+          /> */}
           <Stack.Screen
             name="ManualTimeInputScreen"
             options={{ headerTitle: '', headerBackTitle: 'Back' }}

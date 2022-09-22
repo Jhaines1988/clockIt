@@ -1,18 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Text, StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  getUserActivitiesAsync,
-  setCurrentActivityItem,
-} from '../../app/userHomeScreenInformation';
-import ActivityFlatList from '../../components/ActivityListItems/ActivityFlatList';
-import GradientView from '../../components/UI/BackgroundContainer';
-import { LargeHeaderStyles, SemiBoldHeaderStyles } from '../../constants/styles';
-import WeekAndLogoDisplay from '../../components/UI/WeeKAndTitleDisplay';
-import { getStartOfWeek } from '../../unused';
 import { initializeNames } from '../../app/userHistory';
-import AddButton from '../../components/buttons/AddButton';
+import { setCurrentActivityItem } from '../../app/userHomeScreenInformation';
 import ActivityInputContainer from '../../components/activityInput/ActivityInputContainer';
+import ActivityFlatList from '../../components/ActivityListItems/ActivityFlatList';
+import LoadingOverlay from '../../components/auth/ui/LoadingOverlay';
+import AddButton from '../../components/buttons/AddButton';
+import GradientView from '../../components/UI/BackgroundContainer';
 function HomeScreen({ navigation }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userHomeScreen);
@@ -30,30 +25,22 @@ function HomeScreen({ navigation }) {
     setInputContainerModalVisible(!inputContainerModalVisible);
   }
   useEffect(() => {
-    // dispatch(getUserActivitiesAsync(user.userId));
     dispatch(initializeNames({ activities: user.activities }));
     return () => {};
   }, [dispatch]);
 
-  // if (!user.loaded) {
-  //   return (
-  //     <View>
-  //       <Text>Hey</Text>
-  //     </View>
-  //   );
-  // }
+  if (!user.loaded) {
+    return <LoadingOverlay message="Cleaning things up..." />;
+  }
   return (
-    <GradientView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {/* <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}> */}
-      {/* <WeekAndLogoDisplay weekOf={getStartOfWeek()} /> */}
+    <GradientView>
       <ActivityInputContainer
         userId={user.userId}
         modalVisible={inputContainerModalVisible}
         onClose={startStopAddActivityHandler}
         addingActivitiesToHomeScreenHandler={addingActivitiesToHomeScreenHandler}
       />
-      <Text style={SemiBoldHeaderStyles}> Clock It </Text>
-      <Text style={LargeHeaderStyles}> My Activities </Text>
+
       <ActivityFlatList
         data={user.activities}
         onItemPress={onSelectActivity}
@@ -61,7 +48,6 @@ function HomeScreen({ navigation }) {
         keyExtractor={(item) => item.id}
       />
       <AddButton numUserActivities={user.activities.length} onPress={startStopAddActivityHandler} />
-      {/* </View> */}
     </GradientView>
   );
 }
