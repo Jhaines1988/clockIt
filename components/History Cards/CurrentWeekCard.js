@@ -1,19 +1,15 @@
 import React from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
-import IconButton from '../../components/buttons/IconButton';
 import { ClockItColors } from '../../constants/styles';
-import { convertCentisecondsToHistoryScreenFormat } from '../../utils/DateTimeHelpers/convertCentisecondsToHistoryScreenFormat';
 import { lastSunday } from '../../utils/DateTimeHelpers/DateTimeHelpers';
-const window = Dimensions.get('window');
-import WeeklyDataFlatList from './WeeklyDataFlatList';
 import { dayMap, monthMap } from '../../utils/DateTimeHelpers/DateTimeMaps';
-const CurrentWeekCard = ({ item, onEditButtonPressHandler }) => {
-  const weekSoFar = Object.keys(item).reduce((acc, key) => {
-    if (key !== 'id' && key !== 'name' && key !== 'totalTime') {
-      acc.push({ date: key, time: item[key] });
-    }
-    return acc;
-  }, []);
+import weekSoFar from './helpers/weekSoFar';
+import TotalTimeDisplay from './TotalTimeDisplay';
+import WeeklyDataFlatList from './WeeklyDataFlatList';
+const window = Dimensions.get('window');
+const CurrentWeekCard = ({ item }) => {
+  const thisWeeksDataSoFar = weekSoFar(item);
+
   const weekStart = lastSunday();
   const dayOfWeek = dayMap[weekStart.toDateString().slice(0, 3)];
   const date = weekStart.getDate();
@@ -25,28 +21,12 @@ const CurrentWeekCard = ({ item, onEditButtonPressHandler }) => {
         {dayOfWeek}, {month} {date} {year}
       </Text>
       <View style={styles.cardContainer}>
-        <View style={styles.totalContainer}>
-          <Text style={styles.totalText}>Total </Text>
-          <View style={styles.totalAndEditIconContainer}>
-            <Text style={[styles.totalText, { fontSize: 18 }]}>
-              {convertCentisecondsToHistoryScreenFormat(item.totalTime)}
-            </Text>
-
-            <IconButton
-              style={{
-                margin: 0,
-                borderRadius: 0,
-              }}
-              icon="md-pencil-sharp"
-              color="blue"
-              size={24}
-              onPress={() => {
-                onEditButtonPressHandler(item);
-              }}
-            />
-          </View>
-        </View>
-        <WeeklyDataFlatList week={weekSoFar} />
+        <TotalTimeDisplay
+          totalTime={item.totalTime}
+          includeIcon={true}
+          onEditButtonPressHandler={() => {}}
+        />
+        <WeeklyDataFlatList week={thisWeeksDataSoFar} />
       </View>
     </View>
   );
