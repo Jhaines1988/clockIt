@@ -24,7 +24,6 @@ const EditHistoryCard = ({ modalVisible, onPress, week, dateString, totalTime })
               totalTime={totalTime}
               onEditButtonPressHandler={null}
               includeIcon={false}
-              totalContainerStyles={{ flex: 1 }}
             />
             <FlatList
               bounces={false}
