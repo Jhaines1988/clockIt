@@ -3,12 +3,12 @@ import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { ClockItColors } from '../../constants/styles';
 import { lastSunday } from '../../utils/DateTimeHelpers/DateTimeHelpers';
 import { dayMap, monthMap } from '../../utils/DateTimeHelpers/DateTimeMaps';
-import { weekSoFar } from './helpers/weekSoFar';
+import { currentWeekFormatter } from './helpers/currentWeekHelper';
 import TotalTimeDisplay from './TotalTimeDisplay';
 import WeeklyDataFlatList from './WeeklyDataFlatList';
 const window = Dimensions.get('window');
 const CurrentWeekCard = ({ item }) => {
-  const thisWeeksDataSoFar = weekSoFar(item);
+  const thisWeeksDataSoFar = currentWeekFormatter(item);
 
   const weekStart = lastSunday();
   const dayOfWeek = dayMap[weekStart.toDateString().slice(0, 3)];
