@@ -1,5 +1,5 @@
 import { findDay, lastSunday } from '../../../utils/DateTimeHelpers/DateTimeHelpers';
-import { dayMap } from '../../../utils/DateTimeHelpers/DateTimeMaps';
+import { dayMap, monthMap } from '../../../utils/DateTimeHelpers/DateTimeMaps';
 
 export const currentWeekFormatter = function (item) {
   const start = lastSunday();
@@ -20,6 +20,16 @@ export const currentWeekFormatter = function (item) {
     }
     start.setDate(start.getDate() + 1);
   }
-
+  weekStartHeadingGenerator();
   return formattedUserWeek;
+};
+
+export const weekStartHeadingGenerator = function () {
+  const weekStart = lastSunday();
+  const dayOfWeek = dayMap[weekStart.toDateString().slice(0, 3)];
+  const date = weekStart.getDate();
+  const month = monthMap[weekStart.getMonth()];
+  const year = weekStart.getFullYear();
+
+  return `${dayOfWeek}, ${month} ${date} ${year}`;
 };
