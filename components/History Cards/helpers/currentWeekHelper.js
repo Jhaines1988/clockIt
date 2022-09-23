@@ -20,7 +20,7 @@ export const currentWeekFormatter = function (item) {
     }
     start.setDate(start.getDate() + 1);
   }
-  weekStartHeadingGenerator();
+
   return formattedUserWeek;
 };
 
