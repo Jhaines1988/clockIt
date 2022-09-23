@@ -9,7 +9,7 @@ const WeeklyDataFlatList = ({ week }) => {
         <FlatList
           style={styles.list}
           data={week}
-          keyExtractor={(item) => item.date}
+          keyExtractor={(item, index) => item.date + index}
           renderItem={({ item }) => {
             return <WeeklyDataFlatListItem time={item.time} date={item.date} />;
           }}
