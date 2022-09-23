@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
 import { db } from '../firebase';
+import { convertCentisecondsToHistoryScreenFormat } from '../utils/DateTimeHelpers/convertCentisecondsToHistoryScreenFormat';
+import { dayMap } from '../utils/DateTimeHelpers/DateTimeMaps';
 export const getUserHistoryAsync = createAsyncThunk(
   'userHistory/getUserHistoryAsync',
   async (userId, thunkAPI) => {
@@ -21,6 +23,11 @@ export const getUserHistoryAsync = createAsyncThunk(
           startedAt: doc.data().startedAt.toDate().toISOString(),
           endedAt: doc.data().endedAt.toDate().toISOString(),
           name: name,
+          week: doc.data().week.map((day) => {
+            day.date = dayMap[day.date.slice(0, 3)];
+            day.time = convertCentisecondsToHistoryScreenFormat(day.time);
+            return day;
+          }),
         };
 
         fetchedHistory.push(newDoc);
