@@ -11,7 +11,13 @@ const WeeklyDataFlatList = ({ week }) => {
           data={week}
           keyExtractor={(item, index) => item.date + index}
           renderItem={({ item }) => {
-            return <WeeklyDataFlatListItem time={item.time} date={item.date} />;
+            return (
+              <WeeklyDataFlatListItem
+                time={item.time}
+                date={item.date}
+                isEditable={item.isEditable}
+              />
+            );
           }}
         />
       </SafeAreaView>
