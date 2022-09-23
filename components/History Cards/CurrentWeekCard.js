@@ -8,7 +8,7 @@ import TotalTimeDisplay from './TotalTimeDisplay';
 import WeeklyDataFlatList from './WeeklyDataFlatList';
 const window = Dimensions.get('window');
 const CurrentWeekCard = ({ item }) => {
-  const thisWeeksDataSoFar = currentWeekFormatter(item);
+  const currentWeek = currentWeekFormatter(item);
 
   const weekStart = lastSunday();
   const dayOfWeek = dayMap[weekStart.toDateString().slice(0, 3)];
@@ -26,7 +26,7 @@ const CurrentWeekCard = ({ item }) => {
           includeIcon={true}
           onEditButtonPressHandler={() => {}}
         />
-        <WeeklyDataFlatList week={thisWeeksDataSoFar} />
+        <WeeklyDataFlatList week={currentWeek} />
       </View>
     </View>
   );
