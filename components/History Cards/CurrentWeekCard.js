@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import TotalTimeDisplay from './TotalTimeDisplay';
 import WeeklyDataFlatList from './WeeklyDataFlatList';
@@ -10,8 +10,8 @@ import { currentWeekFormatter, weekStartHeadingGenerator } from './helpers/curre
 import { useDispatch } from 'react-redux';
 import { initializeCurrentWeek } from '../../app/userHistory';
 
-const window = Dimensions.get('window');
 const CurrentWeekCard = ({ item }) => {
+  const { width } = useWindowDimensions();
   const currentWeek = currentWeekFormatter(item);
   const weekStartHeading = weekStartHeadingGenerator();
   const dispatch = useDispatch();
@@ -21,7 +21,7 @@ const CurrentWeekCard = ({ item }) => {
   return (
     <View style={styles.currentWeekContainer}>
       <DateTimeDisplay dateString={weekStartHeading} />
-      <View style={styles.cardContainer}>
+      <View style={[styles.cardContainer, { width: (width / 1.13) | 0 }]}>
         <TotalTimeDisplay
           totalTime={item.totalTime}
           includeIcon={true}
@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginHorizontal: 24,
     marginBottom: 50,
-    width: (window.width / 1.13) | 0,
     borderRadius: 8,
   },
 });
