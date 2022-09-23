@@ -1,7 +1,6 @@
 import React from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { ClockItColors } from '../../constants/styles';
-const window = Dimensions.get('window');
 
 const WeeklyDataFlatListItem = ({ time, date, isEditable }) => {
   return (
