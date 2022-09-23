@@ -1,25 +1,17 @@
 import React from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { ClockItColors } from '../../constants/styles';
-import { lastSunday } from '../../utils/DateTimeHelpers/DateTimeHelpers';
-import { dayMap, monthMap } from '../../utils/DateTimeHelpers/DateTimeMaps';
-import { currentWeekFormatter } from './helpers/currentWeekHelper';
+import { currentWeekFormatter, weekStartHeadingGenerator } from './helpers/currentWeekHelper';
 import TotalTimeDisplay from './TotalTimeDisplay';
 import WeeklyDataFlatList from './WeeklyDataFlatList';
 const window = Dimensions.get('window');
 const CurrentWeekCard = ({ item }) => {
   const currentWeek = currentWeekFormatter(item);
+  const weekStartHeading = weekStartHeadingGenerator();
 
-  const weekStart = lastSunday();
-  const dayOfWeek = dayMap[weekStart.toDateString().slice(0, 3)];
-  const date = weekStart.getDate();
-  const month = monthMap[weekStart.getMonth()];
-  const year = weekStart.getFullYear();
   return (
     <View style={styles.currentWeekContainer}>
-      <Text style={styles.dateHeading}>
-        {dayOfWeek}, {month} {date} {year}
-      </Text>
+      <Text style={styles.dateHeading}>{weekStartHeading}</Text>
       <View style={styles.cardContainer}>
         <TotalTimeDisplay
           totalTime={item.totalTime}
