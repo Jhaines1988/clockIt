@@ -32,14 +32,20 @@ export const getUserHistoryAsync = createAsyncThunk(
     }
   }
 );
+
 export const userHistory = createSlice({
   name: 'userHistory',
-  initialState: {},
+  initialState: {
+    currentWeek: [],
+  },
   reducers: {
     initializeNames: (state, action) => {
       action.payload.activities.forEach((item) => {
         state[item.id] = { name: item.name, history: [], fullyLoaded: false };
       });
+    },
+    initializeCurrentWeek: (state, action) => {
+      state.currentWeek = action.payload;
     },
   },
   extraReducers: {
@@ -53,6 +59,6 @@ export const userHistory = createSlice({
   },
 });
 
-export const { initializeNames } = userHistory.actions;
+export const { initializeNames, initializeCurrentWeek } = userHistory.actions;
 
 export default userHistory.reducer;
