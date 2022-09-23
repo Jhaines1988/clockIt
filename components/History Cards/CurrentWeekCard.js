@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 
 import TotalTimeDisplay from './TotalTimeDisplay';
@@ -7,11 +7,17 @@ import WeeklyDataFlatList from './WeeklyDataFlatList';
 import DateTimeDisplay from './DateTimeDisplay';
 import { currentWeekFormatter, weekStartHeadingGenerator } from './helpers/currentWeekHelper';
 
+import { useDispatch } from 'react-redux';
+import { initializeCurrentWeek } from '../../app/userHistory';
+
 const window = Dimensions.get('window');
 const CurrentWeekCard = ({ item }) => {
   const currentWeek = currentWeekFormatter(item);
   const weekStartHeading = weekStartHeadingGenerator();
-
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(initializeCurrentWeek({ currentWeek }));
+  });
   return (
     <View style={styles.currentWeekContainer}>
       <DateTimeDisplay dateString={weekStartHeading} />
