@@ -15,7 +15,7 @@ const WeeklyDataFlatList = ({ week }) => {
               <WeeklyDataFlatListItem
                 time={item.time}
                 date={item.date}
-                isEditable={item.isEditable}
+                isEditable={item.editable}
               />
             );
           }}
