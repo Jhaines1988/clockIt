@@ -1,28 +1,26 @@
-import { useEffect, useState, useContext, useCallback } from 'react';
-import { View } from 'react-native';
-import AuthContextProvider, { AuthContext } from './store/Auth-Context';
-import UserContextProvider, { UserContext } from './store/User-Context';
-import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SplashScreen from 'expo-splash-screen';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { View } from 'react-native';
+import store from './app/store';
 import LoadingOverlay from './components/auth/ui/LoadingOverlay';
 import Navigation from './navigation/AppNavigator';
-import store from './app/store';
-import thunk from 'redux-thunk';
+import AuthContextProvider, { AuthContext } from './store/Auth-Context';
+import { UserContext } from './store/User-Context';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import { setUserId } from './app/userHomeScreenInformation';
-import { Provider } from 'react-redux';
 
 import {
-  useFonts,
   Manrope_300Light,
   Manrope_400Regular,
   Manrope_500Medium,
   Manrope_600SemiBold,
   Manrope_700Bold,
   Manrope_800ExtraBold,
+  useFonts,
 } from '@expo-google-fonts/manrope';
-// SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
