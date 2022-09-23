@@ -45,7 +45,7 @@ export const userHistory = createSlice({
       });
     },
     initializeCurrentWeek: (state, action) => {
-      state.currentWeek = action.payload;
+      state.currentWeek = action.payload.currentWeek;
     },
   },
   extraReducers: {
