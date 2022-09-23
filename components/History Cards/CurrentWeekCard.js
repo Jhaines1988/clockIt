@@ -1,6 +1,7 @@
 import React from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { ClockItColors } from '../../constants/styles';
+import DateTimeDisplay from './DateTimeDisplay';
 import { currentWeekFormatter, weekStartHeadingGenerator } from './helpers/currentWeekHelper';
 import TotalTimeDisplay from './TotalTimeDisplay';
 import WeeklyDataFlatList from './WeeklyDataFlatList';
@@ -11,7 +12,7 @@ const CurrentWeekCard = ({ item }) => {
 
   return (
     <View style={styles.currentWeekContainer}>
-      <Text style={styles.dateHeading}>{weekStartHeading}</Text>
+      <DateTimeDisplay dateString={weekStartHeading} />
       <View style={styles.cardContainer}>
         <TotalTimeDisplay
           totalTime={item.totalTime}
