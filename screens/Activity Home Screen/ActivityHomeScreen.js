@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
 import React, { useLayoutEffect } from 'react';
+import { StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
 import CurrentWeekCard from '../../components/History Cards/CurrentWeekCard';
-import { useDispatch, useSelector } from 'react-redux';
 import GradientView from '../../components/UI/BackgroundContainer';
 const ActivityHomeScreen = ({ navigation }) => {
   const activityData = useSelector((state) => state.userHomeScreen.currentActivityItem);
