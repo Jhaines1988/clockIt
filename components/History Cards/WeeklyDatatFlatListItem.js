@@ -2,13 +2,12 @@ import React from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { ClockItColors } from '../../constants/styles';
 import { convertCentisecondsToHistoryScreenFormat } from '../../utils/DateTimeHelpers/convertCentisecondsToHistoryScreenFormat';
-import { dayMap } from '../../utils/DateTimeHelpers/DateTimeMaps';
 const window = Dimensions.get('window');
 
-const WeeklyDataFlatListItem = ({ time, date }) => {
+const WeeklyDataFlatListItem = ({ time, date, isEditable }) => {
   return (
     <View style={weeklyDataFlatListItemStyles.dateTimeWrapper}>
-      <Text style={weeklyDataFlatListItemStyles.date}>{dayMap[date.slice(0, 3)]}</Text>
+      <Text style={weeklyDataFlatListItemStyles.date}>{date}</Text>
       <Text style={weeklyDataFlatListItemStyles.time}>
         {convertCentisecondsToHistoryScreenFormat(time)}
       </Text>
