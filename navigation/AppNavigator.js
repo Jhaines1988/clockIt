@@ -75,7 +75,7 @@ const AuthenticatedStack = () => {
                   size={24}
                   color="white"
                   onPress={() => {
-                    authCtx.logout;
+                    authCtx.logout();
                   }}
                 />
               );
