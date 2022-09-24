@@ -1,17 +1,17 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { ClockItColors } from '../../constants/styles';
 
-const WeeklyDataFlatListItem = ({ time, date, isEditable }) => {
+const EditableWeeklyDatatFlatListItem = ({ time, date, isEditable }) => {
   return (
-    <View style={weeklyDataFlatListItemStyles.dateTimeWrapper}>
-      <Text style={weeklyDataFlatListItemStyles.date}>{date}</Text>
-      <Text style={weeklyDataFlatListItemStyles.time}>{time}</Text>
+    <View style={styles.dateTimeWrapper}>
+      <Text style={styles.date}>{date}</Text>
+      <TextInput style={styles.time} defaultValue={time} />
     </View>
   );
 };
 
-const weeklyDataFlatListItemStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   dateTimeWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -32,4 +32,4 @@ const weeklyDataFlatListItemStyles = StyleSheet.create({
   },
 });
 
-export default WeeklyDataFlatListItem;
+export default EditableWeeklyDatatFlatListItem;

@@ -1,6 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
 import { db } from '../firebase';
+import {
+  convertCentisecondsToEditHistoryScreenFormat,
+  convertCentisecondsToHistoryScreenFormat,
+} from '../utils/DateTimeHelpers/convertCentisecondsToHistoryScreenFormat';
+import { dayMap } from '../utils/DateTimeHelpers/DateTimeMaps';
 export const getUserHistoryAsync = createAsyncThunk(
   'userHistory/getUserHistoryAsync',
   async (userId, thunkAPI) => {
@@ -21,6 +26,14 @@ export const getUserHistoryAsync = createAsyncThunk(
           startedAt: doc.data().startedAt.toDate().toISOString(),
           endedAt: doc.data().endedAt.toDate().toISOString(),
           name: name,
+          week: doc.data().week.map((day) => {
+            const tempTime = day.time;
+            day.date = dayMap[day.date.slice(0, 3)];
+            day.time = convertCentisecondsToHistoryScreenFormat(day.time);
+            day.editableTime = convertCentisecondsToEditHistoryScreenFormat(tempTime);
+
+            return day;
+          }),
         };
 
         fetchedHistory.push(newDoc);
@@ -32,14 +45,20 @@ export const getUserHistoryAsync = createAsyncThunk(
     }
   }
 );
+
 export const userHistory = createSlice({
   name: 'userHistory',
-  initialState: {},
+  initialState: {
+    currentWeek: [],
+  },
   reducers: {
     initializeNames: (state, action) => {
       action.payload.activities.forEach((item) => {
         state[item.id] = { name: item.name, history: [], fullyLoaded: false };
       });
+    },
+    initializeCurrentWeek: (state, action) => {
+      state.currentWeek = action.payload.currentWeek;
     },
   },
   extraReducers: {
@@ -53,6 +72,6 @@ export const userHistory = createSlice({
   },
 });
 
-export const { initializeNames } = userHistory.actions;
+export const { initializeNames, initializeCurrentWeek } = userHistory.actions;
 
 export default userHistory.reducer;

@@ -9,7 +9,7 @@ import TotalTimeDisplay from './TotalTimeDisplay';
 
 const EditHistoryCard = ({ modalVisible, onPress, week, dateString, totalTime }) => {
   const { height, width } = useWindowDimensions();
-  console.log('WEEK------', week);
+
   return (
     <Modal visible={modalVisible} presentationStyle="overFullScreen" animationType="slide">
       <GradientView>
@@ -24,7 +24,6 @@ const EditHistoryCard = ({ modalVisible, onPress, week, dateString, totalTime })
               totalTime={totalTime}
               onEditButtonPressHandler={null}
               includeIcon={false}
-              totalContainerStyles={{ flex: 1 }}
             />
             <FlatList
               bounces={false}
