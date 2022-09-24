@@ -1,4 +1,7 @@
-import { convertCentisecondsToHistoryScreenFormat } from '../../../utils/DateTimeHelpers/convertCentisecondsToHistoryScreenFormat';
+import {
+  convertCentisecondsToEditHistoryScreenFormat,
+  convertCentisecondsToHistoryScreenFormat,
+} from '../../../utils/DateTimeHelpers/convertCentisecondsToHistoryScreenFormat';
 import { findDay, lastSunday } from '../../../utils/DateTimeHelpers/DateTimeHelpers';
 import { dayMap, monthMap } from '../../../utils/DateTimeHelpers/DateTimeMaps';
 
@@ -14,13 +17,16 @@ export const currentWeekFormatter = function (item) {
       formattedUserWeek.push({
         date: formattedDay,
         time: convertCentisecondsToHistoryScreenFormat(item[dateKey]),
+        totalTime: convertCentisecondsToEditHistoryScreenFormat(item[dateKey]),
         editable: true,
       });
     } else {
+      const isEditable = start.valueOf() < today ? true : false;
       formattedUserWeek.push({
         date: formattedDay,
         time: '-',
-        editable: start.valueOf() < today ? true : false,
+        totalTime: isEditable ? { hours: 0, minutes: 0 } : { hours: '-', minutes: '-' },
+        editable: isEditable,
       });
     }
     start.setDate(start.getDate() + 1);
@@ -38,3 +44,4 @@ export const weekStartHeadingGenerator = function () {
 
   return `${dayOfWeek}, ${month} ${date} ${year}`;
 };
+convertCentisecondsToEditHistoryScreenFormat;
