@@ -1,7 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, Dimensions, TextInput, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, TextInput, View } from 'react-native';
 import { ClockItColors } from '../../constants/styles';
-import { convertCentisecondsToEditHistoryScreenFormat } from '../../utils/DateTimeHelpers/convertCentisecondsToHistoryScreenFormat';
 import { dayMap } from '../../utils/DateTimeHelpers/DateTimeMaps';
 const window = Dimensions.get('window');
 const RenderItemEditHistoryCard = ({ item, index }) => {
@@ -16,7 +15,7 @@ const RenderItemEditHistoryCard = ({ item, index }) => {
             keyboardType="number-pad"
             style={styles.input}
             placeholderTextColor={ClockItColors.darkestBlue}
-            placeholder={convertCentisecondsToEditHistoryScreenFormat(item.time).hours.toString()}
+            placeholder={item.editableTime.hours.toString()}
           />
         </View>
         <View style={styles.hoursMinutesTextContainer}>
@@ -29,7 +28,7 @@ const RenderItemEditHistoryCard = ({ item, index }) => {
             style={styles.input}
             keyboardType="number-pad"
             placeholderTextColor="blue"
-            placeholder={convertCentisecondsToEditHistoryScreenFormat(item.time).minutes.toString()}
+            placeholder={item.editableTime.minutes.toString()}
           />
         </View>
         <View style={styles.hoursMinutesTextContainer}>
