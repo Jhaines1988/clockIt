@@ -1,8 +1,10 @@
 import React from 'react';
 import { FlatList, SafeAreaView, StyleSheet } from 'react-native';
+import EditableWeeklyDatatFlatListItem from './EditableWeeklyDataFlatListItem';
 import WeeklyDataFlatListItem from './WeeklyDatatFlatListItem';
 
 const WeeklyDataFlatList = ({ week }) => {
+  // console.log(week, '----');
   return (
     <>
       <SafeAreaView style={styles.flatListContainer}>
@@ -11,11 +13,19 @@ const WeeklyDataFlatList = ({ week }) => {
           data={week}
           keyExtractor={(item, index) => item.date + index}
           renderItem={({ item }) => {
-            return (
+            return item.editable === true ? (
+              <EditableWeeklyDatatFlatListItem
+                time={item.time}
+                date={item.date}
+                isEditable={item.editable}
+                totalTime={item.totalTime}
+              />
+            ) : (
               <WeeklyDataFlatListItem
                 time={item.time}
                 date={item.date}
                 isEditable={item.editable}
+                totalTime={item.totalTime}
               />
             );
           }}

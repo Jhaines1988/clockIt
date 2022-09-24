@@ -1,17 +1,16 @@
 import { useState } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
-import { ClockItColors } from '../../constants/styles';
-import { convertCentisecondsToHistoryScreenFormat } from '../../utils/DateTimeHelpers/convertCentisecondsToHistoryScreenFormat';
+import { Dimensions, StyleSheet, View } from 'react-native';
+import { useSelector } from 'react-redux';
 import { monthMap } from '../../utils/DateTimeHelpers/DateTimeMaps';
-import IconButton from '../buttons/IconButton';
-import TotalTimeDisplay from './TotalTimeDisplay';
-import EditHistoryCard from './EditHistoryCard';
-import WeeklyDataFlatList from './WeeklyDataFlatList';
 import DateTimeDisplay from './DateTimeDisplay';
+import EditHistoryCard from './EditHistoryCard';
+import TotalTimeDisplay from './TotalTimeDisplay';
+import WeeklyDataFlatList from './WeeklyDataFlatList';
 const window = Dimensions.get('window');
 const HistoryCard = ({ item }) => {
   const weekStart = new Date(item.startedAt);
   const [editHistoryCardModalOpen, setEditHistoryCardModalOpen] = useState(false);
+  const history = useSelector((state) => state.userHistory);
 
   const dateString = `${
     monthMap[weekStart.getMonth()]
